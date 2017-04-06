@@ -1,11 +1,11 @@
 {
   "version": "0.0.1",
   "name": "rst",
-  "description": "Template to build slideshow based on Reveal.js",
+  "description": "ppsloop demo",
   "homepage": "https://techpush.xyz",
   "repository": {
     "type": "git",
-    "url": "https://github.com/techpush/reveal-slide-template"
+    "url": "git@github.com:greenglobal/ppsloop.git"
   },
   "author": "@ndaidong",
   "keywords": [

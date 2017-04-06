@@ -52,7 +52,9 @@ var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?functi
     }
 
     return peopleWhoKnowThis.map((stt) => {
-      return _people[stt];
+      return _people[stt] || null;
+    }).filter((item) => {
+      return item !== null;
     });
   };
 
@@ -70,7 +72,9 @@ var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?functi
     }
 
     return projectsThatUse.map((stt) => {
-      return _projects[stt];
+      return _projects[stt] || null;
+    }).filter((item) => {
+      return item !== null;
     });
   };
 
@@ -91,7 +95,9 @@ var _typeof=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?functi
       }
     }
     return skillIndexes.map((k) => {
-      return _techstacks[k];
+      return _techstacks[k] || null;
+    }).filter((item) => {
+      return item !== null;
     });
   };
 

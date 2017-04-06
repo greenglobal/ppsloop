@@ -248,7 +248,9 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
     }
 
     return peopleWhoKnowThis.map(function (stt) {
-      return _people[stt];
+      return _people[stt] || null;
+    }).filter(function (item) {
+      return item !== null;
     });
   };
 
@@ -266,7 +268,9 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
     }
 
     return projectsThatUse.map(function (stt) {
-      return _projects[stt];
+      return _projects[stt] || null;
+    }).filter(function (item) {
+      return item !== null;
     });
   };
 
@@ -286,7 +290,9 @@ var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "sym
       }
     }
     return skillIndexes.map(function (k) {
-      return _techstacks[k];
+      return _techstacks[k] || null;
+    }).filter(function (item) {
+      return item !== null;
     });
   };
 

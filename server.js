@@ -9,7 +9,7 @@ var builder = require('./builder');
 
 var app = express();
 
-app.use(express.static('dist'));
+app.use(express.static('docs'));
 
 app.use((req, res) => {
   return res.status(404).send('File not found');

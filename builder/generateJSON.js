@@ -37,7 +37,7 @@ var removeAccents = (s) => {
 
 var createMap = (skills, candidates) => {
   let totalCandidates = candidates.length;
-  return skills.map((item) => {
+  return skills.map(() => {
     let maxToPick = bella.random(3, 20);
     let choosenCandidates = [];
     while (choosenCandidates.length < maxToPick) {
@@ -45,8 +45,8 @@ var createMap = (skills, candidates) => {
       choosenCandidates.push(candidateIndex);
     }
     return choosenCandidates;
-  }).map((candidates) => {
-    return bella.stabilize(candidates).unique();
+  }).map((cand) => {
+    return bella.stabilize(cand).unique();
   });
 };
 
@@ -67,7 +67,7 @@ var getJSON = () => {
       people,
       projects,
       techstacks
-    }
+    };
   });
 };
 

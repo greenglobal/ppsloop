@@ -31,8 +31,14 @@ var setup = async (source, dist) => {
   }
   exec('mkdir ' + dist);
   exec(`mkdir ${dist}/pps-widget`);
+  exec(`mkdir ${dist}/images`);
+  exec(`mkdir ${dist}/css`);
+  exec(`mkdir ${dist}/js`);
 
   cpdir(`${source}/pps-widget`, `${dist}/pps-widget`);
+  cpdir(`${source}/images`, `${dist}/images`);
+  cpdir(`${source}/css`, `${dist}/css`);
+  cpdir(`${source}/js`, `${dist}/js`);
 
   copyFile(`${source}/favicon.ico`, dist);
 

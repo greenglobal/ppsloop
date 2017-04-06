@@ -47,6 +47,7 @@
   --cardTechstackColorDefault: #fff;
   --cardTechstackColorHover: #dff;
   --cardTechstackColorActive: #def;
+  --cardTechstackColorFocus: #ddf;
   --cardLabelTechstackColor: #060;
   --cardTechstackTransition: all 500ms;
 }
@@ -170,6 +171,11 @@
         }
         &:active{
           background-color: var(--cardTechstackColorActive);
+        }
+        &.focus:hover,
+        &.focus:active,
+        &.focus{
+          background-color: var(--cardTechstackColorFocus);
         }
       }
     }

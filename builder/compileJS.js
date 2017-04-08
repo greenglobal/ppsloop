@@ -1,8 +1,16 @@
 // compileJS
 
 var babel = require('babel-core');
+var UglifyJS = require('uglify-js');
 
 var readFile = require('./readFile');
+
+var minifyJS = (jscode) => {
+  let u = UglifyJS.minify(jscode, {
+    fromString: true
+  });
+  return u.code;
+};
 
 var transpile = (code) => {
   let r = babel.transform(code, {
@@ -48,7 +56,7 @@ var compileJS = (jsFiles, source) => {
 
   let js = transpile(myJS);
 
-  return [vendorJS, js].join('\n');
+  return minifyJS([vendorJS, js].join('\n'));
 };
 
 module.exports = compileJS;

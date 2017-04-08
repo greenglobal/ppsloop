@@ -35,7 +35,8 @@
     "postcss": "5.x.x",
     "postcss-cssnext": "2.x.x",
     "postcss-filter-plugins": "2.x.x",
-    "postcss-nested": "1.x.x"
+    "postcss-nested": "1.x.x",
+    "uglify-js": "2.x.x"
   },
   "devDependencies": {
     "cheerio": "0.x.x",

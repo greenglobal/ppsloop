@@ -52,5 +52,6 @@ var prepare = () => {
 module.exports = {
   start,
   prepare,
-  watch
+  watch,
+  update: RM.update
 };

@@ -1,0 +1,26 @@
+/* reset all childen */
+PPSWidget * {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* userful variables */
+:root {
+  --widgetMinWidth: 300px;
+}
+
+PPSWidget {
+
+  overflow: hidden;
+
+  & .wrap-content {
+    min-height: 860px;
+  }
+
+  & .view-all.is-disabled a.btn-viewall {
+    color: #ddd;
+    cursor: default;
+    border: none;
+  }
+}

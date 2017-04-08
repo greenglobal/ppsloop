@@ -4,19 +4,22 @@
 var path = require('path');
 
 var debug = require('debug');
-var info = debug('rst:info');
+var info = debug('pps:info');
 
 var chokidar = require('chokidar');
 
+const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
+
 const SOURCE = path.join(__dirname, '../src');
-const DIST = path.join(__dirname, '../docs');
+const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : '../dist');
 
 var setup = require('./setup');
 var build = require('./build');
+var RM = require('./RM');
 
 var start = () => {
-  setup(SOURCE, DIST);
-  build(SOURCE, DIST);
+  setup(`${SOURCE}/consumer`, DIST);
+  build(`${SOURCE}/consumer`, DIST);
 };
 
 var debounce = (func, wait) => {
@@ -31,19 +34,23 @@ var debounce = (func, wait) => {
 };
 
 var watch = () => {
+  RM.update();
   info('Start watching...');
-  let watcher = chokidar.watch(SOURCE, {
-    persistent: true
-  });
+  let watcher = chokidar.watch(`${SOURCE}/widget`);
 
-  let fn = debounce(start, 1000);
+  let fn = debounce(RM.update, 1000);
   watcher
     .on('add', fn)
     .on('change', fn)
     .on('unlink', fn);
 };
 
+var prepare = () => {
+  RM.prepare(ENV);
+};
+
 module.exports = {
   start,
+  prepare,
   watch
 };

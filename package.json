@@ -18,7 +18,8 @@
     "node": ">= 6.0"
   },
   "scripts": {
-    "start": "DEBUG=rst:* node server.js -p 8080"
+    "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
+    "release": "NODE_ENV=production node builder/bin/build"
   },
   "dependencies": {
     "babel-core": "6.x.x",

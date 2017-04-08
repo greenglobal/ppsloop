@@ -1,4 +1,4 @@
-// readFile
+// builder/readFile
 
 var fs = require('fs');
 

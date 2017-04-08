@@ -9,6 +9,8 @@ var parseHTML = require('./parseHTML');
 var compileCSS = require('./compileCSS');
 var compileJS = require('./compileJS');
 
+const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
+
 var _build = (dist, data) => {
   let {
     html,
@@ -28,6 +30,12 @@ var build = async (source, dist) => {
 
   config.widgetCSSLink = 'http://localhost:8081/ppsloop.widget.css';
   config.widgetJSLink = 'http://localhost:8081/ppsloop.widget.js';
+
+  if (ENV === 'production') {
+    config.widgetCSSLink = 'https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css';
+    config.widgetJSLink = 'https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js';
+  }
+
 
   let structures = parseHTML(`${source}/index.html`, config);
   let {

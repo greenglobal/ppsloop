@@ -1,2 +1,2 @@
 
-PPSWidget *{padding:0;margin:0;box-sizing:border-box}PPSWidget{overflow:hidden}PPSWidget .wrap-content{min-height:860px}PPSWidget .view-all.is-disabled a.btn-viewall{color:#ddd;cursor:default;border:none}
+PPSWidget *{padding:0;margin:0;box-sizing:border-box}PPSWidget{overflow:hidden}PPSWidget .wrap-content{min-height:860px}PPSWidget .view-all.is-disabled a.btn-viewall{color:#ddd;cursor:default;border:none}PPSWidget .pps-card{-webkit-transition:all .4s ease-in-out;transition:all .4s ease-in-out}

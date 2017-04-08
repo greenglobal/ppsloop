@@ -40,6 +40,7 @@ if (port && port >= 0 && port <= 65535) {
 
     await builder.start();
     await builder.prepare();
+    await builder.update();
     builder.watch();
   });
 }

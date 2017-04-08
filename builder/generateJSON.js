@@ -7,44 +7,10 @@ var info = debug('pps:info');
 var error = debug('pps:error');
 
 var removeAccents = require('./removeAccents');
-var getPlaceHolder = require('./getPlaceHolder');
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
 
 const THIS_YEAR = (new Date()).getFullYear();
-
-var remark = (entries, type) => {
-  return entries.map((entry) => {
-    if (!entry.image) {
-      let opts = {
-        text: entry.name,
-        fontSize: 16
-      };
-      if (type === 'people') {
-        let {
-          name
-        } = entry;
-        opts.text = name.split(' ').map((part) => {
-          return part.charAt(0);
-        }).join('');
-        opts.fontSize = 50;
-        opts.width = 160;
-        opts.height = 180;
-        opts.backgroundColor = 'ffffaa';
-      } else if (type === 'project') {
-        opts.width = 170;
-        opts.height = 50;
-        opts.backgroundColor = 'eeffff';
-      } else if (type === 'stack') {
-        opts.width = 180;
-        opts.height = 50;
-        opts.backgroundColor = 'ffffaa';
-      }
-      entry.image = getPlaceHolder(opts);
-    }
-    return entry;
-  });
-};
 
 var standalizeName = (person) => {
   let name = removeAccents(person.name);
@@ -55,8 +21,11 @@ var standalizeName = (person) => {
 
 var getYoE = (begin) => {
   let y = THIS_YEAR - begin;
-  if (y > 0) {
+  if (y > 1) {
     return `${y} years of experience`;
+  }
+  if (y === 1) {
+    return `${y} year of experience`;
   }
   return 'Several months';
 };
@@ -120,9 +89,9 @@ var generateJSON = async () => {
     });
 
     let output = {
-      people: remark(arrPeople, 'people'),
-      projects: remark(arrProjects, 'project'),
-      techstacks: remark(skills, 'stack').map((item) => {
+      people: arrPeople,
+      projects: arrProjects,
+      techstacks: skills.map((item) => {
         return [item.name, item.image];
       })
     };

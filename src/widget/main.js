@@ -40,6 +40,10 @@
     return b.splice(0, count);
   };
 
+  let randomColor = () => {
+    return Math.floor(Math.random() * 16777215).toString(16);
+  };
+
   let getPeople = () => {
     return [...people];
   };
@@ -64,34 +68,88 @@
     });
   };
 
-  let getStartPoint = (dir) => {
+  let makeSrc = (opts) => {
+
+    let {
+      text = '?!?',
+      fontSize = 20,
+      width = 160,
+      height = 120,
+      backgroundColor = randomColor(),
+      textColor = '000000'
+    } = opts;
+
+    let params = [
+      `txt=${text}`,
+      `txtsize=${fontSize}`,
+      `w=${width}`,
+      `h=${height}`,
+      `bg=${backgroundColor}`,
+      `txtclr=${textColor}`
+    ].join('&');
+
+    return `https://placeholdit.imgix.net/~text?${params}`;
+  };
+
+  let addFakeImage = (entry) => {
+    let opts = {
+      fontSize: 16,
+      width: 180,
+      height: 50
+    };
+    if (Array.isArray(entry)) {
+      if (!entry[1]) {
+        opts.text = entry[0];
+        entry[1] = makeSrc(opts);
+      }
+      return entry;
+    }
+
+    if (entry.hasOwnProperty('skills') && !entry.image) {
+      opts.text = entry.name.split(' ').map((part) => {
+        return part.charAt(0);
+      }).join('');
+      opts.fontSize = 50;
+      opts.width = 160;
+      opts.height = 180;
+      entry.image = makeSrc(opts);
+    } else if (entry.hasOwnProperty('stacks') && !entry.image) {
+      opts.text = entry.name;
+      opts.width = 170;
+      opts.height = 50;
+      entry.image = makeSrc(opts);
+    }
+    return entry;
+  };
+
+  let getStartPoint = (dir, delta = 0) => {
     let startX = 0;
     let startY = 0;
 
     if (dir === 'r2l') {
-      startX = 1000;
-      startY = random(0, 2000) - 1000;
+      startX = 1000 + delta;
+      startY = delta > 0 ? delta + random(0, 1000) : delta - random(0, 1000);
     } else if (dir === 'b2t') {
       startY = 1000;
       startX = random(0, 2000) - 1000;
     }
-
     return {
       startX,
       startY
     };
   };
 
-  let applyEffect = (cards, direction = 'rtl') => {
+  let applyEffect = (cards, direction = 'rtl', delta = 0) => {
     let {
       startX,
       startY
-    } = getStartPoint(direction);
+    } = getStartPoint(direction, delta);
 
     let timerStep = 5;
     let timeout = timerStep;
     let speedStep = 200;
     let startSpeed = speedStep;
+    let startD = 180;
 
     cards.filter((item) => {
       return item && item.$el;
@@ -99,20 +157,55 @@
       return item.$el;
     }).map((el) => {
       startSpeed += speedStep;
-      el.style.transition = `all ${startSpeed}ms`;
-      el.style.transform = `translate(${startX}px, ${startY}px)`;
+      el.style.transition = `all ${startSpeed}ms cubic-bezier(0.23, 1, 0.32, 1)`;
+      el.style.opacity = '0.1';
+      startD -= 5;
+      el.style.transform = `translate(${startX}px, ${startY}px) rotate(${startD}deg) rotateY(${startD}deg)`;
       return el;
     }).forEach((el) => {
       timeout += timerStep;
       setTimeout(() => {
-        el.style.transform = 'translate(0px, 0px)';
+        el.style.opacity = '1.0';
+        el.style.transform = 'translate(0px, 0px) rotate(0deg) rotateY(0deg)';
       }, timeout);
+    });
+  };
+
+  let cleanPeoplePanel = () => {
+    let x = random(200, 1000);
+    let y = random(200, 1000);
+    let timer = 50;
+    doc.all('.team-block .pps-card').forEach((el) => {
+      y += 50;
+      x -= 10;
+      setTimeout(() => {
+        el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
+        el.style.transform = `translate(-${x}px, -${y}px)`;
+      }, timer);
+      timer += 50;
+    });
+  };
+
+  let applySimpleEffect = (cards) => {
+    let timeout = 10;
+    cards.filter((item) => {
+      return item && item.$el;
+    }).map((item) => {
+      return item.$el;
+    }).map((el) => {
+      el.style.opacity = '0.1';
+      return el;
+    }).forEach((el) => {
+      setTimeout(() => {
+        el.style.opacity = '1.0';
+      }, timeout);
+      timeout += 5;
     });
   };
 
   let buildStackCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('items');
+    card.addClass('items pps-card');
 
     let [
       name,
@@ -135,7 +228,7 @@
 
   let buildPersonCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('team-member');
+    card.addClass('team-member pps-card');
 
     let {
       image,
@@ -157,7 +250,7 @@
 
   let buildProjectCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('project-items');
+    card.addClass('project-items pps-card');
 
     let {
       image,
@@ -198,6 +291,13 @@
         data: entry
       };
     });
+    let projectCards = result.reduce((prev, curr) => {
+      return prev.concat(curr);
+    }, []);
+
+    if (projectCards.length) {
+      applySimpleEffect(projectCards);
+    }
 
     $btnViewAllProject.onclick = null;
     $btnViewAllProject.addClass('is-disabled');
@@ -211,7 +311,7 @@
     return result;
   };
 
-  let randerPeoplePanel = (ppl, isAppend = false) => {
+  let randerPeoplePanel = (ppl, isAppend = false, delta = 0) => {
     if (!isAppend) {
       $elPeople.empty();
     }
@@ -241,7 +341,7 @@
     }, []);
 
     if (peopleCards.length) {
-      applyEffect(peopleCards, isAppend ? 'b2t' : 'r2l');
+      applyEffect(peopleCards, isAppend ? 'b2t' : 'r2l', delta);
     }
 
     $btnViewAllPeople.onclick = null;
@@ -255,7 +355,7 @@
     return result;
   };
 
-  let onStackSelect = (data) => {
+  let onStackSelect = (data, delta = 0) => {
     let skill = data[0];
 
     updateLeftPanelLogo(skill, data[1]);
@@ -275,9 +375,12 @@
         return sk[0] === skill;
       });
 
-      let yoe = random(1, 9) + ' years of experience';
+      let yoe = '';
       if (yys.length) {
         yoe = yys[0][1];
+      } else {
+        let _y = random(1, 9);
+        yoe = `${_y} year${_y > 0 ? 's' : ''} of experience`;
       }
 
       return {
@@ -287,7 +390,7 @@
       };
     });
 
-    randerPeoplePanel(_peopleToAdd);
+    randerPeoplePanel(_peopleToAdd, false, delta);
 
     let _projects = getProjectsThatUse(skill);
 
@@ -311,8 +414,18 @@
       data
     } = stack;
 
-    doc.Event.on($el, 'click', () => {
-      onStackSelect(data);
+    doc.Event.on($el, 'click', (ev) => {
+      let e = ev || event;
+      let {
+        clientY
+      } = e;
+      let aHaft = window.innerHeight / 2;
+      let delta = clientY - aHaft + 100;
+
+      cleanPeoplePanel();
+      setTimeout(() => {
+        onStackSelect(data, delta);
+      }, 300);
     });
 
     return data;
@@ -413,9 +526,9 @@
         projects: _projects,
         techstacks: _techstacks
       } = o;
-      people = _people;
-      projects = _projects;
-      techstacks = _techstacks;
+      people = _people.map(addFakeImage);
+      projects = _projects.map(addFakeImage);
+      techstacks = _techstacks.map(addFakeImage);
     },
     init,
     getPeople,

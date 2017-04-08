@@ -1,6 +1,11 @@
 // generateJSON
 
 var path = require('path');
+
+var debug = require('debug');
+var info = debug('pps:info');
+var error = debug('pps:error');
+
 var writeFile = require('./writeFile');
 var readFile = require('./readFile');
 
@@ -12,12 +17,11 @@ var compileCSS = require('./compileCSS');
 
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
-const SOURCE = path.join(__dirname, ENV === 'production' ? '../src' : './src');
-const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : './dist');
+const SOURCE = path.join(__dirname, '../src');
+const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : '../dist');
 
 const JSFILES = [
   'vendor/doc.min.js',
-  'layout.js',
   'main.js'
 ];
 
@@ -26,27 +30,51 @@ const CSSFILES = [
 ];
 
 var prepare = async () => {
-  await getFieldbookData();
-  await generateJSON();
+  try {
+    await getFieldbookData();
+    await generateJSON();
+  } catch (err) {
+    error(err);
+  }
+  return false;
 };
 
 var processCSS = async () => {
-  let s = await compileCSS(CSSFILES, `${SOURCE}/widget`);
-  writeFile(`${DIST}/widget/ppsloop.widget.css`, s);
+  try {
+    info('Start compiling CSS...');
+    let s = await compileCSS(CSSFILES, `${SOURCE}/widget`);
+    writeFile(`${DIST}/widget/ppsloop.widget.css`, s);
+    info('Finish compiling CSS...');
+  } catch (err) {
+    error(err);
+  }
+  return false;
 };
 
 var processJS = async () => {
-  let s = await compileJS(JSFILES, `${SOURCE}/widget`);
-  let data = readFile(`./dist/widget/ppsloop.widget.json`);
-  writeFile(`${DIST}/widget/ppsloop.widget.js`, [
-    s,
-    `PPSW.load('${data}');PPSW.init();`
-  ].join('\n'));
+  try {
+    info('Start compiling JS...');
+    let s = await compileJS(JSFILES, `${SOURCE}/widget`);
+    let data = readFile(`./dist/widget/ppsloop.widget.json`);
+    writeFile(`${DIST}/widget/ppsloop.widget.js`, [
+      s,
+      `PPSW.load('${data}');PPSW.init();`
+    ].join('\n'));
+    info('Finish compiling JS...');
+  } catch (err) {
+    error(err);
+  }
+  return false;
 };
 
-var update = () => {
-  processJS();
-  processCSS();
+var update = async () => {
+  try {
+    await processJS();
+    await processCSS();
+  } catch (err) {
+    error(err);
+  }
+  return false;
 };
 
 module.exports = {

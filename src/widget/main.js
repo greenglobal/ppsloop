@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc */
+/* global doc stabilize */
 
 ((name, factory) => {
   let root = window || {};
@@ -28,6 +28,8 @@
   let $btnViewAllPeople;
   let $btnViewAllProject;
 
+  let isStarted = false;
+
   let random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -45,13 +47,13 @@
   };
 
   let getPeople = () => {
-    return [...people];
+    return stabilize(people);
   };
   let getProjects = () => {
-    return [...projects];
+    return stabilize(projects);
   };
   let getTechstacks = () => {
-    return [...techstacks];
+    return stabilize(techstacks);
   };
 
   let getPeopleWhoHas = (skill) => {
@@ -122,67 +124,50 @@
     return entry;
   };
 
-  let getStartPoint = (dir, delta = 0) => {
-    let startX = 0;
-    let startY = 0;
+  let applyEffect = (cards, direction = 'tl2br') => {
+    let x = -200;
+    let y = -200;
+    let timer = 50;
 
-    if (dir === 'r2l') {
-      startX = 1000 + delta;
-      startY = delta > 0 ? delta + random(0, 1000) : delta - random(0, 1000);
-    } else if (dir === 'b2t') {
-      startY = 1000;
-      startX = random(0, 2000) - 1000;
+    if (direction === 'b2t') {
+      x = 0;
+      y = 500;
     }
-    return {
-      startX,
-      startY
-    };
-  };
-
-  let applyEffect = (cards, direction = 'rtl', delta = 0) => {
-    let {
-      startX,
-      startY
-    } = getStartPoint(direction, delta);
-
-    let timerStep = 5;
-    let timeout = timerStep;
-    let speedStep = 200;
-    let startSpeed = speedStep;
-    let startD = 180;
-
     cards.filter((item) => {
       return item && item.$el;
     }).map((item) => {
       return item.$el;
     }).map((el) => {
-      startSpeed += speedStep;
-      el.style.transition = `all ${startSpeed}ms cubic-bezier(0.23, 1, 0.32, 1)`;
-      el.style.opacity = '0.1';
-      startD -= 5;
-      el.style.transform = `translate(${startX}px, ${startY}px) rotate(${startD}deg) rotateY(${startD}deg)`;
+      x += 20;
+      y += 20;
+      el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
+      el.style.transform = `translate(${x}px, ${y}px)`;
+      el.style.opacity = '0.0';
       return el;
     }).forEach((el) => {
-      timeout += timerStep;
       setTimeout(() => {
+        el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
+        el.style.transform = `translate(0px, 0px)`;
         el.style.opacity = '1.0';
-        el.style.transform = 'translate(0px, 0px) rotate(0deg) rotateY(0deg)';
-      }, timeout);
+      }, timer);
+      timer += 50;
     });
   };
 
   let cleanPeoplePanel = () => {
-    let x = random(200, 1000);
-    let y = random(200, 1000);
-    let timer = 50;
-    doc.all('.team-block .pps-card').forEach((el) => {
-      y += 50;
-      x -= 10;
-      setTimeout(() => {
-        el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
-        el.style.transform = `translate(-${x}px, -${y}px)`;
-      }, timer);
-      timer += 50;
+    return new Promise((resolve) => {
+      let x = random(0, 500) + 250;
+      let y = random(0, 100) - 50;
+      let timer = 50;
+      doc.all('.team-block .pps-card').forEach((el) => {
+        setTimeout(() => {
+          el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
+          el.style.transform = `translate(-${x}px, ${y}px)`;
+          el.style.opacity = '0.0';
+        }, timer);
+        timer += 50;
+      });
+      setTimeout(resolve, 300);
     });
   };
 
@@ -194,10 +179,12 @@
       return item.$el;
     }).map((el) => {
       el.style.opacity = '0.1';
+      el.style.transform = `translate(400px, 0px)`;
       return el;
     }).forEach((el) => {
       setTimeout(() => {
         el.style.opacity = '1.0';
+        el.style.transform = `translate(0px, 0px)`;
       }, timeout);
       timeout += 5;
     });
@@ -311,7 +298,7 @@
     return result;
   };
 
-  let randerPeoplePanel = (ppl, isAppend = false, delta = 0) => {
+  let randerPeoplePanel = (ppl, isAppend = false) => {
     if (!isAppend) {
       $elPeople.empty();
     }
@@ -322,6 +309,7 @@
       let arr = ppl.slice(0, 8);
       ppl = arr;
     }
+
     let result = ppl.map((entry) => {
       let card = buildPersonCard(entry);
       if (isAppend) {
@@ -341,7 +329,7 @@
     }, []);
 
     if (peopleCards.length) {
-      applyEffect(peopleCards, isAppend ? 'b2t' : 'r2l', delta);
+      applyEffect(peopleCards, isAppend ? 'b2t' : 'r2l');
     }
 
     $btnViewAllPeople.onclick = null;
@@ -355,7 +343,7 @@
     return result;
   };
 
-  let onStackSelect = (data, delta = 0) => {
+  let onStackSelect = (data) => {
     let skill = data[0];
 
     updateLeftPanelLogo(skill, data[1]);
@@ -390,7 +378,7 @@
       };
     });
 
-    randerPeoplePanel(_peopleToAdd, false, delta);
+    randerPeoplePanel(stabilize(_peopleToAdd).msort({yoe: -1}));
 
     let _projects = getProjectsThatUse(skill);
 
@@ -405,7 +393,7 @@
       };
     });
 
-    randerProjectPanel(_projects);
+    randerProjectPanel(stabilize(_projects).shuffle());
   };
 
   let setupStackClickEvent = (stack) => {
@@ -414,18 +402,10 @@
       data
     } = stack;
 
-    doc.Event.on($el, 'click', (ev) => {
-      let e = ev || event;
-      let {
-        clientY
-      } = e;
-      let aHaft = window.innerHeight / 2;
-      let delta = clientY - aHaft + 100;
-
-      cleanPeoplePanel();
-      setTimeout(() => {
-        onStackSelect(data, delta);
-      }, 300);
+    doc.Event.on($el, 'click', () => {
+      cleanPeoplePanel().then(() => {
+        onStackSelect(data);
+      });
     });
 
     return data;
@@ -444,6 +424,7 @@
   };
 
   let getStart = () => {
+    isStarted = true;
     let stacks = pick(getTechstacks(), 42);
     let entries = randerStackPanel(stacks);
     onStackSelect(entries[0]);
@@ -510,10 +491,9 @@
     $btnViewAllPeople = btnViewAllPeople;
     $btnViewAllProject = btnViewAllProject;
 
-    getStart();
   };
 
-  var init = () => {
+  let init = () => {
     let els = doc.all('ppswidget');
     els.map(setupLayout);
   };
@@ -526,11 +506,19 @@
         projects: _projects,
         techstacks: _techstacks
       } = o;
-      people = _people.map(addFakeImage);
-      projects = _projects.map(addFakeImage);
-      techstacks = _techstacks.map(addFakeImage);
+      people = stabilize(_people.map(addFakeImage));
+      projects = stabilize(_projects.map(addFakeImage));
+      techstacks = stabilize(_techstacks.map(addFakeImage));
     },
     init,
+    isStarted: () => {
+      return isStarted;
+    },
+    start: () => {
+      if (!isStarted) {
+        getStart();
+      }
+    },
     getPeople,
     getProjects,
     getTechstacks,

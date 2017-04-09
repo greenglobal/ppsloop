@@ -21,6 +21,7 @@ const SOURCE = path.join(__dirname, '../src');
 const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : '../dist');
 
 const JSFILES = [
+  'vendor/stabilize.min.js',
   'vendor/doc.min.js',
   'main.js'
 ];

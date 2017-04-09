@@ -1,5 +1,6 @@
 // build
 
+var bella = require('bellajs');
 var debug = require('debug');
 var info = debug('pps:info');
 
@@ -32,8 +33,9 @@ var build = async (source, dist) => {
   config.widgetJSLink = 'http://localhost:8081/ppsloop.widget.js';
 
   if (ENV === 'production') {
-    config.widgetCSSLink = 'https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css';
-    config.widgetJSLink = 'https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js';
+    let revision = bella.createId(10);
+    config.widgetCSSLink = `https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css?rev=${revision}`;
+    config.widgetJSLink = `https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js?rev=${revision}`;
   }
 
 

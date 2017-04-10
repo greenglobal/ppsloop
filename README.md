@@ -4,13 +4,13 @@ Demo animation effect for new home page
 
 ## Usage
 
-Add this widget to your web page with the following steps:
+To add this widget to a web page, you need:
 
 - Include CSS and JS files (see [CDN links](#cdns))
-- Insert `<PPSWidget></PPSWidget>` to right place in webpage
+- Insert `<PPSWidget></PPSWidget>` to right place on the web page
 - Call PPWS.start() method to start rendering the items
 
-Examples:
+Example:
 
 ```
 <html>
@@ -30,7 +30,7 @@ Examples:
 
 ## APIs
 
-By adding widget, you got a global object `PPSW` that has the following methods:
+By adding this widget, you got a global object `PPSW` with the following methods:
 
 
 #### getPeople()
@@ -40,17 +40,17 @@ Return an array which contains the list of people.
 
 #### getProjects()
 
-Return an array which contains the list of projects.
+Return list of projects.
 
 
 #### getTechstacks()
 
-Return an array which contains the list of tech stacks.
+Return list of tech stacks.
 
 
 #### getPeopleWhoHas(skillName)
 
-Return an array of people who has the given skill.
+Return people who has the given skill.
 
 Ex:
 
@@ -89,9 +89,9 @@ Return true if init() has been called at least once early.
 #### start()
 
 
-Start rendering. Use this to manual handle the rendering process, for example based on scrollTop:
+Start rendering. Use this to manually handle rendering process.
 
-For example, just render when user scroll to the point of 250px above widget:
+For example, we just want to render when user scroll to 250px above widget area:
 
 ```
 $(window).scroll(function() {
@@ -134,7 +134,7 @@ npm start
 
 If everything goes well, it would build a compiled version to "/dist", open at 8080 and start watching changes.
 
-To dev, just modify source codes from /src, then reload webpage to see updates.
+To dev, just modify source codes from /src, then reload webpage to see updates. Then, run `npm run release` to get the last result in "/docs".
 
 
 # License

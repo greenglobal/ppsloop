@@ -315,7 +315,7 @@
     }
 
     let remain = [];
-    if (ppl.length > 8) {
+    if (!isAppend && ppl.length > 8) {
       remain = ppl.slice(8, ppl.length);
       let arr = ppl.slice(0, 8);
       ppl = arr;
@@ -395,7 +395,8 @@
     let _projects = getProjectsThatUse(skill);
 
     if (_projects.length < 4) {
-      _projects = _projects.concat(pick(getProjects(), 8));
+      let tmpArr = _projects.concat(pick(getProjects(), 8));
+      _projects = stabilize(tmpArr).unique();
     }
 
     _projects = _projects.map((item) => {
@@ -437,7 +438,7 @@
 
   let getStart = () => {
     isStarted = true;
-    let stacks = pick(getTechstacks(), 39);
+    let stacks = getTechstacks().splice(0, 36);
     let entries = randerStackPanel(stacks);
     onStackSelect(entries[0]);
   };

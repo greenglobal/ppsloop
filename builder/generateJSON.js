@@ -97,16 +97,23 @@ var generateJSON = async () => {
       counter[name] = curr + 1;
     });
 
+    let ts = skills.map((item) => {
+      let {
+        name,
+        image
+      } = item;
+      return [name, image, counter[name] || 0];
+    }).sort((a, b) => {
+      if (a[2] === b[2]) {
+        return 0;
+      }
+      return a[2] > b[2] ? -1 : 1;
+    });
+
     let output = {
       people: arrPeople,
       projects: arrProjects,
-      techstacks: skills.map((item) => {
-        let {
-          name,
-          image
-        } = item;
-        return [name, image, counter[name] || 0];
-      })
+      techstacks: ts
     };
 
     await writeFile(file, JSON.stringify(output));

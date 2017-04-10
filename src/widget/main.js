@@ -87,7 +87,7 @@
       fontSize = 20,
       width = 160,
       height = 120,
-      backgroundColor = randomColor(),
+      backgroundColor = 'ffffff',
       textColor = '000000'
     } = opts;
 
@@ -124,6 +124,7 @@
       opts.fontSize = 50;
       opts.width = 160;
       opts.height = 180;
+      opts.backgroundColor = 'f3f5f6';
       entry.image = makeSrc(opts);
     } else if (entry.hasOwnProperty('stacks') && !entry.image) {
       opts.text = entry.name;
@@ -436,7 +437,7 @@
 
   let getStart = () => {
     isStarted = true;
-    let stacks = pick(getTechstacks(), 42);
+    let stacks = pick(getTechstacks(), 39);
     let entries = randerStackPanel(stacks);
     onStackSelect(entries[0]);
   };

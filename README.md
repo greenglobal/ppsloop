@@ -73,7 +73,7 @@ console.log(whatBuiltWithAngular);
 
 #### init(data)
 
-Start initializing with given data.
+Start initializing with given data. This method can be called just once. The second call does nothing.
 
 ```
 PPSW.init(data);
@@ -100,6 +100,9 @@ $(window).scroll(function() {
   }
 });
 ```
+
+This method can be called just once. The second call does nothing.
+
 
 #### isStarted()
 

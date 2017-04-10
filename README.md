@@ -23,14 +23,14 @@ Examples:
   <PPSWidget id="widgetTechTeam"></PPSWidget>
 
   <script src="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js"></script>
-  <script>PPWS.start();</body>
+  <script>PPSW.start();</body>
   </body>
 </html>
 ```
 
 ## APIs
 
-By adding widget, you got a global object `PPWS` that has the following methods:
+By adding widget, you got a global object `PPSW` that has the following methods:
 
 
 #### getPeople()

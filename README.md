@@ -6,7 +6,7 @@ Demo animation effect for new home page
 
 Add this widget to your web page with the following steps:
 
-- Includes CSS and JS files (see [CDN links](#cdns))
+- Include CSS and JS files (see [CDN links](#cdns))
 - Insert `<PPSWidget></PPSWidget>` to right place in webpage
 - Call PPWS.start() method to start rendering the items
 

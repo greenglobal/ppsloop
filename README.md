@@ -2,13 +2,13 @@
 Demo animation effect for new home page
 
 
-## Usage widget
+## Usage
 
-Add this widget to your web page with the following 2 steps:
+Add this widget to your web page with the following steps:
 
-1, Includes CSS and JS files (see [CDN links](#cdns))
-2, Insert `<PPSWidget></PPSWidget>` to right place in webpage
-3, Call PPWS.start() method to start rendering the items
+- Include CSS and JS files (see [CDN links](#cdns))
+- Insert `<PPSWidget></PPSWidget>` to right place in webpage
+- Call PPWS.start() method to start rendering the items
 
 Examples:
 
@@ -23,14 +23,14 @@ Examples:
   <PPSWidget id="widgetTechTeam"></PPSWidget>
 
   <script src="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js"></script>
-  <script>PPWS.start();</body>
+  <script>PPSW.start();</body>
   </body>
 </html>
 ```
 
 ## APIs
 
-By adding widget, you got a global object `PPWS` that has the following methods:
+By adding widget, you got a global object `PPSW` that has the following methods:
 
 
 #### getPeople()

@@ -6,13 +6,17 @@
 /* global doc stabilize */
 
 ((name, factory) => {
-  let root = window || {};
-  if (root.define && root.define.amd) {
-    root.define([], factory);
-  } else if (root.exports) {
-    root.exports = factory();
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = factory();
   } else {
-    root[name] = factory();
+    var root = window || {};
+    if (root.define && root.define.amd) {
+      root.define([], factory());
+    } else if (root.exports) {
+      root.exports = factory();
+    } else {
+      root[name] = factory();
+    }
   }
 })('PPSW', () => {
 
@@ -28,6 +32,7 @@
   let $btnViewAllPeople;
   let $btnViewAllProject;
 
+  let isInitialized = false;
   let isStarted = false;
 
   let random = (min, max) => {
@@ -47,26 +52,31 @@
   };
 
   let getPeople = () => {
-    return stabilize(people);
+    return [...people];
   };
   let getProjects = () => {
-    return stabilize(projects);
+    return [...projects];
   };
   let getTechstacks = () => {
-    return stabilize(techstacks);
+    return [...techstacks];
   };
 
   let getPeopleWhoHas = (skill) => {
+    let sk = skill.toLowerCase();
     return getPeople().filter((item) => {
       return item.skills.some((prope) => {
-        return prope[0] === skill;
+        return prope[0].toLowerCase() === sk;
       });
     });
   };
 
   let getProjectsThatUse = (skill) => {
+    let sk = skill.toLowerCase();
     return getProjects().filter((item) => {
-      return item.stacks.includes(skill);
+      let stacks = item.stacks.map((st) => {
+        return st.toLowerCase();
+      });
+      return stacks.includes(sk);
     });
   };
 
@@ -378,6 +388,7 @@
       };
     });
 
+
     randerPeoplePanel(stabilize(_peopleToAdd).msort({yoe: -1}));
 
     let _projects = getProjectsThatUse(skill);
@@ -493,31 +504,41 @@
 
   };
 
-  let init = () => {
-    let els = doc.all('ppswidget');
-    els.map(setupLayout);
-  };
-
-  return {
-    load: (json) => {
-      let o = JSON.parse(json);
+  let init = (json) => {
+    try {
+      let o = typeof json === 'string' ? JSON.parse(json) : json;
       let {
         people: _people,
         projects: _projects,
         techstacks: _techstacks
       } = o;
-      people = stabilize(_people.map(addFakeImage));
-      projects = stabilize(_projects.map(addFakeImage));
-      techstacks = stabilize(_techstacks.map(addFakeImage));
-    },
-    init,
-    isStarted: () => {
-      return isStarted;
+      people = _people.map(addFakeImage);
+      projects = _projects.map(addFakeImage);
+      techstacks = _techstacks.map(addFakeImage);
+
+      let els = doc.all('ppswidget') || [];
+      els.map(setupLayout);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return {
+    init: (data) => {
+      if (!isInitialized) {
+        init(data);
+      }
     },
     start: () => {
       if (!isStarted) {
         getStart();
       }
+    },
+    isInitialized: () => {
+      return isInitialized;
+    },
+    isStarted: () => {
+      return isStarted;
     },
     getPeople,
     getProjects,

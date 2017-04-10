@@ -1,6 +1,6 @@
 {
-  "version": "0.0.1",
-  "name": "rst",
+  "version": "0.1.0",
+  "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "https://techpush.xyz",
   "repository": {
@@ -19,34 +19,42 @@
   },
   "scripts": {
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
+    "nsp": "nsp check --output checkstyle",
+    "tape": "tape tests/start.js | tap-spec",
+    "pretest": "eslint .",
+    "test": "NODE_ENV=test npm run tape",
+    "posttest": "npm run nsp",
     "release": "NODE_ENV=production node builder/bin/build"
   },
   "dependencies": {
+    "debug": "2.x.x",
+    "express": "4.x.x",
+    "minimist": "1.x.x"
+  },
+  "devDependencies": {
     "babel-core": "6.x.x",
     "babel-plugin-transform-remove-strict-mode": "0.x.x",
     "babel-preset-env": "1.x.x",
     "bellajs": "6.x.x",
-    "css-mqpacker": "5.x.x",
-    "cssnano": "3.x.x",
-    "debug": "2.x.x",
-    "express": "4.x.x",
-    "minimist": "1.x.x",
-    "node-fetch": "1.x.x",
-    "postcss": "5.x.x",
-    "postcss-cssnext": "2.x.x",
-    "postcss-filter-plugins": "2.x.x",
-    "postcss-nested": "1.x.x",
-    "uglify-js": "2.x.x"
-  },
-  "devDependencies": {
     "cheerio": "0.x.x",
     "chokidar": "1.x.x",
     "copy-dir": "0.x.x",
+    "css-mqpacker": "5.x.x",
+    "cssnano": "3.x.x",
     "eslint": "3.x.x",
     "eslint-config-ggc": "1.x.x",
     "html-minifier": "3.x.x",
     "mkdirp": "0.x.x",
-    "mustache": "2.x.x"
+    "mustache": "2.x.x",
+    "node-fetch": "1.x.x",
+    "nsp": "2.x.x",
+    "postcss": "5.x.x",
+    "postcss-cssnext": "2.x.x",
+    "postcss-filter-plugins": "2.x.x",
+    "postcss-nested": "1.x.x",
+    "tap-spec": "4.x.x",
+    "tape": "4.x.x",
+    "uglify-js": "2.x.x"
   },
   "license": "MIT"
 }

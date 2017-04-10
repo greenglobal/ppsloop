@@ -59,8 +59,8 @@ var processJS = async () => {
     let data = readFile(`./dist/widget/ppsloop.widget.json`);
     writeFile(`${DIST}/widget/ppsloop.widget.js`, [
       s,
-      `PPSW.load('${data}');PPSW.init();`
-    ].join('\n'));
+      `PPSW.init(${data});`
+    ].join(';'));
     info('Finish compiling JS...');
   } catch (err) {
     error(err);

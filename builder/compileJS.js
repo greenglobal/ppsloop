@@ -55,8 +55,8 @@ var compileJS = (jsFiles, source) => {
   }, []).join('\n');
 
   let js = transpile(myJS);
-
-  return minifyJS([vendorJS, js].join('\n'));
+  let output = [vendorJS, js].join('\n');
+  return minifyJS(output);
 };
 
 module.exports = compileJS;

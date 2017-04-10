@@ -88,11 +88,24 @@ var generateJSON = async () => {
       return mapSkillsToProjects(item, projectSkills);
     });
 
+    let counter = {};
+    peopleSkills.forEach((item) => {
+      let {
+        name
+      } = item;
+      let curr = counter[name] || 0;
+      counter[name] = curr + 1;
+    });
+
     let output = {
       people: arrPeople,
       projects: arrProjects,
       techstacks: skills.map((item) => {
-        return [item.name, item.image];
+        let {
+          name,
+          image
+        } = item;
+        return [name, image, counter[name] || 0];
       })
     };
 

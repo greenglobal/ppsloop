@@ -2,13 +2,13 @@
 Demo animation effect for new home page
 
 
-## Usage widget
+## Usage
 
-Add this widget to your web page with the following 2 steps:
+Add this widget to your web page with the following steps:
 
-1, Includes CSS and JS files (see [CDN links](#cdns))
-2, Insert `<PPSWidget></PPSWidget>` to right place in webpage
-3, Call PPWS.start() method to start rendering the items
+- Includes CSS and JS files (see [CDN links](#cdns))
+- Insert `<PPSWidget></PPSWidget>` to right place in webpage
+- Call PPWS.start() method to start rendering the items
 
 Examples:
 

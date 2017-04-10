@@ -451,6 +451,10 @@
     let leftContent = doc.add('DIV', wrapContent);
     leftContent.addClass('left-content');
 
+
+    let mobSelector = doc.add('DIV', leftContent);
+    mobSelector.html('<p class="team-text show-mobile">Choose Technology</p>');
+
     let leftContentHead = doc.add('DIV', leftContent);
     leftContentHead.addClass('logo-team');
 

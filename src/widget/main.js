@@ -126,11 +126,11 @@
       opts.height = 180;
       opts.backgroundColor = 'f3f5f6';
       entry.image = makeSrc(opts);
-    } else if (entry.hasOwnProperty('stacks') && !entry.image) {
+    } else if (entry.hasOwnProperty('stacks') && !entry.logo) {
       opts.text = entry.name;
       opts.width = 170;
       opts.height = 50;
-      entry.image = makeSrc(opts);
+      entry.logo = makeSrc(opts);
     }
     return entry;
   };
@@ -251,7 +251,7 @@
     card.addClass('project-items pps-card');
 
     let {
-      image,
+      logo: image,
       name
     } = entry;
 
@@ -401,7 +401,7 @@
     _projects = _projects.map((item) => {
       return {
         name: item.name,
-        image: item.image
+        logo: item.logo
       };
     });
 

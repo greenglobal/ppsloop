@@ -19,15 +19,24 @@ var standalizeName = (person) => {
   return person;
 };
 
-var getYoE = (begin) => {
+var getYoE = (begin = 0) => {
   let y = THIS_YEAR - begin;
+  if (y > 20) {
+    let m = y % 12;
+    if (m > 1) {
+      return `${m} months`;
+    }
+    if (m === 1) {
+      return `${m} month`;
+    }
+  }
   if (y > 1) {
-    return `${y} years of experience`;
+    return `${y} years`;
   }
   if (y === 1) {
-    return `${y} year of experience`;
+    return `${y} year`;
   }
-  return 'Several months';
+  return '3 months';
 };
 
 var mapSkillsToPeople = (person, mapper) => {

@@ -24,7 +24,8 @@
     "pretest": "eslint .",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
-    "release": "NODE_ENV=production node builder/bin/build"
+    "release": "NODE_ENV=production node builder/bin/build",
+    "reset": "node builder/bin/reset"
   },
   "dependencies": {
     "debug": "2.x.x",

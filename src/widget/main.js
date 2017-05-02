@@ -20,6 +20,10 @@
   }
 })('PPSW', () => {
 
+  const TECH_STACK_NUMBER = 21;
+
+  let {Event} = doc;
+
   let people = [];
   let projects = [];
   let techstacks = [];
@@ -29,7 +33,6 @@
   let $elProject;
   let $elStack;
 
-  let $btnViewAllPeople;
   let $btnViewAllProject;
 
   let isInitialized = false;
@@ -45,10 +48,6 @@
       return random(0, 100) > 50;
     });
     return b.splice(0, count);
-  };
-
-  let randomColor = () => {
-    return Math.floor(Math.random() * 16777215).toString(16);
   };
 
   let getPeople = () => {
@@ -309,26 +308,11 @@
     return result;
   };
 
-  let randerPeoplePanel = (ppl, isAppend = false) => {
-    if (!isAppend) {
-      $elPeople.empty();
-    }
-
-    let remain = [];
-    if (!isAppend && ppl.length > 8) {
-      remain = ppl.slice(8, ppl.length);
-      let arr = ppl.slice(0, 8);
-      ppl = arr;
-    }
-
+  let randerPeoplePanel = (ppl) => {
+    $elPeople.empty();
     let result = ppl.map((entry) => {
       let card = buildPersonCard(entry);
-      if (isAppend) {
-        let last = $elPeople.querySelector('.view-all');
-        $elPeople.insertBefore(card, last);
-      } else {
-        $elPeople.appendChild(card);
-      }
+      $elPeople.appendChild(card);
       return {
         $el: card,
         data: entry
@@ -340,16 +324,7 @@
     }, []);
 
     if (peopleCards.length) {
-      applyEffect(peopleCards, isAppend ? 'b2t' : 'r2l');
-    }
-
-    $btnViewAllPeople.onclick = null;
-    $btnViewAllPeople.addClass('is-disabled');
-    if (remain.length > 0) {
-      $btnViewAllPeople.removeClass('is-disabled');
-      $btnViewAllPeople.onclick = () => {
-        randerPeoplePanel(remain, true);
-      };
+      applyEffect(peopleCards, 'r2l');
     }
     return result;
   };
@@ -379,7 +354,7 @@
         yoe = yys[0][1];
       } else {
         let _y = random(1, 9);
-        yoe = `${_y} year${_y > 0 ? 's' : ''} of experience`;
+        yoe = `${_y} year${_y > 0 ? 's' : ''}`;
       }
 
       return {
@@ -437,76 +412,181 @@
   };
 
   let getStart = () => {
-    isStarted = true;
-    let stacks = getTechstacks().splice(0, 36);
-    let entries = randerStackPanel(stacks);
-    onStackSelect(entries[0]);
+    // isStarted = true;
+    // let stacks = getTechstacks().splice(0, 21);
+    // let entries = randerStackPanel(stacks);
+    // onStackSelect(entries[0]);
+  };
+
+  let setupSliderEvents = (id) => {
+
+    let wd = doc.get(id);
+    let ctn = doc.get(`${id}_ppsSwiperContainer`);
+    let outerWidth = ctn.parentNode.offsetWidth;
+    let innerWidth = ctn.offsetWidth;
+
+    let min = outerWidth - innerWidth;
+    let max = 0;
+    let delta = innerWidth / outerWidth;
+
+    let slideTo = (e) => {
+      let target = doc.get(e.target);
+
+      let dir = 0;
+      if (target.hasClass('pps__swiper--prev')) {
+        dir = -1;
+      } else if (target.hasClass('pps__swiper--next')) {
+        dir = 1;
+      }
+
+      let currx = Number(ctn.getAttribute('data-translateX'));
+
+      let x = 0;
+      let distance = innerWidth / delta;
+      if (dir < 0) {
+        x = Math.min(max, currx + distance);
+      } else if (dir > 0) {
+        x = Math.max(min, currx - distance);
+      }
+
+
+      if (x !== currx) {
+        ctn.setAttribute('data-translateX', x);
+        ctn.style.transform = `translateX(${x}px)`;
+      }
+    };
+
+    let els = Array.from(wd.querySelectorAll('.pps__swiper--nav'));
+    els.forEach((btn) => {
+      btn.onclick = slideTo;
+    });
   };
 
   let setupLayout = (container) => {
+    let labels = [
+      'Team',
+      'Projects',
+      'Tech stacks'
+    ];
+
+    let widgetId = container.getAttribute('id');
+    let attrSectionLabel = container.getAttribute('section-labels');
+    if (attrSectionLabel) {
+      let arrLabels = attrSectionLabel.split('|');
+      for (let i = 0; i < labels.length; i++) {
+        if (arrLabels[i]) {
+          labels[i] = arrLabels[i];
+        }
+      }
+    }
+
     let contentBlock = doc.add('DIV', container);
+    contentBlock.addClass('pps__wrapper--fluid');
 
-    let wrapContent = doc.add('DIV', contentBlock);
-    wrapContent.addClass('wrap-content');
+    let maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
+    let sltOption = techstacks.splice(0, maxsize).map((item) => {
+      let st = item[0];
+      return `<option value="${st}">${st}</option>`;
+    }).join('');
 
-    // left part
-    let leftContent = doc.add('DIV', wrapContent);
-    leftContent.addClass('left-content');
+    let layout = `
+      <div class="pps__frame--top">
+        <div class="pps__frame--left">
+          <div class="pps__select-outer">
+            <select class="pps__select">
+              <option value="">Choose technology:</option>
+              ${sltOption}
+            </select>
+          </div>
+          <div class="pps__block--people">
+            <label class="pps__label">
+              ${labels[0]}
+            </label>
+            <div class="pps__swiper-wrapper">
+              <div class="pps__swiper--nav pps__swiper--prev ripple"></div>
+              <div id="${widgetId}_ppsSwiperContainer" data-translateX="0" class="pps__swiper-container">
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+                <div class="pps__swiper-slide pps-card">
+                  <div class="pps__person-avatar"></div>
+                  <div class="pps__person-name">Hoang Anh</div>
+                  <div class="pps__person-exp">7 years of exp</div>
+                </div>
+              </div>
+              <div class="pps__swiper--nav pps__swiper--next ripple"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pps__frame--right">
 
+        </div>
+      </div>
+      <div class="pps__frame--bottom">
+        <div class="pps__block--project">
+          <label class="pps__label">
+            ${labels[1]}
+          </label>
+          <div class="pps__list--project">
+            <div class="pps__list--project-item"></div>
+            <div class="pps__list--project-item"></div>
+            <div class="pps__list--project-item"></div>
+            <div class="pps__list--project-item"></div>
+          </div>
+          <div class="view-all is-disabled">
+            <a class="btn-viewall">View all</a>
+          </div>
+        </div>
+      </div>
+    `;
+    contentBlock.html(layout);
 
-    let mobSelector = doc.add('DIV', leftContent);
-    mobSelector.html('<p class="team-text show-mobile">Choose Technology</p>');
-
-    let leftContentHead = doc.add('DIV', leftContent);
-    leftContentHead.addClass('logo-team');
-
-    let teamSection = doc.add('DIV', leftContent);
-    teamSection.addClass('team-block');
-
-    let teamSectionHead = doc.add('H3', teamSection);
-    teamSectionHead.addClass('block-text');
-    teamSectionHead.html('Team');
-
-    let panelPeople = doc.add('DIV', teamSection);
-    panelPeople.addClass('team-content');
-    panelPeople.html('');
-
-    let btnViewAllPeople = doc.add('DIV', teamSection);
-    btnViewAllPeople.addClass('view-all');
-    btnViewAllPeople.html('<a class="btn-viewall">View all</a>');
-
-    let projectSection = doc.add('DIV', leftContent);
-    projectSection.addClass('project-block');
-
-    let projectSectionHead = doc.add('H3', projectSection);
-    projectSectionHead.addClass('block-text');
-    projectSectionHead.html('Projects');
-
-    let panelProject = doc.add('DIV', projectSection);
-    panelProject.addClass('project-content');
-    panelProject.html('');
-
-    let btnViewAllProject = doc.add('DIV', projectSection);
-    btnViewAllProject.addClass('view-all');
-    btnViewAllProject.html('<a class="btn-viewall">View all</a>');
-
-    // right part
-    let rightContent = doc.add('DIV', wrapContent);
-    rightContent.addClass('right-content');
-
-    let rightContentHead = doc.add('H3', rightContent);
-    rightContentHead.addClass('content-name');
-    rightContentHead.html('<span class="content-text">Tech stacks</span>');
-
-    let panelTechstack = doc.add('DIV', rightContent);
-    panelTechstack.addClass('content-details');
-
-    $elLogo = leftContentHead;
-    $elPeople = panelPeople;
-    $elProject = panelProject;
-    $elStack = panelTechstack;
-    $btnViewAllPeople = btnViewAllPeople;
-    $btnViewAllProject = btnViewAllProject;
+    setupSliderEvents(widgetId);
+    window.onresize = () => {
+      setupSliderEvents(widgetId);
+    };
 
   };
 
@@ -553,4 +633,3 @@
     getProjectsThatUse
   };
 });
-

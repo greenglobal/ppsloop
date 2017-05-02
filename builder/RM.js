@@ -27,6 +27,7 @@ const JSFILES = [
 ];
 
 const CSSFILES = [
+  'vendor/ripple.min.css',
   'main.css'
 ];
 

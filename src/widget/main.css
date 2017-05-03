@@ -12,6 +12,7 @@ PPSWidget * {
   --widgetMaxWidth: 1280px;
 
   --swiperNavWidth: 30px;
+  --peopleAvatar: 160px;
 
   --fontFamily: Roboto;
 }
@@ -21,22 +22,27 @@ PPSWidget * {
 PPSWidget {
 
   clear: both;
+  overflow: hidden;
   font-family: var(--fontFamily);
 
+  & .pps-card {
+    transition: all .4s ease-in-out;
+  }
+
   & .pps__wrapper--fluid {
+
     width: 100%;
     max-width: var(--widgetMaxWidth);
     min-width: var(--widgetMinWidth);
     min-height: var(--widgetMinHeight);
-    margin: 20px auto 30px;
 
     position: relative;
+    display: flex;
+    flex-direction: row;
+    margin: 20px auto 30px;
 
     background: #fff;
     box-shadow: 0 0 20px 0 rgba(0,0,0,.07);
-
-    display: flex;
-    flex-direction: column;
 
     & label.pps__label {
       font-size: 16px;
@@ -45,31 +51,31 @@ PPSWidget {
       color: #000;
     }
 
-    & .pps__frame--top {
-      width: 100%;
-      flex: 1 auto;
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      min-height: 240px;
-    }
-
     & .pps__frame--left {
       flex: 1 auto;
       align-self: stretch;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+
+      & .pps__frame--top {
+        width: 100%;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 240px;
+      }
+
+      & .pps__frame--bottom {
+        width: 100%;
+        overflow: visible;
+      }
     }
+
     & .pps__frame--right {
       display: none;
       min-width: 30%;
-      background-color: red;
-    }
-
-    & .pps__frame--bottom {
-      width: 100%;
-      overflow: visible;
     }
 
     & select.pps__select {
@@ -77,6 +83,17 @@ PPSWidget {
       width: 100%;
       & option {
         padding-left: 20px;
+      }
+    }
+
+    & .pps__techlogo-outer {
+      padding: 20px;
+      display: none;
+      & .pps__techlogo {
+        width: 180px;
+        height: 50px;
+        background: #eee none no-repeat center center;
+        background-size: cover;
       }
     }
 
@@ -101,27 +118,20 @@ PPSWidget {
           position: absolute;
           z-index: 1;
           top: 0px;
-          bottom: 0px;
+          height: var(--peopleAvatar);
           width: var(--swiperNavWidth);
           background-color: ;
           opacity: 1;
           background: #fff none no-repeat center center;
           background-size: contain;
           cursor: pointer;
-          &:hover {
-            background-color: #fee;
-          };
         }
         & .pps__swiper--prev {
           left: 0px;
-          border-top-right-radius: 20px;
-          border-bottom-right-radius: 20px;
           background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iNTEycHgiIGlkPSJMYXllcl8xIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMnB4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cG9seWdvbiBwb2ludHM9IjM1MiwxMjguNCAzMTkuNyw5NiAxNjAsMjU2IDE2MCwyNTYgMTYwLDI1NiAzMTkuNyw0MTYgMzUyLDM4My42IDIyNC43LDI1NiAiLz48L3N2Zz4=')
         }
         & .pps__swiper--next {
           right: 0px;
-          border-top-left-radius: 20px;
-          border-bottom-left-radius: 20px;
           background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGhlaWdodD0iNTEycHgiIGlkPSJMYXllcl8xIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyOyIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMnB4IiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cG9seWdvbiBwb2ludHM9IjE2MCwxMjguNCAxOTIuMyw5NiAzNTIsMjU2IDM1MiwyNTYgMzUyLDI1NiAxOTIuMyw0MTYgMTYwLDM4My42IDI4Ny4zLDI1NiAiLz48L3N2Zz4=');
         }
 
@@ -138,7 +148,7 @@ PPSWidget {
           & .pps__swiper-slide {
             user-select: none;
             text-align: center;
-            width: 120px;
+            width: 180px;
             height: 100%;
             margin: 0px 5px;
             background-color: #fff;
@@ -147,7 +157,7 @@ PPSWidget {
               background: #f3f5f6 url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDUxMiA1MTIiIGlkPSJMYXllcl8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48Zz48cGF0aCBkPSJNMjU2LDI3NC4xYy03NS42LDAtMTM3LjEtNjEuNS0xMzcuMS0xMzcuMVMxODAuNCwwLDI1NiwwYzc1LjYsMCwxMzcuMSw2MS41LDEzNy4xLDEzNy4xICAgUzMzMS42LDI3NC4xLDI1NiwyNzQuMXogTTI1NiwyMC40Yy02NC4zLDAtMTE2LjYsNTIuMy0xMTYuNiwxMTYuNlMxOTEuNywyNTMuNywyNTYsMjUzLjdjNjQuMywwLDExNi42LTUyLjMsMTE2LjYtMTE2LjYgICBTMzIwLjMsMjAuNCwyNTYsMjAuNHoiIGZpbGw9IiM2QTZFN0MiLz48cGF0aCBkPSJNNDkzLjksNTEyYy01LjYsMC0xMC4yLTQuNi0xMC4yLTEwLjJjMC0xMjUuNS0xMDIuMS0yMjcuNi0yMjcuNi0yMjcuNmMtMTI1LjUsMC0yMjcuNiwxMDIuMS0yMjcuNiwyMjcuNiAgIGMwLDUuNi00LjYsMTAuMi0xMC4yLDEwLjJzLTEwLjItNC42LTEwLjItMTAuMmMwLTY2LjMsMjUuOC0xMjguNiw3Mi43LTE3NS40czEwOS4yLTcyLjcsMTc1LjQtNzIuN3MxMjguNiwyNS44LDE3NS40LDcyLjcgICBzNzIuNywxMDkuMiw3Mi43LDE3NS40QzUwNC4xLDUwNy40LDQ5OS41LDUxMiw0OTMuOSw1MTJ6IiBmaWxsPSIjNkE2RTdDIi8+PC9nPjwvc3ZnPg==') no-repeat center center;
               background-size: contain;
               width: 100%;
-              height: 140px;
+              height: var(--peopleAvatar);
             }
 
             & .pps__person-name {
@@ -175,14 +185,57 @@ PPSWidget {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      justify-content: space-around;
+      justify-content: flex-start;
 
       & .pps__list--project-item {
-        flex-basis: 22%;
-        height: 80px;
-        background: #efe none no-repeat center center;
-        background-size: contain;
-        margin-bottom: 20px;
+        width: 25%;
+        float: left;
+        padding: 7px;
+
+        & a.inner {
+          display: block;
+          background: #fff none no-repeat center center;
+          background-size: contain;
+          border: 1px solid #d8d8d8;
+          border-radius: 2px;
+          width: 100%;
+          height: 100px;
+        }
+
+      }
+    }
+
+    & .pps__block--stack {
+      padding: 20px 10px;
+    }
+
+    & .pps__list--stack {
+      padding: 10px;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+
+      & .pps__list--stack-item {
+        width: 33.3333333333%;
+        float: left;
+        padding: 0 6px;
+        margin-bottom: 13px;
+
+        & a.inner {
+          display: block;
+          width: 100%;
+          height: 50px;
+          border: 1px solid #d8d8d8;
+          border-radius: 2px;
+          background: #fff none no-repeat center center;
+          background-size: contain;
+        }
+
+        &.active a.inner {
+          border-color: #5fe2a4;
+          background-color: #e6fff3;
+        }
       }
     }
 
@@ -226,6 +279,9 @@ PPSWidget {
         color: #ddd;
         cursor: default;
         border: none;
+        &:hover {
+          text-decoration: none;
+        };
       }
     }
   }
@@ -238,8 +294,26 @@ PPSWidget {
         display: none;
       }
 
+      & .pps__techlogo-outer {
+        display: block;
+      }
       & .pps__frame--right {
         display: block;
+      }
+    }
+
+  }
+}
+@media (width >= 760px) and (width <= 1024px) {
+  PPSWidget {
+    & .pps__wrapper--fluid {
+      & .pps__list--stack {
+        & .pps__list--stack-item {
+          width: 49%;
+          & a.inner {
+            height: 40px;
+          }
+        }
       }
     }
 

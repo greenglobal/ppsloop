@@ -20,13 +20,13 @@
   }
 })('PPSW', () => {
 
-  const TECH_STACK_NUMBER = 21;
-
-  let {Event} = doc;
+  const TECH_STACK_NUMBER = 30;
 
   let people = [];
   let projects = [];
   let techstacks = [];
+
+  let pickedStacks = [];
 
   let $elLogo;
   let $elPeople;
@@ -37,17 +37,10 @@
 
   let isInitialized = false;
   let isStarted = false;
+  let widgetId = '';
 
   let random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
-  let pick = (arr, count = 1) => {
-    let b = arr.slice(0);
-    b.sort(() => {
-      return random(0, 100) > 50;
-    });
-    return b.splice(0, count);
   };
 
   let getPeople = () => {
@@ -134,15 +127,80 @@
     return entry;
   };
 
-  let applyEffect = (cards, direction = 'tl2br') => {
+  let setupSliderEvents = (id) => {
+
+    let wd = doc.get(id);
+    let ctn = doc.get(`${id}_ppsSwiperContainer`);
+    let outerWidth = ctn.parentNode.offsetWidth;
+    let innerWidth = ctn.offsetWidth;
+
+    let min = outerWidth - innerWidth;
+    let max = 0;
+    let delta = innerWidth / outerWidth;
+
+    ctn.setAttribute('data-translateX', 0);
+    ctn.style.transform = `translateX(${0}px)`;
+
+    let slideTo = (e) => {
+      let target = doc.get(e.target);
+
+      let dir = 0;
+      if (target.hasClass('pps__swiper--prev')) {
+        dir = -1;
+      } else if (target.hasClass('pps__swiper--next')) {
+        dir = 1;
+      }
+
+      let currx = Number(ctn.getAttribute('data-translateX'));
+
+      let x = 0;
+      let distance = innerWidth / delta;
+      if (dir < 0) {
+        x = Math.min(max, currx + distance);
+      } else if (dir > 0) {
+        x = Math.max(min, currx - distance);
+      }
+
+
+      if (x !== currx) {
+        ctn.setAttribute('data-translateX', x);
+        ctn.style.transform = `translateX(${x}px)`;
+      }
+    };
+
+    let doNothing = () => {
+      return false;
+    };
+    let els = Array.from(wd.querySelectorAll('.pps__swiper--nav'));
+    els.forEach((btn) => {
+      btn.onclick = delta > 0 ? slideTo : doNothing;
+    });
+  };
+
+  let setActiveState = (origin) => {
+    doc.all('.pps__list--stack-item.active').forEach((el) => {
+      el.removeClass('active');
+    });
+    origin.addClass('active');
+  };
+
+  let getLocatePoint = (origin) => {
+    let ol = origin.offsetLeft;
+    let ot = origin.offsetTop;
+    let ow = origin.offsetWidth;
+    let oh = origin.offsetHeight;
+
+    return {
+      left: Math.floor(ol - ow / 2),
+      top: Math.floor(ot - oh / 2)
+    };
+  };
+
+  let applyEffect = (cards) => {
     let x = -200;
     let y = -200;
     let timer = 50;
 
-    if (direction === 'b2t') {
-      x = 0;
-      y = 500;
-    }
     cards.filter((item) => {
       return item && item.$el;
     }).map((item) => {
@@ -161,23 +219,6 @@
         el.style.opacity = '1.0';
       }, timer);
       timer += 50;
-    });
-  };
-
-  let cleanPeoplePanel = () => {
-    return new Promise((resolve) => {
-      let x = random(0, 500) + 250;
-      let y = random(0, 100) - 50;
-      let timer = 50;
-      doc.all('.team-block .pps-card').forEach((el) => {
-        setTimeout(() => {
-          el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
-          el.style.transform = `translate(-${x}px, ${y}px)`;
-          el.style.opacity = '0.0';
-        }, timer);
-        timer += 50;
-      });
-      setTimeout(resolve, 300);
     });
   };
 
@@ -202,25 +243,24 @@
 
   let buildStackCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('items pps-card');
+    card.addClass('pps__list--stack-item');
 
     let [
       name,
       image
     ] = entry;
 
-    let tpl = `
-      <div class="item-wrap">
-        <img src="${image}" alt="${name}">
-      </div>
-    `;
+    let atag = doc.add('A', card);
+    atag.addClass('inner');
+    atag.style.backgroundImage = `url(${image})`;
+    atag.setAttribute('title', name);
 
-    card.html(tpl);
     return card;
   };
 
   let updateLeftPanelLogo = (stack, image) => {
-    $elLogo.html(`<img src="${image}" alt="${stack}">`);
+    $elLogo.style.backgroundImage = `url(${image})`;
+    $elLogo.setAttribute('title', stack);
   };
 
   let buildPersonCard = (entry) => {
@@ -234,11 +274,11 @@
     } = entry;
 
     let tpl = `
-      <div class="avata">
-        <img src="${image}" alt="${name}">
+      <div class="pps__swiper-slide pps-card">
+        <div class="pps__person-avatar" style="background-image:url(${image})"></div>
+        <div class="pps__person-name">${name}</div>
+        <div class="pps__person-exp">${yoe} of experience</div>
       </div>
-      <p class="member-name"><a>${name}</a></p>
-      <p class="member-description">${yoe}</p>
     `;
 
     card.html(tpl);
@@ -247,20 +287,18 @@
 
   let buildProjectCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('project-items pps-card');
+    card.addClass('pps__list--project-item pps-card');
 
     let {
       logo: image,
       name
     } = entry;
 
-    let tpl = `
-      <a class="project-link">
-        <img src="${image}" alt="${name}">
-      </a>
-    `;
+    let atag = doc.add('A', card);
+    atag.addClass('inner');
+    atag.style.backgroundImage = `url(${image})`;
+    atag.setAttribute('title', name);
 
-    card.html(tpl);
     return card;
   };
 
@@ -269,7 +307,7 @@
       $elProject.empty();
     }
     let remain = [];
-    if (ppj.length > 4) {
+    if (!isAppend && ppj.length > 4) {
       remain = ppj.slice(4, ppj.length);
       let arr = ppj.slice(0, 4);
       ppj = arr;
@@ -308,7 +346,11 @@
     return result;
   };
 
-  let randerPeoplePanel = (ppl) => {
+  let randerPeoplePanel = (ppl, origin) => {
+
+    let pointer = getLocatePoint(origin);
+    console.log(pointer);
+
     $elPeople.empty();
     let result = ppl.map((entry) => {
       let card = buildPersonCard(entry);
@@ -326,20 +368,20 @@
     if (peopleCards.length) {
       applyEffect(peopleCards, 'r2l');
     }
+    setupSliderEvents(widgetId);
     return result;
   };
 
-  let onStackSelect = (data) => {
+  let getFakeProjects = (len) => {
+    return stabilize(projects).pick(len);
+  };
+
+  let onStackSelect = (data, origin) => {
     let skill = data[0];
 
     updateLeftPanelLogo(skill, data[1]);
 
-    let _people = getPeopleWhoHas(skill);
-    if (_people.length < 8) {
-      _people = _people.concat(pick(getPeople(), 20));
-    }
-
-    let _peopleToAdd = _people.map((item) => {
+    let _people = getPeopleWhoHas(skill).map((item) => {
       let {
         name,
         image,
@@ -354,7 +396,7 @@
         yoe = yys[0][1];
       } else {
         let _y = random(1, 9);
-        yoe = `${_y} year${_y > 0 ? 's' : ''}`;
+        yoe = `${_y} year${_y > 0 ? 's' : ''} of exp`;
       }
 
       return {
@@ -364,24 +406,26 @@
       };
     });
 
-
-    randerPeoplePanel(stabilize(_peopleToAdd).msort({yoe: -1}));
+    setActiveState(origin);
+    randerPeoplePanel(stabilize(_people).msort({yoe: -1}), origin);
 
     let _projects = getProjectsThatUse(skill);
-
-    if (_projects.length < 4) {
-      let tmpArr = _projects.concat(pick(getProjects(), 8));
-      _projects = stabilize(tmpArr).unique();
+    if (!_projects.length) {
+      _projects = [getFakeProjects(1)];
     }
 
-    _projects = _projects.map((item) => {
+    let arr = _projects.map((item) => {
       return {
         name: item.name,
         logo: item.logo
       };
     });
 
-    randerProjectPanel(stabilize(_projects).shuffle());
+    if (arr.length > 1) {
+      arr = stabilize(_projects).shuffle();
+    }
+
+    randerProjectPanel(arr);
   };
 
   let setupStackClickEvent = (stack) => {
@@ -391,9 +435,7 @@
     } = stack;
 
     doc.Event.on($el, 'click', () => {
-      cleanPeoplePanel().then(() => {
-        onStackSelect(data);
-      });
+      onStackSelect(data, $el);
     });
 
     return data;
@@ -412,54 +454,9 @@
   };
 
   let getStart = () => {
-    // isStarted = true;
-    // let stacks = getTechstacks().splice(0, 21);
-    // let entries = randerStackPanel(stacks);
-    // onStackSelect(entries[0]);
-  };
-
-  let setupSliderEvents = (id) => {
-
-    let wd = doc.get(id);
-    let ctn = doc.get(`${id}_ppsSwiperContainer`);
-    let outerWidth = ctn.parentNode.offsetWidth;
-    let innerWidth = ctn.offsetWidth;
-
-    let min = outerWidth - innerWidth;
-    let max = 0;
-    let delta = innerWidth / outerWidth;
-
-    let slideTo = (e) => {
-      let target = doc.get(e.target);
-
-      let dir = 0;
-      if (target.hasClass('pps__swiper--prev')) {
-        dir = -1;
-      } else if (target.hasClass('pps__swiper--next')) {
-        dir = 1;
-      }
-
-      let currx = Number(ctn.getAttribute('data-translateX'));
-
-      let x = 0;
-      let distance = innerWidth / delta;
-      if (dir < 0) {
-        x = Math.min(max, currx + distance);
-      } else if (dir > 0) {
-        x = Math.max(min, currx - distance);
-      }
-
-
-      if (x !== currx) {
-        ctn.setAttribute('data-translateX', x);
-        ctn.style.transform = `translateX(${x}px)`;
-      }
-    };
-
-    let els = Array.from(wd.querySelectorAll('.pps__swiper--nav'));
-    els.forEach((btn) => {
-      btn.onclick = slideTo;
-    });
+    isStarted = true;
+    let $el = doc.all('.pps__list--stack-item')[0];
+    onStackSelect(pickedStacks[0], $el);
   };
 
   let setupLayout = (container) => {
@@ -469,7 +466,7 @@
       'Tech stacks'
     ];
 
-    let widgetId = container.getAttribute('id');
+    widgetId = container.getAttribute('id');
     let attrSectionLabel = container.getAttribute('section-labels');
     if (attrSectionLabel) {
       let arrLabels = attrSectionLabel.split('|');
@@ -484,19 +481,23 @@
     contentBlock.addClass('pps__wrapper--fluid');
 
     let maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
-    let sltOption = techstacks.splice(0, maxsize).map((item) => {
+    pickedStacks = techstacks.splice(0, maxsize);
+    let sltOption = pickedStacks.map((item) => {
       let st = item[0];
       return `<option value="${st}">${st}</option>`;
     }).join('');
 
     let layout = `
-      <div class="pps__frame--top">
-        <div class="pps__frame--left">
+      <div class="pps__frame--left">
+        <div class="pps__frame--top">
           <div class="pps__select-outer">
             <select class="pps__select">
               <option value="">Choose technology:</option>
               ${sltOption}
             </select>
+          </div>
+          <div class="pps__techlogo-outer">
+            <div class="pps__techlogo" id="${widgetId}_ppsTechLogo"></div>
           </div>
           <div class="pps__block--people">
             <label class="pps__label">
@@ -504,86 +505,44 @@
             </label>
             <div class="pps__swiper-wrapper">
               <div class="pps__swiper--nav pps__swiper--prev ripple"></div>
-              <div id="${widgetId}_ppsSwiperContainer" data-translateX="0" class="pps__swiper-container">
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-                <div class="pps__swiper-slide pps-card">
-                  <div class="pps__person-avatar"></div>
-                  <div class="pps__person-name">Hoang Anh</div>
-                  <div class="pps__person-exp">7 years of exp</div>
-                </div>
-              </div>
+              <div id="${widgetId}_ppsSwiperContainer" data-translateX="0" class="pps__swiper-container"></div>
               <div class="pps__swiper--nav pps__swiper--next ripple"></div>
             </div>
           </div>
         </div>
-        <div class="pps__frame--right">
-
+        <div class="pps__frame--bottom">
+          <div class="pps__block--project">
+            <label class="pps__label">
+              ${labels[1]}
+            </label>
+            <div class="pps__list--project" id="${widgetId}_ppsProjectList"></div>
+            <div class="view-all" id="${widgetId}_ppsProjectViewAll">
+              <a class="btn-viewall">View all</a>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="pps__frame--bottom">
-        <div class="pps__block--project">
+      <div class="pps__frame--right">
+        <div class="pps__block--stack">
           <label class="pps__label">
-            ${labels[1]}
+            ${labels[2]}
           </label>
-          <div class="pps__list--project">
-            <div class="pps__list--project-item"></div>
-            <div class="pps__list--project-item"></div>
-            <div class="pps__list--project-item"></div>
-            <div class="pps__list--project-item"></div>
-          </div>
-          <div class="view-all is-disabled">
-            <a class="btn-viewall">View all</a>
-          </div>
+          <div class="pps__list--stack" id="${widgetId}_ppsStackList"></div>
         </div>
       </div>
     `;
     contentBlock.html(layout);
 
-    setupSliderEvents(widgetId);
+    $elStack = doc.get(`${widgetId}_ppsStackList`);
+    $elPeople = doc.get(`${widgetId}_ppsSwiperContainer`);
+    $elProject = doc.get(`${widgetId}_ppsProjectList`);
+
+    $elLogo = doc.get(`${widgetId}_ppsTechLogo`);
+
+    $btnViewAllProject = doc.get(`${widgetId}_ppsProjectViewAll`);
+
+    randerStackPanel(pickedStacks);
+
     window.onresize = () => {
       setupSliderEvents(widgetId);
     };

@@ -29,6 +29,10 @@
   let pickedStacks = [];
 
   let $elLogo;
+  let $elSelector;
+  let $elSwiperWapper;
+  let $elContentBlock;
+
   let $elPeople;
   let $elProject;
   let $elStack;
@@ -38,6 +42,9 @@
   let isInitialized = false;
   let isStarted = false;
   let widgetId = '';
+
+  let outerWidth;
+  let innerWidth;
 
   let random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -131,8 +138,8 @@
 
     let wd = doc.get(id);
     let ctn = doc.get(`${id}_ppsSwiperContainer`);
-    let outerWidth = ctn.parentNode.offsetWidth;
-    let innerWidth = ctn.offsetWidth;
+    outerWidth = ctn.parentNode.offsetWidth;
+    innerWidth = ctn.offsetWidth;
 
     let min = outerWidth - innerWidth;
     let max = 0;
@@ -145,9 +152,9 @@
       let target = doc.get(e.target);
 
       let dir = 0;
-      if (target.hasClass('pps__swiper--prev')) {
+      if (target.hasClass('prev')) {
         dir = -1;
-      } else if (target.hasClass('pps__swiper--next')) {
+      } else if (target.hasClass('next')) {
         dir = 1;
       }
 
@@ -171,7 +178,7 @@
     let doNothing = () => {
       return false;
     };
-    let els = Array.from(wd.querySelectorAll('.pps__swiper--nav'));
+    let els = Array.from(wd.querySelectorAll('.pps__btn-link'));
     els.forEach((btn) => {
       btn.onclick = delta > 0 ? slideTo : doNothing;
     });
@@ -191,34 +198,88 @@
     let oh = origin.offsetHeight;
 
     return {
-      left: Math.floor(ol - ow / 2),
-      top: Math.floor(ot - oh / 2)
+      left: Math.floor(ol + ow / 2),
+      top: Math.floor(ot + oh / 2)
     };
   };
 
-  let applyEffect = (cards) => {
-    let x = -200;
-    let y = -200;
-    let timer = 50;
+  let applyEffect = (cards, pointer) => {
 
-    cards.filter((item) => {
+    console.log(pointer);
+    let {
+      left: pleft,
+      top: ptop
+    } = pointer;
+
+    let t = 10;
+
+    let delta = Math.ceil(outerWidth / 160);
+    let arr = cards.splice(0, delta);
+
+    console.log(arr);
+
+    let ot = $elSwiperWapper.offsetTop;
+    let ol = $elSwiperWapper.offsetLeft;
+
+    arr.filter((item) => {
       return item && item.$el;
     }).map((item) => {
       return item.$el;
     }).map((el) => {
-      x += 20;
-      y += 20;
-      el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
-      el.style.transform = `translate(${x}px, ${y}px)`;
-      el.style.opacity = '0.0';
-      return el;
-    }).forEach((el) => {
+      return {
+        top: ot + el.offsetTop,
+        left: ol + el.offsetLeft,
+        width: el.offsetWidth,
+        height: el.offsetHeight,
+        $el: el
+      };
+    }).forEach((data) => {
+      let {
+        top,
+        left,
+        width,
+        height,
+        $el
+      } = data;
+      let shadow = doc.create('DIV');
+      shadow.addClass('pps__swiper-slide');
+      shadow.setStyle({
+        top,
+        left,
+        width,
+        height,
+        border: 'solid px #eee'
+      });
+      let node = doc.get($el.cloneNode(true));
+      node.setStyle({
+        position: 'absolute',
+        zIndex: 10,
+        width,
+        height
+      });
+      node.style.left = `${pleft}px`;
+      node.style.top = `${ptop}px`;
+      node.style.transform = 'scale(0.3)';
+
+      $elContentBlock.appendChild(node);
+
+      if ($el.parentNode) {
+        $el.parentNode.replaceChild(shadow, $el);
+      }
+
+      t += 50;
       setTimeout(() => {
-        el.style.transition = `all ${timer}ms cubic-bezier(0.455, 0.03, 0.515, 0.955);`;
-        el.style.transform = `translate(0px, 0px)`;
-        el.style.opacity = '1.0';
-      }, timer);
-      timer += 50;
+        node.style.left = `${left}px`;
+        node.style.top = `${top}px`;
+        node.style.transform = 'scale(1)';
+      }, t);
+
+      node.addEventListener('transitionend', () => {
+        node.destroy();
+        if (shadow.parentNode) {
+          shadow.parentNode.replaceChild($el, shadow);
+        }
+      });
     });
   };
 
@@ -237,13 +298,13 @@
         el.style.opacity = '1.0';
         el.style.transform = `translate(0px, 0px)`;
       }, timeout);
-      timeout += 5;
+      timeout += 20;
     });
   };
 
   let buildStackCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('pps__list--stack-item');
+    card.addClass('pps__list--stack-item ripple');
 
     let [
       name,
@@ -265,7 +326,7 @@
 
   let buildPersonCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('team-member pps-card');
+    card.addClass('pps__swiper-slide pps-card');
 
     let {
       image,
@@ -274,11 +335,9 @@
     } = entry;
 
     let tpl = `
-      <div class="pps__swiper-slide pps-card">
-        <div class="pps__person-avatar" style="background-image:url(${image})"></div>
-        <div class="pps__person-name">${name}</div>
-        <div class="pps__person-exp">${yoe} of experience</div>
-      </div>
+      <div class="pps__person-avatar" style="background-image:url(${image})"></div>
+      <div class="pps__person-name">${name}</div>
+      <div class="pps__person-exp">${yoe} of experience</div>
     `;
 
     card.html(tpl);
@@ -349,7 +408,6 @@
   let randerPeoplePanel = (ppl, origin) => {
 
     let pointer = getLocatePoint(origin);
-    console.log(pointer);
 
     $elPeople.empty();
     let result = ppl.map((entry) => {
@@ -366,7 +424,7 @@
     }, []);
 
     if (peopleCards.length) {
-      applyEffect(peopleCards, 'r2l');
+      applyEffect(peopleCards, pointer);
     }
     setupSliderEvents(widgetId);
     return result;
@@ -441,6 +499,31 @@
     return data;
   };
 
+  let setupSelectorEvent = () => {
+    $elSelector.onchange = () => {
+      let v = $elSelector.value;
+      let skills = pickedStacks.filter((item) => {
+        return item[0] === v;
+      });
+      if (skills && skills.length > 0) {
+        let origin;
+        doc.all('.pps__list--stack-item').forEach((el) => {
+          el.removeClass('active');
+          let a = el.querySelector('a.inner');
+          if (a.getAttribute('title') === v) {
+            origin = el;
+          }
+        });
+
+        if (origin) {
+          let sk = skills[0];
+          onStackSelect(sk, origin);
+        }
+
+      }
+    };
+  };
+
   let randerStackPanel = (stacks) => {
     $elStack.empty();
     return stacks.map((entry) => {
@@ -491,7 +574,7 @@
       <div class="pps__frame--left">
         <div class="pps__frame--top">
           <div class="pps__select-outer">
-            <select class="pps__select">
+            <select class="pps__select" id="${widgetId}_ppsStackSelector">
               <option value="">Choose technology:</option>
               ${sltOption}
             </select>
@@ -503,10 +586,14 @@
             <label class="pps__label">
               ${labels[0]}
             </label>
-            <div class="pps__swiper-wrapper">
-              <div class="pps__swiper--nav pps__swiper--prev ripple"></div>
+            <div class="pps__swiper-wrapper" id="${widgetId}_ppsSwiperWapper">
+              <div class="pps__swiper--nav pps__swiper--prev">
+                <a class="pps__btn-link prev ripple"></a>
+              </div>
               <div id="${widgetId}_ppsSwiperContainer" data-translateX="0" class="pps__swiper-container"></div>
-              <div class="pps__swiper--nav pps__swiper--next ripple"></div>
+              <div class="pps__swiper--nav pps__swiper--next">
+                <a class="pps__btn-link next ripple"></a>
+              </div>
             </div>
           </div>
         </div>
@@ -538,8 +625,14 @@
     $elProject = doc.get(`${widgetId}_ppsProjectList`);
 
     $elLogo = doc.get(`${widgetId}_ppsTechLogo`);
+    $elSelector = doc.get(`${widgetId}_ppsStackSelector`);
+    $elSwiperWapper = doc.get(`${widgetId}_ppsSwiperWapper`);
+
+    $elContentBlock = contentBlock;
 
     $btnViewAllProject = doc.get(`${widgetId}_ppsProjectViewAll`);
+
+    setupSelectorEvent();
 
     randerStackPanel(pickedStacks);
 
@@ -557,9 +650,9 @@
         projects: _projects,
         techstacks: _techstacks
       } = o;
-      people = _people.map(addFakeImage);
-      projects = _projects.map(addFakeImage);
-      techstacks = _techstacks.map(addFakeImage);
+      people = [..._people].map(addFakeImage);
+      projects = [..._projects].map(addFakeImage);
+      techstacks = [..._techstacks].map(addFakeImage);
 
       let els = doc.all('ppswidget') || [];
       els.map(setupLayout);

@@ -349,7 +349,7 @@ PPSWidget {
   }
 }
 
-@media (width >= 760px) and (width <= 1024px) {
+@media (width >= 760px) and (width <= 1000px) {
   PPSWidget {
     & .pps__wrapper--fluid {
       & .pps__list--stack {

@@ -26,6 +26,7 @@ PPSWidget {
   clear: both;
   overflow: hidden;
   font-family: var(--fontFamily);
+  text-align: left;
 
   & .pps-card {
     transition: all var(--transitionTimer) ease-in-out;

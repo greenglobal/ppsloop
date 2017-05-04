@@ -87,29 +87,6 @@ Return true if init() has been called at least once early.
 
 
 
-#### start()
-
-
-Start rendering. Use this to manually handle rendering process.
-
-For example, we just want to render when user scroll to 250px above widget area:
-
-```
-$(window).scroll(function() {
-  if(!PPSW.isStarted() && $(window).scrollTop() > $('#widgetTechTeam').offset().top - 250) {
-    PPSW.start();
-  }
-});
-```
-
-This method can be called just once. The second call does nothing.
-
-
-#### isStarted()
-
-Return true if start() has been called at least once early.
-
-
 #### CDNs
 
 - Dev (fast update)

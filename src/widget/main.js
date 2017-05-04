@@ -30,8 +30,6 @@
 
   let pickedStacks = [];
 
-  let siema;
-
   let $elLogo;
   let $elTeamNum;
   let $elSelector;
@@ -45,8 +43,15 @@
   let $btnViewAllProject;
 
   let isInitialized = false;
-  let isStarted = false;
   let widgetId = '';
+
+  let onscroll = () => {
+    return true;
+  };
+
+  let onresize = () => {
+    return true;
+  };
 
   let random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -92,6 +97,8 @@
 
     let bprev = doc.get(btns[0]);
     let bnext = doc.get(btns[1]);
+
+    let siema;
 
     let resetState = (cslide) => {
       bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
@@ -159,7 +166,9 @@
 
     return {
       left: Math.floor(ol - ow),
-      top: Math.floor(ot - oh)
+      top: Math.floor(ot - oh),
+      width: ow,
+      height: oh
     };
   };
 
@@ -167,10 +176,12 @@
 
     let {
       left: pleft,
-      top: ptop
+      top: ptop,
+      width: pwidth,
+      height: pheight
     } = pointer;
 
-    let t = 10;
+    let t = 20;
 
     let arr = cards.splice(0, peoplePerPage);
 
@@ -214,9 +225,9 @@
         width,
         height
       });
-      node.style.left = `${pleft}px`;
-      node.style.top = `${ptop}px`;
-      node.style.transform = 'scale(0.5)';
+      node.style.left = `${pleft + pwidth / 2}px`;
+      node.style.top = `${ptop - pheight / 2}px`;
+      node.style.transform = 'scale(0.1)';
 
       $elContentBlock.appendChild(node);
 
@@ -224,7 +235,7 @@
         $el.parentNode.replaceChild(shadow, $el);
       }
 
-      t += 50;
+      t += 60;
       setTimeout(() => {
         node.style.left = `${left}px`;
         node.style.top = `${top}px`;
@@ -233,8 +244,6 @@
 
       node.addEventListener('transitionend', () => {
         node.destroy();
-        node.style.border = 'solid 1px #000';
-        node.style.opacity = '0.2';
         if (shadow.parentNode) {
           shadow.parentNode.replaceChild($el, shadow);
         }
@@ -532,12 +541,6 @@
     }
   };
 
-  let getStart = () => {
-    isStarted = true;
-    let $el = doc.all('.pps__list--stack-item')[0];
-    onStackSelect(pickedStacks[0], $el);
-  };
-
   let setupLayout = (container) => {
     let labels = [
       'Team',
@@ -630,15 +633,17 @@
     $btnViewAllProject = doc.get(`${widgetId}_ppsProjectViewAll`);
 
     updateSettings();
-    window.onresize = () => {
-      updateSettings();
-      setupSliderEvents(widgetId);
-    };
 
     setupSelectorEvent();
 
     randerStackPanel(pickedStacks);
 
+    window.onresize = onresize;
+    window.onscroll = onscroll;
+
+    let rand = random(5, pickedStacks.length - 5);
+    let $el = doc.all('.pps__list--stack-item')[rand];
+    onStackSelect(pickedStacks[rand], $el);
   };
 
   let init = (json) => {
@@ -660,22 +665,19 @@
     }
   };
 
+  onresize = () => {
+    updateSettings();
+    setupSliderEvents(widgetId);
+  };
+
   return {
     init: (data) => {
       if (!isInitialized) {
         init(data);
       }
     },
-    start: () => {
-      if (!isStarted) {
-        getStart();
-      }
-    },
     isInitialized: () => {
       return isInitialized;
-    },
-    isStarted: () => {
-      return isStarted;
     },
     getPeople,
     getProjects,

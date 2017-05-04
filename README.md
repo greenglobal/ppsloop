@@ -1,6 +1,7 @@
 # ppsloop
 Demo animation effect for new home page
 
+[![Video](http://i3.ytimg.com/vi/wCwRiyowXO0/maxresdefault.jpg)](https://www.youtube.com/watch?v=wCwRiyowXO0)
 
 ## Usage
 

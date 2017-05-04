@@ -20,7 +20,7 @@
   }
 })('PPSW', () => {
 
-  const TECH_STACK_NUMBER = 30;
+  const TECH_STACK_NUMBER = 27;
 
   let peoplePerPage = 4;
 

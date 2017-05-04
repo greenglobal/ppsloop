@@ -184,7 +184,7 @@
     }).map((el) => {
       return {
         top: ot + el.offsetTop,
-        left: ol + el.offsetLeft,
+        left: ol + el.offsetLeft + 25,
         width: el.offsetWidth,
         height: el.offsetHeight,
         $el: el
@@ -206,6 +206,7 @@
         height,
         border: 'solid px #eee'
       });
+
       let node = doc.get($el.cloneNode(true));
       node.setStyle({
         position: 'absolute',
@@ -215,7 +216,6 @@
       });
       node.style.left = `${pleft}px`;
       node.style.top = `${ptop}px`;
-      node.style.opacity = '0.5';
       node.style.transform = 'scale(0.5)';
 
       $elContentBlock.appendChild(node);
@@ -228,12 +228,13 @@
       setTimeout(() => {
         node.style.left = `${left}px`;
         node.style.top = `${top}px`;
-        node.style.opacity = '1.0';
         node.style.transform = 'scale(1)';
       }, t);
 
       node.addEventListener('transitionend', () => {
         node.destroy();
+        node.style.border = 'solid 1px #000';
+        node.style.opacity = '0.2';
         if (shadow.parentNode) {
           shadow.parentNode.replaceChild($el, shadow);
         }

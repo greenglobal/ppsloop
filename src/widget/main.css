@@ -349,9 +349,9 @@ PPSWidget {
         display: block;
       }
     }
-
   }
 }
+
 @media (width >= 760px) and (width <= 1024px) {
   PPSWidget {
     & .pps__wrapper--fluid {

@@ -21,6 +21,7 @@
 })('PPSW', () => {
 
   const TECH_STACK_NUMBER = 27;
+  const DELTA_TO_START = 300;
 
   let peoplePerPage = 4;
 
@@ -43,6 +44,7 @@
   let $btnViewAllProject;
 
   let isInitialized = false;
+  let isStarted = false;
   let widgetId = '';
 
   let onscroll = () => {
@@ -84,6 +86,31 @@
       });
       return stacks.includes(sk);
     });
+  };
+
+  let getPosition = (el) => {
+
+    let xPos = 0;
+    let yPos = 0;
+
+    while (el) {
+      if (el.tagName === 'BODY') {
+        var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
+        var yScroll = el.scrollTop || document.documentElement.scrollTop;
+
+        xPos += el.offsetLeft - xScroll + el.clientLeft;
+        yPos += el.offsetTop - yScroll + el.clientTop;
+      } else {
+        xPos += el.offsetLeft - el.scrollLeft + el.clientLeft;
+        yPos += el.offsetTop - el.scrollTop + el.clientTop;
+      }
+
+      el = el.offsetParent;
+    }
+    return {
+      x: xPos,
+      y: yPos
+    };
   };
 
   let setupSliderEvents = (id) => {
@@ -272,7 +299,7 @@
 
   let buildStackCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('pps__list--stack-item ripple');
+    card.addClass('pps__list--stack-item');
 
     let [
       name,
@@ -280,7 +307,7 @@
     ] = entry;
 
     let atag = doc.add('A', card);
-    atag.addClass('inner');
+    atag.addClass('inner ripple');
     atag.style.backgroundImage = `url(${image})`;
     atag.setAttribute('title', name);
 
@@ -541,6 +568,29 @@
     }
   };
 
+  let start = () => {
+    if (isStarted) {
+      return false;
+    }
+    isStarted = true;
+
+    let items = doc.all('.pps__list--stack-item');
+    let el = items[0];
+    el.addClass('highlight');
+    let arrow = doc.add('DIV', el);
+    arrow.addClass('arrow');
+    arrow.addEventListener('animationend', () => {
+      arrow.style.opacity = '0.0';
+      arrow.addEventListener('animationend', () => {
+        arrow.destroy();
+        el.removeClass('highlight');
+      });
+      onStackSelect(pickedStacks[0], el);
+    });
+
+    return isStarted;
+  };
+
   let setupLayout = (container) => {
     let labels = [
       'Team',
@@ -640,10 +690,6 @@
 
     window.onresize = onresize;
     window.onscroll = onscroll;
-
-    let rand = random(5, pickedStacks.length - 5);
-    let $el = doc.all('.pps__list--stack-item')[rand];
-    onStackSelect(pickedStacks[rand], $el);
   };
 
   let init = (json) => {
@@ -663,6 +709,18 @@
     } catch (err) {
       console.error(err);
     }
+  };
+
+  onscroll = () => {
+    if (!isStarted) {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      let offsetTop = getPosition($elContentBlock).y;
+      let delta = offsetTop - scrollTop;
+      if (delta < DELTA_TO_START) {
+        start();
+      }
+    }
+
   };
 
   onresize = () => {

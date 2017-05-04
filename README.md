@@ -20,7 +20,7 @@ Example:
   </head>
   <body>
   <!-- add widget here -->
-  <PPSWidget id="widgetTechTeam"></PPSWidget>
+  <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks"></PPSWidget>
 
   <script src="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js"></script>
   <script>PPSW.start();</body>

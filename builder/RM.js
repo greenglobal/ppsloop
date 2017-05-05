@@ -21,14 +21,14 @@ const SOURCE = path.join(__dirname, '../src');
 const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : '../dist');
 
 const JSFILES = [
-  'vendor/siema.min.js',
   'vendor/stabilize.min.js',
   'vendor/doc.min.js',
+  'vendor/animate.min.js',
+  'vendor/siema.min.js',
   'main.js'
 ];
 
 const CSSFILES = [
-  'vendor/ripple.min.css',
   'main.css'
 ];
 

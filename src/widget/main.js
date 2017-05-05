@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema */
+/* global doc stabilize Siema animate */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -21,7 +21,8 @@
 })('PPSW', () => {
 
   const TECH_STACK_NUMBER = 27;
-  const DELTA_TO_START = 300;
+  const DELTA_TO_START = 0;
+  const TIME_TO_MOVE_HAND = 500;
 
   let peoplePerPage = 4;
 
@@ -568,25 +569,66 @@
     }
   };
 
-  let start = () => {
+  let activateRipple = (target) => {
+    let ripple = doc.add('DIV', target);
+    ripple.addClass('flash');
+    ripple.addEventListener('animationend', () => {
+      ripple.destroy();
+    });
+  };
+
+  let addRippleEffect = (e) => {
+    let target = doc.Event.locate(e);
+    if (target && target.hasClass('ripple')) {
+      activateRipple(target);
+    }
+  };
+
+  let start = (delta, offsetTop) => {
     if (isStarted) {
       return false;
     }
+
     isStarted = true;
 
     let items = doc.all('.pps__list--stack-item');
     let el = items[0];
-    el.addClass('highlight');
-    let arrow = doc.add('DIV', el);
-    arrow.addClass('arrow');
-    arrow.addEventListener('animationend', () => {
-      arrow.style.opacity = '0.0';
-      arrow.addEventListener('animationend', () => {
-        arrow.destroy();
-        el.removeClass('highlight');
+
+    if (offsetTop > 0) {
+      el.addClass('highlight');
+
+      let hand = doc.add('DIV', el);
+      hand.addClass('hand');
+
+      animate({
+        el: hand,
+        translateX: 0,
+        translateY: 0,
+        rotate: 10,
+        opacity: 1,
+        duration: TIME_TO_MOVE_HAND,
+        complete: () => {
+
+          let target = doc.get(el.querySelector('a.ripple'));
+          activateRipple(target);
+          onStackSelect(pickedStacks[0], el);
+
+          animate({
+            el: hand,
+            opacity: 0,
+            duration: 500,
+            complete: () => {
+              hand.destroy();
+              el.removeClass('highlight');
+            }
+          });
+
+        }
       });
+    } else {
       onStackSelect(pickedStacks[0], el);
-    });
+    }
+
 
     return isStarted;
   };
@@ -690,6 +732,8 @@
 
     window.onresize = onresize;
     window.onscroll = onscroll;
+
+    document.addEventListener('mousedown', addRippleEffect, false);
   };
 
   let init = (json) => {
@@ -713,11 +757,11 @@
 
   onscroll = () => {
     if (!isStarted) {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       let offsetTop = getPosition($elContentBlock).y;
-      let delta = offsetTop - scrollTop;
+      let wHeight = window.innerHeight;
+      let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {
-        start();
+        start(delta, offsetTop, wHeight);
       }
     }
 
@@ -744,3 +788,4 @@
     getProjectsThatUse
   };
 });
+

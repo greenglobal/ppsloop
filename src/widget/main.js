@@ -21,7 +21,7 @@
 })('PPSW', () => {
 
   const TECH_STACK_NUMBER = 27;
-  const DELTA_TO_START = 0;
+  const DELTA_TO_START = -100;
   const TIME_TO_MOVE_HAND = 500;
 
   let peoplePerPage = 4;
@@ -734,6 +734,8 @@
     window.onscroll = onscroll;
 
     document.addEventListener('mousedown', addRippleEffect, false);
+
+    onscroll();
   };
 
   let init = (json) => {
@@ -761,6 +763,7 @@
       let wHeight = window.innerHeight;
       let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {
+        console.log(delta);
         start(delta, offsetTop, wHeight);
       }
     }

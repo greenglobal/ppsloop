@@ -571,17 +571,10 @@
 
   let activateRipple = (target) => {
     let ripple = doc.add('DIV', target);
-    ripple.addClass('flash');
+    ripple.addClass('pps-flash');
     ripple.addEventListener('animationend', () => {
       ripple.destroy();
     });
-  };
-
-  let addRippleEffect = (e) => {
-    let target = doc.Event.locate(e);
-    if (target && target.hasClass('ripple')) {
-      activateRipple(target);
-    }
   };
 
   let start = (delta, offsetTop) => {
@@ -732,8 +725,6 @@
 
     window.onresize = onresize;
     window.onscroll = onscroll;
-
-    document.addEventListener('mousedown', addRippleEffect, false);
 
     onscroll();
   };

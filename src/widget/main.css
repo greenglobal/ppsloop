@@ -32,25 +32,19 @@ PPSWidget {
     transition: all var(--transitionTimer) ease-in-out;
   }
 
-  & .ripple{
-    position: relative;
-    overflow: hidden;
-    transform: translate3d(0, 0, 0);
-
-    & .flash{
-      display: block;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, #999 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      animation: ripple 600ms ease-in-out;
-      transition: transform 600ms, opacity 600ms
-    }
+  & .pps-flash {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #999 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    animation: ripple 600ms ease-in-out;
+    transition: transform 600ms, opacity 600ms
   }
 
   & .pps__wrapper--fluid {
@@ -138,11 +132,9 @@ PPSWidget {
       flex: 1 auto;
       align-self: stretch;
       flex-direction: column;
-      background-color: #fff;
     }
 
     & .pps__swiper-wrapper {
-      background-color: #fff;
       flex-direction: column;
       justify-content: space-between;
       align-items: stretch;
@@ -157,7 +149,7 @@ PPSWidget {
     & .pps__swiper--nav {
       height: var(--peopleAvatar);
       width: var(--swiperNavWidth);
-      background-color: #ff1;
+      background-color: #fff;
       transition: all 300ms ease;
 
       display: none;

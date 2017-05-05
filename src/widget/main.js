@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema anime */
+/* global doc stabilize Siema animate */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -22,6 +22,7 @@
 
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = 0;
+  const TIME_TO_MOVE_HAND = 500;
 
   let peoplePerPage = 4;
 
@@ -583,103 +584,51 @@
     }
   };
 
-  let start = () => {
+  let start = (delta, offsetTop) => {
     if (isStarted) {
       return false;
     }
+
     isStarted = true;
 
     let items = doc.all('.pps__list--stack-item');
     let el = items[0];
-    el.addClass('highlight');
 
-    let hand = doc.add('DIV', el);
-    hand.addClass('hand');
+    if (offsetTop > 0) {
+      el.addClass('highlight');
 
-    let delta = 360;
-    let x = 20;
-    let y = -delta;
+      let hand = doc.add('DIV', el);
+      hand.addClass('hand');
 
-    let handEnd = getPosition($elContentBlock).y;
-    let handStart = handEnd - delta;
+      animate({
+        el: hand,
+        translateX: 0,
+        translateY: 0,
+        rotate: 10,
+        opacity: 1,
+        duration: TIME_TO_MOVE_HAND,
+        complete: () => {
 
-    console.log(handEnd, handStart)
+          let target = doc.get(el.querySelector('a.ripple'));
+          activateRipple(target);
+          onStackSelect(pickedStacks[0], el);
 
-    let distance = 0;
+          animate({
+            el: hand,
+            opacity: 0,
+            duration: 500,
+            complete: () => {
+              hand.destroy();
+              el.removeClass('highlight');
+            }
+          });
 
-    let timeline = anime.timeline({
-      duration: 500,
-      loop: false,
-      autoplay: false,
-      direction: 'alternate'
-    });
-
-    timeline
-      .add({
-        targets: hand,
-        translateX: [
-          {value: x},
-          {value: 0}
-        ],
-        translateY: [
-          {value: y},
-          {value: 0}
-        ],
-        opacity: [
-          {value: 0},
-          {value: 1}
-        ],
-        rotate: [
-          {value: 10},
-          {value: 20}
-        ],
-        offset: 0,
-        easing: 'linear'
+        }
       });
-
-    let update = () => {
-      let offsetTop = getPosition($elContentBlock).y;
-      distance = offsetTop - handStart;
-      if (distance > delta) {
-        distance = delta;
-      }
-      if (distance < 0) {
-        distance = 0;
-      }
-
-      console.log(`distance: ${distance}`);
-      let progress = distance;
-      timeline.seek(progress);
-    };
-
-    update();
-    window.onscroll = update;
-
-    // var easeInOutQuad = 'cubic-bezier(0.455, 0.030, 0.515, 0.955)';
-
-    // hand.animate([
-    //   {
-    //     transform: 'rotate(5deg) translate(0px, 0px)',
-    //     opacity: 0
-    //   },
-    //   {
-    //     transform: 'rotate(10deg) translate(-16px, 320px)',
-    //     opacity: 1
-    //   }
-    // ], {
-    //   duration: 1000,
-    //   easing: easeInOutQuad
-    // });
-
-    setTimeout(() => {
-      let target = doc.get(el.querySelector('a.ripple'));
-      let ripple = doc.add('DIV', target);
-      ripple.addClass('flash');
-      ripple.addEventListener('animationend', () => {
-        ripple.destroy();
-      });
+    } else {
       onStackSelect(pickedStacks[0], el);
-    }, 1000);
+    }
+
 
     return isStarted;
   };
@@ -807,13 +756,12 @@
   };
 
   onscroll = () => {
-    console.log('t')
     if (!isStarted) {
       let offsetTop = getPosition($elContentBlock).y;
       let wHeight = window.innerHeight;
       let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {
-        start();
+        start(delta, offsetTop, wHeight);
       }
     }
 

@@ -32,6 +32,27 @@ PPSWidget {
     transition: all var(--transitionTimer) ease-in-out;
   }
 
+  & .ripple{
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+
+    & .flash{
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #999 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      animation: ripple 600ms ease-in-out;
+      transition: transform 600ms, opacity 600ms
+    }
+  }
+
   & .pps__wrapper--fluid {
 
     width: 100%;
@@ -273,6 +294,9 @@ PPSWidget {
             height: 120px;
             background: transparent url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGltYWdlLXJlbmRlcmluZz0ib3B0aW1pemVRdWFsaXR5IiBzaGFwZS1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgdGV4dC1yZW5kZXJpbmc9Imdlb21ldHJpY1ByZWNpc2lvbiIgdmlld0JveD0iMCAwIDUwMCA1MDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHN0eWxlIHR5cGU9InRleHQvY3NzIj48IVtDREFUQVsKICAgIC5zdHIxIHtzdHJva2U6IzQzNDI0MjtzdHJva2Utd2lkdGg6MTA7c3Ryb2tlLWxpbmVqb2luOnJvdW5kfQogICAgLnN0cjAge3N0cm9rZTojNDM0MjQyO3N0cm9rZS13aWR0aDoyMDtzdHJva2UtbGluZWpvaW46cm91bmR9CiAgICAuZmlsMCB7ZmlsbDpub25lfQogICAgLmZpbDIge2ZpbGw6dXJsKCNpZDApfQogICAgLmZpbDEge2ZpbGw6dXJsKCNpZDEpfQogICBdXT48L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImlkMCIgeDE9IjI3MC41NzYiIHgyPSIyNzAuNTc2IiB5MT0iNTkuMjM2IiB5Mj0iMTQ0LjkzOCI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMDA4QkZGIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGFmIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJpZDEiIHgxPSIyNDcuMTY3IiB4Mj0iMjQ3LjE2NyIgeTE9IjIwNC43NTIiIHkyPSI0MzguMDQyIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGQ0ZDRkQiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48ZyBpZD0iXzEzMTc4NDE3NDQiPjxwYXRoIGNsYXNzPSJmaWwwIHN0cjAiIGQ9Ik0yMDggNDQxYzggMCAxNS03IDE1LTE1di0xMDVjMC0xMCAxMC0xMCAxMCAwdjI1YzAgOSA3IDE1IDE1IDE1czE1LTYgMTUtMTV2LTQwYzAtMTAgMTAtMTAgMTAgMHYyNWMwIDkgNyAxNSAxNSAxNXMxNS02IDE1LTE1di00MGMwLTEwIDEwLTEwIDEwIDB2MjVjMCA5IDcgMTUgMTUgMTVzMTUtNiAxNS0xNXYtMTE1YzAtMTAtNi0yMC0xNC0yNS0zLTItNy00LTExLTQtMy0xLTMtNC0yLTZsOS0yMWgtMTAydjI2Yy05IDAtMTcgNC0yMiAxMC0yIDItNCA1LTUgN2wtNDMgNzVjLTQgNy0xIDE2IDYgMjAgNSA1IDE3IDEgMjAtNWwxNC0yNHYxNzJjMCA4IDcgMTUgMTUgMTV6Ii8+PHBhdGggY2xhc3M9ImZpbDEiIGQ9Ik0yMDggNDQxYzggMCAxNS03IDE1LTE1di0xMDVjMC0xMCAxMC0xMCAxMCAwdjI1YzAgOSA3IDE1IDE1IDE1czE1LTYgMTUtMTV2LTQwYzAtMTAgMTAtMTAgMTAgMHYyNWMwIDkgNyAxNSAxNSAxNXMxNS02IDE1LTE1di00MGMwLTEwIDEwLTEwIDEwIDB2MjVjMCA5IDcgMTUgMTUgMTVzMTUtNiAxNS0xNXYtMTE1YzAtMTAtNi0yMC0xNC0yNS0zLTItNy00LTExLTQtMy0xLTMtNC0yLTZsOS0yMWgtMTAydjI2Yy05IDAtMTcgNC0yMiAxMC0yIDItNCA1LTUgN2wtNDMgNzVjLTQgNy0xIDE2IDYgMjAgNSA1IDE3IDEgMjAtNWwxNC0yNHYxNzJjMCA4IDcgMTUgMTUgMTV6IiBpZD0iMSIvPjxwYXRoIGNsYXNzPSJmaWwyIHN0cjEiIGQ9Ik0zMzkgNTljNSAwIDEwIDUgMTAgMTB2NjZjMCA1LTUgMTAtMTAgMTBoLTEyOGMtNiAwLTEwLTUtMTAtMTB2LTc2aDEzOHoiLz48L2c+PC9zdmc+') no-repeat center center;
             background-size: contain;
+            opacity: 0;
+            transform: translate(80px, -360px) rotate(10deg);
+            /* animation: 600ms ease-in-out 0s 1 alternate forwards pointing; */
           }
         }
       }
@@ -387,15 +411,6 @@ PPSWidget {
   }
 }
 
-@keyframes pointing {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translate(0px, 0px) scale(1) rotate(26deg);
-  }
-  10%, 30%, 40%, 70%, 90% {
-    transform: translate(-100px, -20px) scale(0.8) rotate(0deg);
-  }
-}
-
 @keyframes ripple {
   0% {
     transform: scale(0);
@@ -407,22 +422,9 @@ PPSWidget {
   }
 }
 
-.ripple{
-  position: relative;
-  overflow: hidden;
-  transform: translate3d(0, 0, 0)
-}
-.ripple .flash{
-  display: block;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  background-image: radial-gradient(circle, #999 10%, transparent 10.01%);
-  background-repeat: no-repeat;
-  background-position: 50%;
-  animation: ripple 600ms ease-in-out;
-  transition: transform 600ms, opacity 600ms
+@keyframes pointing {
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px) rotate(10deg);
+  }
 }

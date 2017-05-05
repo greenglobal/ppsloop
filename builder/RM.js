@@ -23,8 +23,8 @@ const DIST = path.join(__dirname, ENV === 'production' ? '../docs' : '../dist');
 const JSFILES = [
   'vendor/stabilize.min.js',
   'vendor/doc.min.js',
+  'vendor/animate.min.js',
   'vendor/siema.min.js',
-  'vendor/anime.min.js',
   'main.js'
 ];
 

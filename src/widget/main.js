@@ -754,7 +754,6 @@
       let wHeight = window.innerHeight;
       let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {
-        console.log(delta);
         start(delta, offsetTop, wHeight);
       }
     }

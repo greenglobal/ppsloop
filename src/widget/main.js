@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema */
+/* global doc stabilize Siema anime */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -21,7 +21,7 @@
 })('PPSW', () => {
 
   const TECH_STACK_NUMBER = 27;
-  const DELTA_TO_START = 300;
+  const DELTA_TO_START = 0;
 
   let peoplePerPage = 4;
 
@@ -568,6 +568,21 @@
     }
   };
 
+  let activateRipple = (target) => {
+    let ripple = doc.add('DIV', target);
+    ripple.addClass('flash');
+    ripple.addEventListener('animationend', () => {
+      ripple.destroy();
+    });
+  };
+
+  let addRippleEffect = (e) => {
+    let target = doc.Event.locate(e);
+    if (target && target.hasClass('ripple')) {
+      activateRipple(target);
+    }
+  };
+
   let start = () => {
     if (isStarted) {
       return false;
@@ -577,16 +592,94 @@
     let items = doc.all('.pps__list--stack-item');
     let el = items[0];
     el.addClass('highlight');
-    let arrow = doc.add('DIV', el);
-    arrow.addClass('arrow');
-    arrow.addEventListener('animationend', () => {
-      arrow.style.opacity = '0.0';
-      arrow.addEventListener('animationend', () => {
-        arrow.destroy();
-        el.removeClass('highlight');
+
+    let hand = doc.add('DIV', el);
+    hand.addClass('hand');
+
+    let delta = 360;
+    let x = 20;
+    let y = -delta;
+
+    let handEnd = getPosition($elContentBlock).y;
+    let handStart = handEnd - delta;
+
+    console.log(handEnd, handStart)
+
+    let distance = 0;
+
+    let timeline = anime.timeline({
+      duration: 500,
+      loop: false,
+      autoplay: false,
+      direction: 'alternate'
+    });
+
+    timeline
+      .add({
+        targets: hand,
+        translateX: [
+          {value: x},
+          {value: 0}
+        ],
+        translateY: [
+          {value: y},
+          {value: 0}
+        ],
+        opacity: [
+          {value: 0},
+          {value: 1}
+        ],
+        rotate: [
+          {value: 10},
+          {value: 20}
+        ],
+        offset: 0,
+        easing: 'linear'
+      });
+
+    let update = () => {
+      let offsetTop = getPosition($elContentBlock).y;
+      distance = offsetTop - handStart;
+      if (distance > delta) {
+        distance = delta;
+      }
+      if (distance < 0) {
+        distance = 0;
+      }
+
+      console.log(`distance: ${distance}`);
+      let progress = distance;
+      timeline.seek(progress);
+    };
+
+    update();
+    window.onscroll = update;
+
+    // var easeInOutQuad = 'cubic-bezier(0.455, 0.030, 0.515, 0.955)';
+
+    // hand.animate([
+    //   {
+    //     transform: 'rotate(5deg) translate(0px, 0px)',
+    //     opacity: 0
+    //   },
+    //   {
+    //     transform: 'rotate(10deg) translate(-16px, 320px)',
+    //     opacity: 1
+    //   }
+    // ], {
+    //   duration: 1000,
+    //   easing: easeInOutQuad
+    // });
+
+    setTimeout(() => {
+      let target = doc.get(el.querySelector('a.ripple'));
+      let ripple = doc.add('DIV', target);
+      ripple.addClass('flash');
+      ripple.addEventListener('animationend', () => {
+        ripple.destroy();
       });
       onStackSelect(pickedStacks[0], el);
-    });
+    }, 1000);
 
     return isStarted;
   };
@@ -690,6 +783,8 @@
 
     window.onresize = onresize;
     window.onscroll = onscroll;
+
+    document.addEventListener('mousedown', addRippleEffect, false);
   };
 
   let init = (json) => {
@@ -712,10 +807,11 @@
   };
 
   onscroll = () => {
+    console.log('t')
     if (!isStarted) {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       let offsetTop = getPosition($elContentBlock).y;
-      let delta = offsetTop - scrollTop;
+      let wHeight = window.innerHeight;
+      let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {
         start();
       }
@@ -744,3 +840,4 @@
     getProjectsThatUse
   };
 });
+

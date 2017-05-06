@@ -9,7 +9,7 @@
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = factory();
   } else {
-    var root = window || {};
+    let root = window || {};
     if (root.define && root.define.amd) {
       root.define([], factory());
     } else if (root.exports) {
@@ -561,6 +561,7 @@
 
   let updateSettings = () => {
     let wsize = $elContentBlock.offsetWidth;
+    peoplePerPage = 4;
     if (wsize < 800) {
       peoplePerPage = 3;
     }
@@ -587,7 +588,10 @@
     let items = doc.all('.pps__list--stack-item');
     let el = items[0];
 
-    if (offsetTop > 0) {
+    let righPanel = doc.all('.pps__frame--right')[0];
+
+    if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
+
       el.addClass('highlight');
 
       let hand = doc.add('DIV', el);
@@ -649,6 +653,7 @@
 
     let maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
     pickedStacks = techstacks.splice(0, maxsize);
+
     let sltOption = pickedStacks.map((item) => {
       let st = item[0];
       return `<option value="${st}">${st}</option>`;
@@ -657,14 +662,16 @@
     let layout = `
       <div class="pps__frame--left">
         <div class="pps__frame--top">
-          <div class="pps__select-outer">
-            <select class="pps__select" id="${widgetId}_ppsStackSelector">
-              <option value="">Choose technology:</option>
-              ${sltOption}
-            </select>
-          </div>
           <div class="pps__techlogo-outer">
-            <div class="pps__techlogo" id="${widgetId}_ppsTechLogo"></div>
+            <div class="pps__techlogo" id="${widgetId}_ppsTechLogo">
+              <div class="pps__select-outer">
+                <select class="pps__select" id="${widgetId}_ppsStackSelector">
+                  <option value="">Choose technology:</option>
+                  ${sltOption}
+                </select>
+              </div>
+              <a class="pps__techselect-arrow"></a>
+            </div>
           </div>
           <div class="pps__block--people">
             <label class="pps__label">
@@ -762,7 +769,6 @@
 
   onresize = () => {
     updateSettings();
-    setupSliderEvents(widgetId);
   };
 
   return {

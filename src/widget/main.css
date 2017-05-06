@@ -107,22 +107,48 @@ PPSWidget {
       min-width: 30%;
     }
 
-    & select.pps__select {
-      padding: 8px;
-      width: 100%;
-      & option {
-        padding-left: 20px;
-      }
-    }
-
     & .pps__techlogo-outer {
       padding: 20px;
-      display: none;
       & .pps__techlogo {
-        width: 180px;
-        height: 60px;
-        background: transparent none no-repeat center center;
-        background-size: cover;
+        position: relative;
+        width: 100%;
+        height: 90px;
+        background: transparent none no-repeat left center;
+        background-size: contain;
+
+        &:after {
+          content:'';
+          position: absolute;
+          left: 0px;
+          bottom: 5px;
+          width: 100%;
+          height: 1px;
+          box-shadow: 0px 1px 2px rgba(70, 70, 70, 0.71);
+          display: block;
+        }
+      }
+
+      & .pps__select-outer {
+        position: absolute;
+        z-index: 1;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        opacity: 0;
+        select {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      & a.pps__techselect-arrow {
+        float: right;
+        display: inline-block;
+        width: 30px;
+        height: 90px;
+        background: transparent url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE0LjgzIDE2LjQybDkuMTcgOS4xNyA5LjE3LTkuMTcgMi44MyAyLjgzLTEyIDEyLTEyLTEyeiIvPjxwYXRoIGQ9Ik0wLS43NWg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+') no-repeat center center;
+        background-size: contain;
       }
     }
 
@@ -354,9 +380,16 @@ PPSWidget {
           height: 400px;
         }
       }
+
       & .pps__techlogo-outer {
-        display: block;
+        & .pps__techlogo:after {
+          display: none;
+        }
+        & a.pps__techselect-arrow {
+          display: none;
+        }
       }
+
       & .pps__frame--right {
         display: block;
       }

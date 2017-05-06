@@ -89,7 +89,7 @@ PPSWidget {
 
       & .pps__frame--top {
         width: 100%;
-        height: 350px;
+        height: 420px;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -240,7 +240,7 @@ PPSWidget {
     }
 
     & .pps__block--project {
-      padding: 0px 20px 20px;
+      padding: 0px 0px 20px;
     }
 
     & .pps__list--project {
@@ -377,7 +377,7 @@ PPSWidget {
 
       & .pps__frame--left {
         & .pps__frame--top {
-          height: 400px;
+          height: 420px;
         }
       }
 
@@ -394,6 +394,9 @@ PPSWidget {
         display: block;
       }
 
+      & .pps__block--project {
+        padding: 0px 20px 20px;
+      }
       & .pps__list--project {
         & .pps__list--project-item {
           width: 25%;

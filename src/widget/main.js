@@ -25,6 +25,7 @@
   const TIME_TO_MOVE_HAND = 500;
 
   let peoplePerPage = 4;
+  let deltaPaddingLeft = 20;
 
   let people = [];
   let projects = [];
@@ -230,7 +231,7 @@
     }).map((el) => {
       return {
         top: ot + el.offsetTop,
-        left: ol + el.offsetLeft + 25,
+        left: ol + el.offsetLeft + deltaPaddingLeft,
         width: el.offsetWidth,
         height: el.offsetHeight,
         $el: el
@@ -301,7 +302,7 @@
         el.style.opacity = '1.0';
         el.style.transform = `translate(0px, 0px)`;
       }, timeout);
-      timeout += 20;
+      timeout += 30;
     });
   };
 
@@ -574,6 +575,12 @@
     }
     if (wsize < 400) {
       peoplePerPage = 2;
+    }
+    let blockPeople = $elContentBlock.querySelector('.pps__block--people');
+    let paddingLeft = window.getComputedStyle(blockPeople, null).getPropertyValue('padding-left');
+    if (paddingLeft) {
+      let pl = parseInt(paddingLeft, 10);
+      deltaPaddingLeft = pl ? pl + 5 : -5;
     }
   };
 

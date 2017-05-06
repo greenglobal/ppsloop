@@ -170,7 +170,7 @@
       selector: '.pps__swiper-container',
       duration: 200,
       easing: 'ease-out',
-      perPage,
+      perPage: Math.min(perPage, total),
       startIndex: 0,
       draggable: true,
       threshold: 20,
@@ -436,7 +436,7 @@
       txt = `${total} members`;
     }
     $elTeamNum.html(txt);
-    setupSliderEvents(widgetId);
+    setupSliderEvents(widgetId, total);
 
     if (peopleCards.length) {
       applyEffect(peopleCards, pointer);

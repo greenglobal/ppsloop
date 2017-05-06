@@ -144,17 +144,24 @@
           bnext.addClass('pps__swiper--nav--enable');
         }
 
-        let els = Array.from(wd.querySelectorAll('.pps__swiper--nav--enable .pps__btn-link'));
+        let els = Array.from(wd.querySelectorAll('.pps__btn-link'));
         els.forEach((btn) => {
           let b = doc.get(btn);
-          b.addClass('ripple');
-          btn.onclick = () => {
-            if (b.hasClass('prev')) {
-              siema.prev(perPage);
-            } else if (b.hasClass('next')) {
-              siema.next(perPage);
-            }
-          };
+          let p = doc.get(b.parentNode);
+          if (p.hasClass('pps__swiper--nav--enable')) {
+            b.addClass('ripple');
+            p.onclick = () => {
+              if (b.hasClass('prev')) {
+                siema.prev(perPage);
+              } else if (b.hasClass('next')) {
+                siema.next(perPage);
+              }
+            };
+          } else {
+            setTimeout(() => {
+              b.removeClass('ripple');
+            }, 500);
+          }
         });
       }
     };

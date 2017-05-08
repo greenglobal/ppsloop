@@ -677,7 +677,11 @@
       <div class="pps__frame--left">
         <div class="pps__frame--top">
           <div class="pps__techlogo-outer">
-            <div class="pps__techlogo" id="${widgetId}_ppsTechLogo">
+            <label class="pps__label pps__label--no-padding">
+              ${labels[2]}
+            </label>
+            <div class="pps__techlogo">
+              <div class="pps__techlogo-image" id="${widgetId}_ppsTechLogo"></div>
               <div class="pps__select-outer">
                 <select class="pps__select" id="${widgetId}_ppsStackSelector">
                   <option value="">Choose technology:</option>

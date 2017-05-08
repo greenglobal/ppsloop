@@ -70,6 +70,11 @@ PPSWidget {
       color: #000;
       text-indent: 5px;
       text-transform: uppercase;
+
+      &.pps__label--no-padding {
+        padding: 0px;
+        text-indent: 0px;
+      }
     }
 
     & .pps__teamnumber--small {
@@ -109,23 +114,21 @@ PPSWidget {
 
     & .pps__techlogo-outer {
       padding: 20px;
+
       & .pps__techlogo {
         position: relative;
         width: 100%;
         height: 90px;
-        background: transparent none no-repeat left center;
-        background-size: contain;
+        border-bottom: solid 1px #ccc;
 
-        &:after {
-          content:'';
-          position: absolute;
-          left: 0px;
-          bottom: 5px;
-          width: 100%;
-          height: 1px;
-          box-shadow: 0px 1px 2px rgba(70, 70, 70, 0.71);
-          display: block;
+        & .pps__techlogo-image {
+          float: left;
+          width: 200px;
+          height: 100%;
+          background: transparent none no-repeat left center;
+          background-size: contain;
         }
+
       }
 
       & .pps__select-outer {
@@ -382,9 +385,18 @@ PPSWidget {
       }
 
       & .pps__techlogo-outer {
+        padding-left: 20px;
+        & .pps__label {
+          display: none;
+        }
+        & .pps__techlogo {
+          border-bottom: solid 1px transparent;
+        }
+
         & .pps__techlogo:after {
           display: none;
         }
+
         & a.pps__techselect-arrow {
           display: none;
         }

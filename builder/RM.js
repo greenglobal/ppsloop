@@ -50,7 +50,7 @@ var processCSS = async () => {
     info('Start compiling CSS...');
     let s = await compileCSS(CSSFILES, `${SOURCE}/widget`);
     writeFile(`${DIST}/widget/ppsloop.widget.css`, [
-      `/** v.${version} */`,
+      `/** v${version} */`,
       s
     ].join('\n'));
     info('Finish compiling CSS...');
@@ -66,7 +66,7 @@ var processJS = async () => {
     let s = await compileJS(JSFILES, `${SOURCE}/widget`);
     let data = readFile(`./dist/widget/ppsloop.widget.json`);
     writeFile(`${DIST}/widget/ppsloop.widget.js`, [
-      `/** v.${version} */`,
+      `/** v${version} */`,
       s,
       `PPSW.init(${data});`
     ].join(';'));

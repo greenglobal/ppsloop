@@ -171,7 +171,7 @@
       selector: '.pps__swiper-container',
       duration: 200,
       easing: 'ease-out',
-      perPage: Math.min(perPage, total),
+      perPage,
       startIndex: 0,
       draggable: true,
       threshold: 20,

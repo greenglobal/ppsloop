@@ -173,6 +173,7 @@ PPSWidget {
 
     & .pps__swiper-container {
       padding: 0px;
+      width: 100%;
     }
 
     & .pps__swiper--nav {
@@ -216,10 +217,8 @@ PPSWidget {
     & .pps__swiper-slide {
       user-select: none;
       text-align: center;
-      width: 180px;
       height: 100%;
       margin: 0px 5px;
-      float: left;
       background-color: #fff;
 
       & .pps__person-avatar {

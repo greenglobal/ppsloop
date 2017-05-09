@@ -455,11 +455,15 @@
 
     updateLeftPanelLogo(skill, data[1]);
 
-    let avatars = people.filter((item) => {
-      return item.image !== '';
-    }).map((item) => {
-      return item.image;
-    });
+    let getTmpAvatars = () => {
+      return people.filter((item) => {
+        return item.image !== '';
+      }).map((item) => {
+        return item.image;
+      });
+    };
+
+    let avatars = getTmpAvatars();
 
     let _people = getPeopleWhoHas(skill).map((item) => {
       let {
@@ -484,8 +488,12 @@
           return src !== image;
         });
       } else {
+        if (!avatars.length) {
+          avatars = getTmpAvatars();
+        }
         let k = random(0, avatars.length - 1);
         image = avatars[k];
+        avatars.splice(k, 1);
       }
 
       return {

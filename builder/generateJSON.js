@@ -1,23 +1,13 @@
 // generateJSON
 
-var bella = require('bellajs');
-
 var debug = require('debug');
 var info = debug('pps:info');
 var error = debug('pps:error');
 
-var removeAccents = require('./removeAccents');
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
 
 const THIS_YEAR = (new Date()).getFullYear();
-
-var standalizeName = (person) => {
-  let name = removeAccents(person.name);
-  let arr = bella.stabilize(name.split(' '));
-  person.name = arr.last() + ' ' + arr.first();
-  return person;
-};
 
 var getYoE = (begin = 0) => {
   let y = THIS_YEAR - begin;
@@ -89,7 +79,7 @@ var generateJSON = async () => {
       projectSkills
     } = json;
 
-    let arrPeople = people.map(standalizeName).map((item) => {
+    let arrPeople = people.map((item) => {
       return mapSkillsToPeople(item, peopleSkills);
     });
 

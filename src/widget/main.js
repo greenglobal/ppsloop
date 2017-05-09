@@ -416,6 +416,7 @@
     let pointer = getLocatePoint(origin);
 
     $elPeople.empty();
+
     let result = ppl.map((entry) => {
       let card = buildPersonCard(entry);
       $elPeople.appendChild(card);
@@ -485,7 +486,6 @@
       } else {
         let k = random(0, avatars.length - 1);
         image = avatars[k];
-        avatars.splice(k, 1);
       }
 
       return {
@@ -496,7 +496,11 @@
     });
 
     setActiveState(origin);
-    randerPeoplePanel(stabilize(_people).msort({yoe: -1}), origin);
+
+    if (_people.length > 1) {
+      _people = stabilize(_people).msort({yoe: -1});
+    }
+    randerPeoplePanel(_people, origin);
 
     let _projects = getProjectsThatUse(skill);
     if (_projects.length < 2) {
@@ -550,7 +554,6 @@
           let sk = skills[0];
           onStackSelect(sk, origin);
         }
-
       }
     };
   };
@@ -600,6 +603,11 @@
     isStarted = true;
 
     let items = doc.all('.pps__list--stack-item');
+
+    if (!items.length) {
+      return false;
+    }
+
     let el = items[0];
 
     let righPanel = doc.all('.pps__frame--right')[0];

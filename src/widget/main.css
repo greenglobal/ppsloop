@@ -294,7 +294,7 @@ PPSWidget {
           border: 1px solid #d8d8d8;
           border-radius: 2px;
           background: #fff none no-repeat center center;
-          background-size: contain;
+          background-size: 50%;
         }
 
         &.active a.inner {

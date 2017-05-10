@@ -27,6 +27,7 @@ const JSFILES = [
   'vendor/doc.min.js',
   'vendor/animate.min.js',
   'vendor/siema.min.js',
+  'vendor/array.includes.js',
   'main.js'
 ];
 

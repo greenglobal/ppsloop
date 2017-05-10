@@ -49,16 +49,17 @@
   let isStarted = false;
   let widgetId = '';
 
+  if (!Array.from) {
+    Array.from = (arr) => {
+      return [].slice.call(arr);
+    };
+  }
   let onscroll = () => {
     return true;
   };
 
   let onresize = () => {
     return true;
-  };
-
-  let toArray = (arr = []) => {
-    return [].slice.call(arr);
   };
 
   let random = (min, max) => {
@@ -149,7 +150,7 @@
           bnext.addClass('pps__swiper--nav--enable');
         }
 
-        let els = toArray(wd.querySelectorAll('.pps__btn-link'));
+        let els = Array.from(wd.querySelectorAll('.pps__btn-link'));
         els.forEach((btn) => {
           let b = doc.get(btn);
           let p = doc.get(b.parentNode);

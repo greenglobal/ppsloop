@@ -68,7 +68,7 @@ PPSWidget {
       line-height: 2;
       padding: 10px;
       color: #000;
-      text-indent: 5px;
+      text-indent: 0px;
       text-transform: uppercase;
 
       &.pps__label--no-padding {

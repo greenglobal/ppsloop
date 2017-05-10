@@ -296,17 +296,18 @@ PPSWidget {
           border-radius: 2px;
           background: #fff none no-repeat center center;
           background-size: 50%;
+          cursor: pointer;
         }
 
-        &.active a.inner {
+        &.active a.pps-inner {
           border-color: #5fe2a4;
           background-color: #e6fff3;
         }
 
-        &.highlight {
+        &.pps-highlight {
           position: relative;
 
-          & .hand {
+          & .pps-hand {
             position: absolute;
             top: -90px;
             left: 0px;
@@ -317,7 +318,16 @@ PPSWidget {
             background-size: contain;
             opacity: 0;
             transform: translate(80px, -360px) rotate(10deg);
-            /* animation: 600ms ease-in-out 0s 1 alternate forwards pointing; */
+            transition: all 600ms ease;
+
+            &.pps-hand-move {
+              opacity: 1;
+              transform: translate(0px, 0px) rotate(10deg);
+
+              &.pps-hand-disappear {
+                opacity: 0;
+              }
+            }
           }
         }
       }

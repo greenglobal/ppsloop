@@ -25,7 +25,6 @@ const {version} = require(path.join(__dirname, '../package.json'));
 const JSFILES = [
   'vendor/stabilize.min.js',
   'vendor/doc.min.js',
-  'vendor/animate.min.js',
   'vendor/siema.min.js',
   'vendor/array.includes.js',
   'main.js'

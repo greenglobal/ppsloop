@@ -19,8 +19,8 @@ var transpile = (code) => {
         'env', {
           targets: {
             browsers: [
-              '> 1%',
-              'last 2 versions'
+              '> 3%',
+              'not ie <= 8'
             ]
           },
           useBuiltIns: true

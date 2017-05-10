@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema animate */
+/* global doc stabilize Siema */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -22,7 +22,6 @@
 
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -100;
-  const TIME_TO_MOVE_HAND = 500;
 
   let peoplePerPage = 4;
   let deltaPaddingLeft = 20;
@@ -627,36 +626,29 @@
 
     if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
 
-      el.addClass('highlight');
+      el.addClass('pps-highlight');
 
       let hand = doc.add('DIV', el);
-      hand.addClass('hand');
+      hand.addClass('pps-hand');
 
-      animate({
-        el: hand,
-        translateX: 0,
-        translateY: 0,
-        rotate: 10,
-        opacity: 1,
-        duration: TIME_TO_MOVE_HAND,
-        complete: () => {
+      setTimeout(() => {
+        hand.addClass('pps-hand-move');
+      }, 100);
 
-          let target = doc.get(el.querySelector('a.ripple'));
-          activateRipple(target);
-          onStackSelect(pickedStacks[0], el);
+      hand.addEventListener('transitionend', () => {
+        let target = doc.get(el.querySelector('a.ripple'));
+        activateRipple(target);
+        onStackSelect(pickedStacks[0], el);
 
-          animate({
-            el: hand,
-            opacity: 0,
-            duration: 500,
-            complete: () => {
-              hand.destroy();
-              el.removeClass('highlight');
-            }
-          });
-
-        }
+        setTimeout(() => {
+          hand.addClass('pps-hand-disappear');
+        }, 100);
+        hand.addEventListener('transitionend', () => {
+          hand.destroy();
+          el.removeClass('pps-highlight');
+        });
       });
+
     } else {
       onStackSelect(pickedStacks[0], el);
     }

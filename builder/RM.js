@@ -52,7 +52,7 @@ var processCSS = async () => {
     writeFile(`${DIST}/widget/ppsloop.widget.css`, [
       `/** v${version} */`,
       s
-    ].join('\n'));
+    ].join(' '));
     info('Finish compiling CSS...');
   } catch (err) {
     error(err);

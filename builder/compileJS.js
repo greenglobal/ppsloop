@@ -19,12 +19,11 @@ var transpile = (code) => {
         'env', {
           targets: {
             browsers: [
-              'safari 9',
-              'ie 11',
-              'Android 4',
-              'iOS 7'
+              '> 1%',
+              'last 2 versions'
             ]
-          }
+          },
+          useBuiltIns: true
         }
       ]
     ],

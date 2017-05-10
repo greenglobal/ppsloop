@@ -2,6 +2,8 @@
 
 var readFile = require('./readFile');
 
+var {trim} = require('bellajs');
+
 var postcss = require('postcss');
 var postcssFilter = require('postcss-filter-plugins');
 var nested = require('postcss-nested');
@@ -34,22 +36,22 @@ var compileCSS = async (cssFiles, source) => {
   let vendorCSS = cssFiles.filter((file) => {
     return file.includes('vendor/');
   }).map((file) => {
-    return readFile(`${source}/${file}`);
+    return trim(readFile(`${source}/${file}`));
   }).reduce((prev, curr) => {
     return prev.concat(curr);
-  }, []).join('\n');
+  }, []).join(' ');
 
   let myCSS = cssFiles.filter((file) => {
     return !file.includes('vendor/');
   }).map((file) => {
-    return readFile(`${source}/${file}`);
+    return trim(readFile(`${source}/${file}`));
   }).reduce((prev, curr) => {
     return prev.concat(curr);
-  }, []).join('\n');
+  }, []).join(' ');
 
   let css = await postProcess(myCSS);
 
-  return [vendorCSS, css].join('\n');
+  return [vendorCSS, css].join(' ');
 };
 
 module.exports = compileCSS;

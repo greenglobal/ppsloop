@@ -123,8 +123,9 @@ PPSWidget {
 
         & .pps__techlogo-image {
           float: left;
+          margin-top: 15px;
           width: 200px;
-          height: 100%;
+          height: 60px;
           background: transparent none no-repeat left center;
           background-size: contain;
         }
@@ -149,7 +150,7 @@ PPSWidget {
         float: right;
         display: inline-block;
         width: 30px;
-        height: 90px;
+        height: 100%;
         background: transparent url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE0LjgzIDE2LjQybDkuMTcgOS4xNyA5LjE3LTkuMTcgMi44MyAyLjgzLTEyIDEyLTEyLTEyeiIvPjxwYXRoIGQ9Ik0wLS43NWg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PC9zdmc+') no-repeat center center;
         background-size: contain;
       }

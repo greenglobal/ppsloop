@@ -57,6 +57,10 @@
     return true;
   };
 
+  let toArray = (arr = []) => {
+    return [].slice.call(arr);
+  };
+
   let random = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
@@ -145,7 +149,7 @@
           bnext.addClass('pps__swiper--nav--enable');
         }
 
-        let els = Array.from(wd.querySelectorAll('.pps__btn-link'));
+        let els = toArray(wd.querySelectorAll('.pps__btn-link'));
         els.forEach((btn) => {
           let b = doc.get(btn);
           let p = doc.get(b.parentNode);

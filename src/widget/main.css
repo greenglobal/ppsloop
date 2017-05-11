@@ -258,7 +258,7 @@ PPSWidget {
         float: left;
         padding: 7px;
 
-        & a.inner {
+        & a.pps-inner {
           display: block;
           background: #fff none no-repeat center center;
           background-size: contain;
@@ -288,7 +288,7 @@ PPSWidget {
         padding: 0 6px;
         margin-bottom: 13px;
 
-        & a.inner {
+        & a.pps-inner {
           display: block;
           width: 100%;
           height: 50px;
@@ -299,7 +299,7 @@ PPSWidget {
           cursor: pointer;
         }
 
-        &.active a.pps-inner {
+        &.pps-active a.pps-inner {
           border-color: #5fe2a4;
           background-color: #e6fff3;
         }
@@ -333,7 +333,7 @@ PPSWidget {
       }
     }
 
-    & .view-all {
+    & .pps__view-all {
       text-align: center;
       position: relative;
       padding: 10px 0;
@@ -352,7 +352,7 @@ PPSWidget {
         background-image: linear-gradient(90deg,#fff,#c2c2c2 24%,#d4d4d4 77%,#fff);
       }
 
-      & .btn-viewall {
+      & .pps__btn-viewall {
         z-index: 3;
         opacity: 1;
         background: #fff;
@@ -369,7 +369,7 @@ PPSWidget {
         text-transform: uppercase;
       }
 
-      &.is-disabled a.btn-viewall {
+      &.pps__is-disabled a.pps__btn-viewall {
         color: #ddd;
         cursor: default;
         border: none;

@@ -38,6 +38,7 @@
     "babel-plugin-transform-remove-strict-mode": "0.x.x",
     "babel-preset-env": "1.x.x",
     "bellajs": "6.x.x",
+    "butternut": "^0.3.3",
     "cheerio": "0.x.x",
     "chokidar": "1.x.x",
     "copy-dir": "0.x.x",
@@ -55,8 +56,7 @@
     "postcss-filter-plugins": "2.x.x",
     "postcss-nested": "1.x.x",
     "tap-spec": "4.x.x",
-    "tape": "4.x.x",
-    "uglify-js": "2.x.x"
+    "tape": "4.x.x"
   },
   "license": "MIT"
 }

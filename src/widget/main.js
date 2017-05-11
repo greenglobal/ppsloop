@@ -119,13 +119,12 @@
     };
   };
 
-  let setupSliderEvents = (id) => {
+  let setupSliderEvents = (id, total = 0) => {
 
     let wd = doc.get(id);
 
     let perPage = peoplePerPage;
 
-    let total = wd.querySelectorAll('.pps__swiper-slide.pps-card').length;
     let btns = wd.querySelectorAll('.pps__swiper--nav');
 
     let bprev = doc.get(btns[0]);
@@ -171,16 +170,19 @@
       }
     };
 
+    let righPanel = doc.all('.pps__frame--right')[0];
+
     siema = new Siema({
       selector: '.pps__swiper-container',
       duration: 200,
       easing: 'ease-out',
       perPage,
       startIndex: 0,
-      draggable: true,
+      draggable: !(righPanel && righPanel.offsetParent),
       threshold: 20,
       loop: false,
       onInit: () => {
+        $elPeople.style.cursor = 'default';
         resetState(0);
       },
       onChange: () => {
@@ -192,10 +194,10 @@
   };
 
   let setActiveState = (origin) => {
-    doc.all('.pps__list--stack-item.active').forEach((el) => {
-      el.removeClass('active');
+    doc.all('.pps__list--stack-item.pps-active').forEach((el) => {
+      el.removeClass('pps-active');
     });
-    origin.addClass('active');
+    origin.addClass('pps-active');
   };
 
   let getLocatePoint = (origin) => {
@@ -267,7 +269,7 @@
       });
       node.style.left = `${pleft + pwidth / 2}px`;
       node.style.top = `${ptop - pheight / 2}px`;
-      node.style.transform = 'scale(0.1)';
+      node.style.transform = 'scale(0.05)';
 
       $elContentBlock.appendChild(node);
 
@@ -320,7 +322,7 @@
     ] = entry;
 
     let atag = doc.add('A', card);
-    atag.addClass('inner ripple');
+    atag.addClass('pps-inner ripple');
     atag.style.backgroundImage = `url(${image})`;
     atag.setAttribute('title', name);
 
@@ -362,7 +364,7 @@
     } = entry;
 
     let atag = doc.add('A', card);
-    atag.addClass('inner');
+    atag.addClass('pps-inner');
     if (image) {
       atag.style.backgroundImage = `url(${image})`;
     }
@@ -385,7 +387,7 @@
     let result = ppj.map((entry) => {
       let card = buildProjectCard(entry);
       if (isAppend) {
-        let last = $elProject.querySelector('.view-all');
+        let last = $elProject.querySelector('.pps__view-all');
         $elProject.insertBefore(card, last);
       } else {
         $elProject.appendChild(card);
@@ -404,9 +406,9 @@
     }
 
     $btnViewAllProject.onclick = null;
-    $btnViewAllProject.addClass('is-disabled');
+    $btnViewAllProject.addClass('pps__is-disabled');
     if (remain.length > 0) {
-      $btnViewAllProject.removeClass('is-disabled');
+      $btnViewAllProject.removeClass('pps__is-disabled');
       $btnViewAllProject.onclick = () => {
         randerProjectPanel(remain, true);
       };
@@ -555,8 +557,8 @@
       if (skills && skills.length > 0) {
         let origin;
         doc.all('.pps__list--stack-item').forEach((el) => {
-          el.removeClass('active');
-          let a = el.querySelector('a.inner');
+          el.removeClass('pps-active');
+          let a = el.querySelector('a.pps-inner');
           if (a.getAttribute('title') === v) {
             origin = el;
           }
@@ -592,7 +594,8 @@
       peoplePerPage = 2;
     }
     let blockPeople = $elContentBlock.querySelector('.pps__block--people');
-    let paddingLeft = window.getComputedStyle(blockPeople, null).getPropertyValue('padding-left');
+    let cstyle = window.getComputedStyle(blockPeople, null);
+    let paddingLeft = cstyle.getPropertyValue('padding-left');
     if (paddingLeft) {
       let pl = parseInt(paddingLeft, 10);
       deltaPaddingLeft = pl ? pl + 5 : -5;
@@ -725,8 +728,8 @@
               ${labels[1]}
             </label>
             <div class="pps__list--project" id="${widgetId}_ppsProjectList"></div>
-            <div class="view-all" id="${widgetId}_ppsProjectViewAll">
-              <a class="btn-viewall">View all</a>
+            <div class="pps__view-all" id="${widgetId}_ppsProjectViewAll">
+              <a class="pps__btn-viewall">View all</a>
             </div>
           </div>
         </div>

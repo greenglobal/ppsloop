@@ -1,15 +1,16 @@
 // compileJS
 
 var babel = require('babel-core');
-var UglifyJS = require('uglify-js');
+var butternut = require('butternut');
 
 var readFile = require('./readFile');
 
 var minifyJS = (jscode) => {
-  let u = UglifyJS.minify(jscode, {
-    fromString: true
+  let {code} = butternut.squash(jscode, {
+    sourceMap: false,
+    check: true
   });
-  return u.code;
+  return code;
 };
 
 var transpile = (code) => {

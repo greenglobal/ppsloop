@@ -37,6 +37,7 @@ if (port && port >= 0 && port <= 65535) {
     console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.js`);
     console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.css`);
     console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.json`);
+    console.log(`http://localhost:${widgetAppPort}/data.json`);
 
     await builder.start();
     await builder.prepare();

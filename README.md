@@ -21,7 +21,7 @@ Example:
   </head>
   <body>
   <!-- add widget here -->
-  <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks"></PPSWidget>
+  <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks" image-path="/img/widgetimage"></PPSWidget>
 
   <script src="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js"></script>
   <script>PPSW.start();</body>
@@ -49,14 +49,14 @@ Return list of projects.
 Return list of tech stacks.
 
 
-#### getPeopleWhoHas(skillName)
+#### getPeopleWhoKnow(skillName)
 
 Return people who has the given skill.
 
 Ex:
 
 ```
-let whoCanUseAngular = PPSW.getPeopleWhoHas('angular');
+let whoCanUseAngular = PPSW.getPeopleWhoKnow('angular');
 console.log(whoCanUseAngular);
 ```
 
@@ -69,6 +69,17 @@ Ex:
 ```
 let whatBuiltWithAngular = PPSW.getProjectsThatUse('angular');
 console.log(whatBuiltWithAngular);
+```
+
+#### getProjectMembers(projectName)
+
+Return an array of people who involved in the given project.
+
+Ex:
+
+```
+let whoInvolveEscope = PPSW.getProjectMembers('Escope');
+console.log(whoInvolveEscope);
 ```
 
 

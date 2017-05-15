@@ -70,6 +70,8 @@ var processJS = async () => {
       s,
       `PPSW.init(${data});`
     ].join(';'));
+
+    writeFile(`${DIST}/widget/ppsloop.widget.json`, data);
     info('Finish compiling JS...');
   } catch (err) {
     error(err);

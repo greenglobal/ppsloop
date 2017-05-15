@@ -23,6 +23,8 @@
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -100;
 
+  let imgPath = '';
+
   let peoplePerPage = 4;
   let deltaPaddingLeft = 20;
 
@@ -75,7 +77,7 @@
     return [...techstacks];
   };
 
-  let getPeopleWhoHas = (skill) => {
+  let getPeopleWhoKnow = (skill) => {
     let sk = skill.toLowerCase();
     return getPeople().filter((item) => {
       return item.skills.some((prope) => {
@@ -92,6 +94,17 @@
       });
       return stacks.includes(sk);
     });
+  };
+
+  let getProjectMembers = (pname) => {
+    let name = pname.toLowerCase();
+    let p = getProjects().filter((item) => {
+      return name === item.name.toLowerCase();
+    });
+    if (p.length > 0) {
+      return p[0].members;
+    }
+    return [];
   };
 
   let getPosition = (el) => {
@@ -323,14 +336,14 @@
 
     let atag = doc.add('A', card);
     atag.addClass('pps-inner ripple');
-    atag.style.backgroundImage = `url(${image})`;
+    atag.style.backgroundImage = `url(${imgPath}${image})`;
     atag.setAttribute('title', name);
 
     return card;
   };
 
   let updateLeftPanelLogo = (stack, image) => {
-    $elLogo.style.backgroundImage = `url(${image})`;
+    $elLogo.style.backgroundImage = `url(${imgPath}${image})`;
     $elLogo.setAttribute('title', stack);
   };
 
@@ -345,7 +358,7 @@
     } = entry;
 
     let tpl = `
-      <div class="pps__person-avatar" style="background-image:url(${image})"></div>
+      <div class="pps__person-avatar" style="background-image:url(${imgPath}${image})"></div>
       <div class="pps__person-name">${name}</div>
       <div class="pps__person-exp">${yoe} of experience</div>
     `;
@@ -365,10 +378,12 @@
 
     let atag = doc.add('A', card);
     atag.addClass('pps-inner');
-    if (image) {
-      atag.style.backgroundImage = `url(${image})`;
-    }
+
     atag.setAttribute('title', name);
+
+    if (image) {
+      atag.style.backgroundImage = `url(${imgPath}${image})`;
+    }
 
     return card;
   };
@@ -471,7 +486,7 @@
 
     let avatars = getTmpAvatars();
 
-    let _people = getPeopleWhoHas(skill).map((item) => {
+    let _people = getPeopleWhoKnow(skill).map((item) => {
       let {
         name,
         image,
@@ -678,6 +693,14 @@
       }
     }
 
+    let ipath = container.getAttribute('image-path');
+    if (ipath) {
+      if (ipath.endsWidth === '/') {
+        ipath = ipath.slice(0, -1);
+      }
+      imgPath = ipath;
+    }
+
     let contentBlock = doc.add('DIV', container);
     contentBlock.addClass('pps__wrapper--fluid');
 
@@ -784,6 +807,7 @@
 
       let els = doc.all('ppswidget') || [];
       els.map(setupLayout);
+
     } catch (err) {
       console.error(err);
     }
@@ -817,8 +841,9 @@
     getPeople,
     getProjects,
     getTechstacks,
-    getPeopleWhoHas,
-    getProjectsThatUse
+    getPeopleWhoKnow,
+    getProjectsThatUse,
+    getProjectMembers
   };
 });
 

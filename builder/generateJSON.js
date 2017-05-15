@@ -7,7 +7,13 @@ var error = debug('pps:error');
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
 
+var removeAccents = require('../builder/removeAccents');
+
 const THIS_YEAR = (new Date()).getFullYear();
+
+const PERSON_IMAGE_FOLDER = 'People';
+const PROJECT_IMAGE_FOLDER = 'Logo Project';
+const TECHSTACK_IMAGE_FOLDER = 'LogoTechStack';
 
 var getYoE = (begin = 0) => {
   let y = THIS_YEAR - begin;
@@ -57,6 +63,77 @@ var mapSkillsToProjects = (project, mapper) => {
   return project;
 };
 
+var mapPeopleToProjects = (project, mapper, people = []) => {
+  let cache = {};
+  let getPersonName = (id) => {
+    if (!cache[id]) {
+      let candidates = people.filter((item) => {
+        return item.id === id;
+      });
+
+      if (candidates.length > 0) {
+        let p = candidates[0];
+        cache[id] = p;
+      }
+    }
+    return cache[id] || false;
+  };
+
+  let members = project.members.map((id) => {
+    return mapper.filter((item) => {
+      return item.id === id;
+    }).map((item) => {
+      let p = getPersonName(item.person);
+      return {
+        person: p.name,
+        image: p.image,
+        role: item.role
+      };
+    });
+  });
+  project.members = members;
+  return project;
+};
+
+var makeEmailName = (person) => {
+  let fname = person.name;
+  person.fullname = fname;
+  let name = removeAccents(fname);
+  let arr = name.split(' ');
+  let first = arr.pop();
+  person.name = first + ' ' + arr[0];
+  if (!person.email) {
+    person.email = arr.reduce((prev, curr) => {
+      return prev + curr[0];
+    }, first).toLowerCase();
+  }
+  return person;
+};
+
+var localizePersonImage = (person) => {
+  if (person.image) {
+    let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
+    person.image = `/${dir}/${encodeURIComponent(person.email)}.png`;
+  }
+  return person;
+};
+
+var localizeProjectImage = (project) => {
+  if (project.logo) {
+    let dir = encodeURIComponent(PROJECT_IMAGE_FOLDER);
+    project.logo = `/${dir}/${encodeURIComponent(project.name)}.png`;
+  }
+  return project;
+};
+
+var localizeTechstackImage = (stack) => {
+  if (stack[1]) {
+    let dir = encodeURIComponent(TECHSTACK_IMAGE_FOLDER);
+    stack[1] = `/${dir}/${encodeURIComponent(stack[0])}.png`;
+  }
+  return stack;
+};
+
 
 var generateJSON = async () => {
 
@@ -69,6 +146,8 @@ var generateJSON = async () => {
     return false;
   }
 
+  await writeFile('./dist/widget/data.json', dataText);
+
   try {
     let json = JSON.parse(dataText);
     let {
@@ -76,16 +155,19 @@ var generateJSON = async () => {
       projects,
       skills,
       peopleSkills,
-      projectSkills
+      projectSkills,
+      projectMembers
     } = json;
 
     let arrPeople = people.map((item) => {
       return mapSkillsToPeople(item, peopleSkills);
-    });
+    }).map(makeEmailName).map(localizePersonImage);
 
     let arrProjects = projects.map((item) => {
       return mapSkillsToProjects(item, projectSkills);
-    });
+    }).map((item) => {
+      return mapPeopleToProjects(item, projectMembers, arrPeople);
+    }).map(localizeProjectImage);
 
     let counter = {};
     peopleSkills.forEach((item) => {
@@ -107,7 +189,7 @@ var generateJSON = async () => {
         return 0;
       }
       return a[2] > b[2] ? -1 : 1;
-    });
+    }).map(localizeTechstackImage);
 
     let output = {
       people: arrPeople,

@@ -31,11 +31,13 @@ var build = async (source, dist) => {
 
   config.widgetCSSLink = 'http://localhost:8081/ppsloop.widget.css';
   config.widgetJSLink = 'http://localhost:8081/ppsloop.widget.js';
+  config.imagePath = '/img/widgetimage/';
 
   if (ENV === 'production') {
     let revision = bella.createId(10);
     config.widgetCSSLink = `https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css?rev=${revision}`;
     config.widgetJSLink = `https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js?rev=${revision}`;
+    config.imagePath = '/ppsloop/img/widgetimage/';
   }
 
 

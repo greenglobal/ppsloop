@@ -1,4 +1,4 @@
-// compileCSS
+// postify
 
 var readFile = require('./readFile');
 

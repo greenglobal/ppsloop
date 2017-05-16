@@ -137,7 +137,7 @@ var localizeTechstackImage = (stack) => {
 
 var generateJSON = async () => {
 
-  let file = './dist/widget/ppsloop.widget.json';
+  let file = './src/widget/data.json';
 
   let ofile = './src/data.json';
   let dataText = await readFile(ofile);
@@ -145,8 +145,6 @@ var generateJSON = async () => {
     info(`Couldl not generate. ${ofile} not found.`);
     return false;
   }
-
-  await writeFile('./dist/widget/data.json', dataText);
 
   try {
     let json = JSON.parse(dataText);

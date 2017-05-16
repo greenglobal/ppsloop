@@ -5,7 +5,7 @@ var test = require('tape');
 
 require('jsdom-global')();
 
-let data = require('../../dist/widget/ppsloop.widget.json');
+let data = require('../../dist/ppsloop.json');
 
 let PPSW = require('../../src/widget/main');
 

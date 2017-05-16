@@ -1,6 +1,9 @@
 # ppsloop
 Demo animation effect for new home page
 
+[![Build Status](https://travis-ci.org/greenglobal/ppsloop.svg?branch=master)](https://travis-ci.org/greenglobal/ppsloop)
+[![Dependency Status](https://gemnasium.com/badges/github.com/greenglobal/ppsloop.svg)](https://gemnasium.com/github.com/greenglobal/ppsloop)
+
 [![Video](http://i3.ytimg.com/vi/wCwRiyowXO0/maxresdefault.jpg)](https://www.youtube.com/watch?v=wCwRiyowXO0)
 
 ## Usage

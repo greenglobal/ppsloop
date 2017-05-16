@@ -5,6 +5,8 @@ var butternut = require('butternut');
 
 var readFile = require('./readFile');
 
+const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
+
 var minifyJS = (jscode) => {
   let {code} = butternut.squash(jscode, {
     sourceMap: false,
@@ -56,7 +58,8 @@ var compileJS = (jsFiles, source) => {
 
   let js = transpile(myJS);
   let output = [vendorJS, js].join('\n');
-  return minifyJS(output);
+  let s = ENV === 'production' ? minifyJS(output) : output;
+  return s;
 };
 
 module.exports = compileJS;

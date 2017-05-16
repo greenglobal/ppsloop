@@ -2,11 +2,8 @@
  * Import specs
  */
 
-
 var fs = require('fs');
 var path = require('path');
-
-var test = require('tape');
 
 let where = './tests/specs/';
 if (fs.existsSync(where)) {
@@ -15,4 +12,3 @@ if (fs.existsSync(where)) {
   });
 }
 
-test.onFinish(process.exit);

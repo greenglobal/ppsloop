@@ -69,7 +69,7 @@ var processJS = async () => {
       `/** v${version} */`,
       s,
       `PPSW.init(${data});`
-    ].join(';'));
+    ].join('\n'));
 
     writeFile(`${DIST}/widget/ppsloop.widget.json`, data);
     info('Finish compiling JS...');

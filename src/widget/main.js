@@ -805,8 +805,10 @@
       projects = [..._projects];
       techstacks = [..._techstacks];
 
-      let els = doc.all('ppswidget') || [];
-      els.map(setupLayout);
+      if (window.doc) {
+        let els = doc.all('ppswidget') || [];
+        els.map(setupLayout);
+      }
 
     } catch (err) {
       console.error(err);
@@ -833,6 +835,7 @@
     init: (data) => {
       if (!isInitialized) {
         init(data);
+        isInitialized = true;
       }
     },
     isInitialized: () => {

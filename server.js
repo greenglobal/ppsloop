@@ -5,43 +5,60 @@
 
 var minimist = require('minimist');
 var express = require('express');
+
 var builder = require('./builder');
+var {setup, compiler, readFile} = builder;
 
-var consumerApp = express();
+var app = express();
 
-consumerApp.use(express.static('dist'));
+app.use(express.static('src/consumer'));
+app.use((req, res, next) => {
 
-consumerApp.use((req, res) => {
-  return res.status(404).send('File not found');
+  if (req.path === '/widget/ppsloop.css') {
+    return compiler.css().then((css) => {
+      return res.status(200).type('text/css').send(css);
+    }).catch((err) => {
+      return res.status(500).send(err);
+    });
+  }
+
+  if (req.path === '/widget/ppsloop.js') {
+    return compiler.js().then((js) => {
+      return res.status(200).type('text/javascript').send(js);
+    }).catch((err) => {
+      return res.status(500).send(err);
+    });
+  }
+
+  if (req.path === '/widget/ppsloop.json') {
+    let json = readFile('./src/widget/data.json');
+    return res.status(200).type('application/json').send(json);
+  }
+
+  if (req.path === '/widget/ppsloop.init.js') {
+    let json = readFile('./src/widget/data.json');
+    let js = `PPSW.init(${json});`;
+    return res.status(200).type('text/javascript').send(js);
+  }
+
+  return next();
 });
 
-var widgetApp = express();
-
-widgetApp.use(express.static('dist/widget'));
-
-widgetApp.use((req, res) => {
+app.use((req, res) => {
   return res.status(404).send('File not found');
 });
-
 
 var argv = minimist(process.argv.slice(2));
 var port = argv.port || argv.p;
 if (port && port >= 0 && port <= 65535) {
-  consumerApp.listen(port, () => {
+  app.listen(port, () => {
+
+    setup();
     console.log(`Server started running at ${port}`);
     console.log(`http://localhost:${port}`);
-  });
-  let widgetAppPort = port + 1;
-  widgetApp.listen(widgetAppPort, async () => {
-    console.log(`Widget is provided via the following URLs:`);
-    console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.js`);
-    console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.css`);
-    console.log(`http://localhost:${widgetAppPort}/ppsloop.widget.json`);
-    console.log(`http://localhost:${widgetAppPort}/data.json`);
-
-    await builder.start();
-    await builder.prepare();
-    await builder.update();
-    builder.watch();
+    console.log('Data sources:');
+    console.log(`http://localhost:${port}/widget/ppsloop.css`);
+    console.log(`http://localhost:${port}/widget/ppsloop.js`);
+    console.log(`http://localhost:${port}/widget/ppsloop.json`);
   });
 }

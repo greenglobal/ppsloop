@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "7.10"
+  - "7.6"
+before_script:
+  - yarn
+after_success:
+  - npm run build
+  - npm test

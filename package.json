@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "https://techpush.xyz",
@@ -15,7 +15,7 @@
   ],
   "main": "./index.js",
   "engines": {
-    "node": ">= 6.0"
+    "node": ">= 7.6"
   },
   "scripts": {
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
@@ -24,7 +24,7 @@
     "pretest": "eslint .",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
-    "release": "NODE_ENV=production node builder/bin/build",
+    "build": "NODE_ENV=production node builder/bin/build",
     "reset": "node builder/bin/reset"
   },
   "dependencies": {
@@ -33,16 +33,11 @@
     "minimist": "1.x.x"
   },
   "devDependencies": {
-    "babel-core": "6.x.x",
-    "babel-plugin-transform-es5-property-mutators": "6.x.x",
-    "babel-plugin-transform-remove-strict-mode": "0.x.x",
-    "babel-preset-env": "1.x.x",
+    "babel-plugin-external-helpers": "6.x.x",
+    "babel-preset-es2015-rollup": "3.x.x",
     "bellajs": "6.x.x",
-    "butternut": "0.x.x",
-    "cheerio": "0.x.x",
-    "chokidar": "1.x.x",
     "copy-dir": "0.x.x",
-    "css-mqpacker": "5.x.x",
+    "css-mqpacker": "6.x.x",
     "cssnano": "3.x.x",
     "eslint": "3.x.x",
     "eslint-config-ggc": "1.x.x",
@@ -50,14 +45,17 @@
     "jsdom": "10.x.x",
     "jsdom-global": "3.x.x",
     "mkdirp": "0.x.x",
-    "mustache": "2.x.x",
     "node-fetch": "1.x.x",
     "nsp": "2.x.x",
-    "postcss": "5.x.x",
+    "postcss": "6.x.x",
     "postcss-cssnext": "2.x.x",
     "postcss-filter-plugins": "2.x.x",
-    "postcss-nested": "1.x.x",
-    "ramda": "0.x.x",
+    "postcss-nested": "2.x.x",
+    "rollup": "0.x.x",
+    "rollup-plugin-babel": "2.x.x",
+    "rollup-plugin-commonjs": "8.x.x",
+    "rollup-plugin-node-resolve": "3.x.x",
+    "rollup-plugin-uglify": "1.x.x",
     "tap-spec": "4.x.x",
     "tape": "4.x.x"
   },

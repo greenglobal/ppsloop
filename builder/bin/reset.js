@@ -5,6 +5,7 @@ var exec = require('child_process').execSync;
 
 var dirs = [
   join(__dirname, '../../dist'),
+  join(__dirname, '../../docs'),
   join(__dirname, '../../node_modules')
 ];
 

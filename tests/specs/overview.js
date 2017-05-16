@@ -10,10 +10,9 @@ var hasFile = (f) => {
 test('File generation', (assert) => {
   let files = [
     './src/data.json',
-    './dist/widget/data.json',
-    './dist/widget/ppsloop.widget.js',
-    './dist/widget/ppsloop.widget.css',
-    './dist/widget/ppsloop.widget.json'
+    './dist/ppsloop.css',
+    './dist/ppsloop.json',
+    './dist/ppsloop.js'
   ];
 
   files.forEach((f) => {

@@ -20,6 +20,9 @@
   }
 })('PPSW', () => {
 
+  const DEFAULT_AVATAR = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/1b48edb4cfa5a98a42526f942d97f7e9/no-avatar.png';
+  const DEFAULT_PHOTO = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/fcd6027aedffad62752e7e5fd84d12e3/no-image.png';
+
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -100;
 
@@ -357,8 +360,14 @@
       yoe
     } = entry;
 
+    if (image) {
+      image = `${imgPath}${image}`;
+    } else {
+      image = DEFAULT_AVATAR;
+    }
+
     let tpl = `
-      <div class="pps__person-avatar" style="background-image:url(${imgPath}${image})"></div>
+      <div class="pps__person-avatar" style="background-image:url(${image})"></div>
       <div class="pps__person-name">${name}</div>
       <div class="pps__person-exp">${yoe} of experience</div>
     `;
@@ -382,8 +391,12 @@
     atag.setAttribute('title', name);
 
     if (image) {
-      atag.style.backgroundImage = `url(${imgPath}${image})`;
+      image = `${imgPath}${image}`;
+    } else {
+      image = DEFAULT_PHOTO;
     }
+
+    atag.style.backgroundImage = `url(${image})`;
 
     return card;
   };
@@ -476,16 +489,6 @@
 
     updateLeftPanelLogo(skill, data[1]);
 
-    let getTmpAvatars = () => {
-      return people.filter((item) => {
-        return item.image !== '';
-      }).map((item) => {
-        return item.image;
-      });
-    };
-
-    let avatars = getTmpAvatars();
-
     let _people = getPeopleWhoKnow(skill).map((item) => {
       let {
         name,
@@ -502,19 +505,6 @@
       } else {
         let _y = random(1, 9);
         yoe = `${_y} year${_y > 0 ? 's' : ''} of exp`;
-      }
-
-      if (image) {
-        avatars = avatars.filter((src) => {
-          return src !== image;
-        });
-      } else {
-        if (!avatars.length) {
-          avatars = getTmpAvatars();
-        }
-        let k = random(0, avatars.length - 1);
-        image = avatars[k];
-        avatars.splice(k, 1);
       }
 
       return {

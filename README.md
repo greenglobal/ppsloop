@@ -20,13 +20,13 @@ Example:
 <html>
   <head>
     <title>Hello</title>
-    <link rel="stylesheet" href="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css">
+    <link rel="stylesheet" href="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css">
   </head>
   <body>
   <!-- add widget here -->
   <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks" image-path="/img/widgetimage"></PPSWidget>
 
-  <script src="https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js"></script>
+  <script src="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js"></script>
   <script>PPSW.start();</body>
   </body>
 </html>
@@ -105,14 +105,15 @@ Return true if init() has been called at least once early.
 
 - Dev (fast update)
 
-  - [ppsloop.widget.css](https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.css)
-  - [ppsloop.widget.js](https://rawgit.com/greenglobal/ppsloop/master/docs/widget/ppsloop.widget.js)
+  - [ppsloop.css](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css)
+  - [ppsloop.js](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js)
+  - [ppsloop.json](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.json)
 
 - Production (stable)
 
-  - [ppsloop.widget.css](https://cdn.rawgit.com/greenglobal/ppsloop/6c9000a4/docs/widget/ppsloop.widget.css)
-  - [ppsloop.widget.js](https://cdn.rawgit.com/greenglobal/ppsloop/6c9000a4/docs/widget/ppsloop.widget.js)
-
+  - [ppsloop.css](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css)
+  - [ppsloop.js](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js)
+  - [ppsloop.json](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.json)
 
 
 ## Installation

@@ -133,6 +133,8 @@ var localizePersonImage = (person) => {
   if (hasPersonAvatar(person)) {
     let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
     person.image = `/${dir}/${encodeURIComponent(person.email)}.png`;
+  } else {
+    person.image = '';
   }
   return person;
 };
@@ -141,6 +143,8 @@ var localizeProjectImage = (project) => {
   if (hasProjectImage(project)) {
     let dir = encodeURIComponent(PROJECT_IMAGE_FOLDER);
     project.logo = `/${dir}/${encodeURIComponent(project.name)}.png`;
+  } else {
+    project.logo = '';
   }
   return project;
 };

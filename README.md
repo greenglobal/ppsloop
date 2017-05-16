@@ -12,7 +12,6 @@ To add this widget to a web page, you need:
 
 - Include CSS and JS files (see [CDN links](#cdns))
 - Insert `<PPSWidget></PPSWidget>` to right place on the web page
-- Call PPWS.start() method to start rendering the items
 
 Example:
 
@@ -27,7 +26,6 @@ Example:
   <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks" image-path="/img/widgetimage"></PPSWidget>
 
   <script src="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js"></script>
-  <script>PPSW.start();</body>
   </body>
 </html>
 ```

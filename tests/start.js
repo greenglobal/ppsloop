@@ -2,13 +2,13 @@
  * Import specs
  */
 
-var fs = require('fs');
-var path = require('path');
+var files = [
+  'overview',
+  'widget',
+  'widget.apis'
+];
 
-let where = './tests/specs/';
-if (fs.existsSync(where)) {
-  fs.readdirSync(where).forEach((file) => {
-    require(path.join('.' + where, file));
-  });
-}
+files.forEach((fname) => {
+  require(`../tests/specs/${fname}.js`);
+});
 

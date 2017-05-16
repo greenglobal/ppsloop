@@ -50,25 +50,25 @@ Return list of projects.
 Return list of tech stacks.
 
 
-#### getPeopleWhoKnow(skillName)
+#### getPeopleBySkill(skillName)
 
 Return people who has the given skill.
 
 Ex:
 
 ```
-let whoCanUseAngular = PPSW.getPeopleWhoKnow('angular');
+let whoCanUseAngular = PPSW.getPeopleBySkill('angular');
 console.log(whoCanUseAngular);
 ```
 
-#### getProjectsThatUse(skillName)
+#### getProjectStacks(skillName)
 
 Return an array of people who has the given skill.
 
 Ex:
 
 ```
-let whatBuiltWithAngular = PPSW.getProjectsThatUse('angular');
+let whatBuiltWithAngular = PPSW.getProjectStacks('angular');
 console.log(whatBuiltWithAngular);
 ```
 

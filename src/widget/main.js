@@ -80,7 +80,7 @@
     return [...techstacks];
   };
 
-  let getPeopleWhoKnow = (skill) => {
+  let getPeopleBySkill = (skill) => {
     let sk = skill.toLowerCase();
     return getPeople().filter((item) => {
       return item.skills.some((prope) => {
@@ -89,7 +89,7 @@
     });
   };
 
-  let getProjectsThatUse = (skill) => {
+  let getProjectStacks = (skill) => {
     let sk = skill.toLowerCase();
     return getProjects().filter((item) => {
       let stacks = item.stacks.map((st) => {
@@ -489,7 +489,7 @@
 
     updateLeftPanelLogo(skill, data[1]);
 
-    let _people = getPeopleWhoKnow(skill).map((item) => {
+    let _people = getPeopleBySkill(skill).map((item) => {
       let {
         name,
         image,
@@ -521,7 +521,7 @@
     }
     randerPeoplePanel(_people, origin);
 
-    let _projects = getProjectsThatUse(skill);
+    let _projects = getProjectStacks(skill);
     if (_projects.length < 2) {
       _projects = [].concat(_projects, getFakeProjects(2));
     }
@@ -834,8 +834,8 @@
     getPeople,
     getProjects,
     getTechstacks,
-    getPeopleWhoKnow,
-    getProjectsThatUse,
+    getPeopleBySkill,
+    getProjectStacks,
     getProjectMembers
   };
 });

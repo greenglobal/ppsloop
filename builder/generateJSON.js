@@ -4,16 +4,38 @@ var debug = require('debug');
 var info = debug('pps:info');
 var error = debug('pps:error');
 
+var fs = require('fs');
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
 
 var removeAccents = require('../builder/removeAccents');
+var normalizeData = require('../builder/normalizeData');
 
 const THIS_YEAR = (new Date()).getFullYear();
+
+const IMAGE_DIR = './src/consumer/img/widgetimage';
 
 const PERSON_IMAGE_FOLDER = 'People';
 const PROJECT_IMAGE_FOLDER = 'Logo Project';
 const TECHSTACK_IMAGE_FOLDER = 'LogoTechStack';
+
+var hasPersonAvatar = (person) => {
+  let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
+  let file = `${IMAGE_DIR}/${PERSON_IMAGE_FOLDER}/${person.email}.png`;
+  return fs.existsSync(file);
+};
+
+var hasProjectImage = (project) => {
+  let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
+  let file = `${IMAGE_DIR}/${PROJECT_IMAGE_FOLDER}/${project.name}.png`;
+  return fs.existsSync(file);
+};
+
+var hasTechLogo = (stack) => {
+  let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
+  let file = `${IMAGE_DIR}/${TECHSTACK_IMAGE_FOLDER}/${stack[0]}.png`;
+  return fs.existsSync(file);
+};
 
 var getYoE = (begin = 0) => {
   let y = THIS_YEAR - begin;
@@ -111,7 +133,7 @@ var makeEmailName = (person) => {
 };
 
 var localizePersonImage = (person) => {
-  if (person.image) {
+  if (hasPersonAvatar(person)) {
     let dir = encodeURIComponent(PERSON_IMAGE_FOLDER);
     person.image = `/${dir}/${encodeURIComponent(person.email)}.png`;
   }
@@ -119,7 +141,7 @@ var localizePersonImage = (person) => {
 };
 
 var localizeProjectImage = (project) => {
-  if (project.logo) {
+  if (hasProjectImage(project)) {
     let dir = encodeURIComponent(PROJECT_IMAGE_FOLDER);
     project.logo = `/${dir}/${encodeURIComponent(project.name)}.png`;
   }
@@ -127,7 +149,7 @@ var localizeProjectImage = (project) => {
 };
 
 var localizeTechstackImage = (stack) => {
-  if (stack[1]) {
+  if (hasTechLogo(stack)) {
     let dir = encodeURIComponent(TECHSTACK_IMAGE_FOLDER);
     stack[1] = `/${dir}/${encodeURIComponent(stack[0])}.png`;
   }
@@ -148,6 +170,7 @@ var generateJSON = async () => {
 
   try {
     let json = JSON.parse(dataText);
+    let ob = normalizeData(json);
     let {
       people,
       projects,
@@ -155,7 +178,7 @@ var generateJSON = async () => {
       peopleSkills,
       projectSkills,
       projectMembers
-    } = json;
+    } = ob;
 
     let arrPeople = people.map((item) => {
       return mapSkillsToPeople(item, peopleSkills);

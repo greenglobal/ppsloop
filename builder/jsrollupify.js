@@ -1,4 +1,4 @@
-// parseJS
+// rollupify
 
 var debug = require('debug');
 var info = debug('app:info');

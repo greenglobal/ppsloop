@@ -9,8 +9,7 @@ var error = debug('pps:error');
 
 var writeFile = require('./writeFile');
 
-const DATA_SOURCE = 'https://fieldbookcode.com/58dc7b4195b7800300c2f7f3/list';
-// const DATA_SOURCE = 'https://fieldbookcode.com/58dc7b4195b7800300c2f7f3/list-filter';
+const DATA_SOURCE = 'https://fieldbookcode.com/58dc7b4195b7800300c2f7f3/all';
 const DOWNLOAD_AS = './src/data.json';
 
 var getFieldbookData = () => {

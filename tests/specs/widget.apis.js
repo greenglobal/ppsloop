@@ -51,15 +51,40 @@ test('Widget APIs', (assert) => {
     }
   });
 
-  assert.comment(` - Test .getPeopleWhoKnow() method`);
-  let whoKnowJava = PPSW.getPeopleWhoKnow('Java');
-  assert.ok(bella.isArray(whoKnowJava), `Returned - $whoKnowJava = PPSW.getPeopleWhoKnow('Java') - must be an array`);
-  assert.ok(whoKnowJava.length > 0, '$whoKnowJava must contain many entries');
+  assert.comment(` - Test .getPeopleBySkill('Java') method`);
+  let javaDevs = PPSW.getPeopleBySkill('Java');
+  assert.ok(bella.isArray(javaDevs), `Returned - $javaDevs - must be an array`);
+  assert.ok(javaDevs.length > 0, '$javaDevs must contain many entries');
 
   [
     'id', 'name', 'email', 'image', 'skills', 'fullname'
   ].forEach((k) => {
-    assert.ok(bella.hasProperty(whoKnowJava[0], k), `$whoKnowJava entry must have property ${k}`);
+    assert.ok(bella.hasProperty(javaDevs[0], k), `$javaDevs entry must have property ${k}`);
+  });
+
+
+  assert.comment(` - Test .getProjectStacks('AngularJS') method`);
+  let ngProjects = PPSW.getProjectStacks('AngularJS');
+
+  assert.ok(bella.isArray(ngProjects), `Returned - $ngProjects - must be an array`);
+  assert.ok(ngProjects.length > 0, '$ngProjects must contain many entries');
+
+  [
+    'name', 'logo', 'stacks', 'members'
+  ].forEach((k) => {
+    assert.ok(bella.hasProperty(ngProjects[0], k), `$ngProjects entry must have property ${k}`);
+  });
+
+  assert.comment(` - Test .getProjectMembers('Escope') method`);
+  let teamEscope = PPSW.getProjectMembers('Escope');
+
+  assert.ok(bella.isArray(teamEscope), `Returned - $teamEscope - must be an array`);
+  assert.ok(teamEscope.length > 0, '$teamEscope must contain many entries');
+
+  [
+    'person', 'image', 'role'
+  ].forEach((k) => {
+    assert.ok(bella.hasProperty(teamEscope[0], k), `$teamEscope entry must have property ${k}`);
   });
 
   assert.end();

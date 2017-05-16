@@ -22,8 +22,11 @@ test('Widget data', (assert) => {
   ]), 'Widget data must have required properties');
 
   assert.ok(bella.isArray(data.people), 'data.people must be an array');
+  assert.ok(data.people.length > 0, 'data.people must contain entries');
   assert.ok(bella.isArray(data.projects), 'data.projects must be an array');
+  assert.ok(data.projects.length > 0, 'data.projects must contain entries');
   assert.ok(bella.isArray(data.techstacks), 'data.techstacks must be an array');
+  assert.ok(data.techstacks.length > 0, 'data.techstacks must contain entries');
   assert.end();
 });
 
@@ -33,7 +36,7 @@ test('Widget interface', (assert) => {
   let methods = [
     'init', 'isInitialized',
     'getPeople', 'getProjects', 'getTechstacks',
-    'getPeopleWhoKnow', 'getProjectsThatUse', 'getProjectMembers'
+    'getPeopleBySkill', 'getProjectStacks', 'getProjectMembers'
   ];
   assert.ok(hasProps(PPSW, methods), 'PPSW must have required methods');
 

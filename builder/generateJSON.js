@@ -109,7 +109,10 @@ var mapPeopleToProjects = (project, mapper, people = []) => {
         role: item.role
       };
     });
-  });
+  }).reduce((prev, curr) => {
+    return [].concat(prev, curr);
+  }, []);
+
   project.members = members;
   return project;
 };

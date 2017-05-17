@@ -1,4 +1,4 @@
-(() => {
+(function() {
   var container = document.getElementById('projectMemberList');
   var imagePath = '/wp-content/themes/greenglobal-v2/dist/images/widgetimage/People/';
   var template = [

@@ -20,7 +20,7 @@
         members = members.splice(0, 4);
       }
       container.innerHTML = members.filter(function(mem) {
-        return mem.image && mem.name;
+        return mem.image && mem.person;
       }).map(function(mem) {
         var name = mem.person;
         var avatar = imagePath + mem.image;

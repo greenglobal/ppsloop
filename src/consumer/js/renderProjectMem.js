@@ -12,8 +12,8 @@
   ].join('');
 
   var arr = document.URL.split('/');
-  if (container && arr.length === 4) {
-    var alias = arr[2];
+  if (container && arr.length === 5) {
+    var alias = arr[3];
     var members = PPSW.getProjectMembers(alias);
     if (members.length > 0) {
       container.innerHTML = members.filter(function(mem) {

@@ -16,8 +16,11 @@
     var alias = arr[3];
     var members = PPSW.getProjectMembers(alias);
     if (members.length > 0) {
+      if (members.length > 4) {
+        members = members.splice(0, 4);
+      }
       container.innerHTML = members.filter(function(mem) {
-        return mem.image !== '';
+        return mem.image && mem.name;
       }).map(function(mem) {
         var name = mem.person;
         var avatar = imagePath + mem.image;

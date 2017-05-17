@@ -1,6 +1,6 @@
-(() => {
+;(function() {
   var container = document.getElementById('projectMemberList');
-  var imagePath = '/wp-content/themes/greenglobal-v2/dist/images/widgetimage/People/';
+  var imagePath = '/wp-content/themes/greenglobal-v2/dist/images/widgetimage';
   var template = [
     '<div class="team-member">',
       '<div class="avata">',
@@ -12,20 +12,24 @@
   ].join('');
 
   var arr = document.URL.split('/');
-  if (container && arr.length === 4) {
+  if (container && arr.length === 5) {
     var alias = arr[3];
     var members = PPSW.getProjectMembers(alias);
     if (members.length > 0) {
-      var s = '';
-      members.forEach(function(mem) {
+      if (members.length > 4) {
+        members = members.splice(0, 4);
+      }
+      container.innerHTML = members.filter(function(mem) {
+        return mem.image && mem.name;
+      }).map(function(mem) {
         var name = mem.person;
         var avatar = imagePath + mem.image;
-        var role = mem.role;
-        s += template.replace('{{avatar}}', avatar);
-        s += s.replace('{{name}}', name);
-        s += s.replace('{{role}}', role);
-      });
-      container.innerHTML = s;
+        var role = mem.role || '';
+        return template.replace('{{avatar}}', avatar)
+                        .replace('{{name}}', name)
+                        .replace('{{name}}', name)
+                        .replace('{{role}}', role);
+      }).join('');
     }
   }
 })();

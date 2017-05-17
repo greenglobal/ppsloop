@@ -382,11 +382,17 @@
 
     let {
       logo: image,
-      name
+      name,
+      alias
     } = entry;
 
     let atag = doc.add('A', card);
     atag.addClass('pps-inner');
+    let link = `/${alias}`;
+    if (document.URL.indexOf('.greenglobal.vn') === -1) {
+      link = `http://test-v2.greenglobal.vn:9500/${alias}`;
+    }
+    atag.setAttribute('href', link);
 
     atag.setAttribute('title', name);
 
@@ -741,7 +747,7 @@
               ${labels[1]}
             </label>
             <div class="pps__list--project" id="${widgetId}_ppsProjectList"></div>
-            <div class="pps__view-all" id="${widgetId}_ppsProjectViewAll">
+            <div class="pps__view-all pps__is-disabled" id="${widgetId}_ppsProjectViewAll">
               <a class="pps__btn-viewall">View all</a>
             </div>
           </div>

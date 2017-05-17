@@ -102,7 +102,8 @@
   let getProjectMembers = (pname) => {
     let name = pname.toLowerCase();
     let p = getProjects().filter((item) => {
-      return name === item.name.toLowerCase();
+      let nlower = item.name.toLowerCase();
+      return name === nlower || name === item.alias;
     });
     if (p.length > 0) {
       return p[0].members;

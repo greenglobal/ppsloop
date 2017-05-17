@@ -1,5 +1,6 @@
 // generateJSON
 
+var bella = require('bellajs');
 var debug = require('debug');
 var info = debug('pps:info');
 var error = debug('pps:error');
@@ -117,6 +118,12 @@ var mapPeopleToProjects = (project, mapper, people = []) => {
   return project;
 };
 
+var makeProjectAlias = (project) => {
+  let {name} = project;
+  project.alias = bella.createAlias(name);
+  return project;
+};
+
 var makeEmailName = (person) => {
   let fname = person.name;
   person.fullname = fname;
@@ -196,6 +203,8 @@ var generateJSON = async () => {
       return mapSkillsToProjects(item, projectSkills);
     }).map((item) => {
       return mapPeopleToProjects(item, projectMembers, arrPeople);
+    }).map((item) => {
+      return makeProjectAlias(item);
     }).map(localizeProjectImage);
 
     let counter = {};

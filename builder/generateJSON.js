@@ -186,9 +186,13 @@ var generateJSON = async () => {
 
     let arrPeople = people.map((item) => {
       return mapSkillsToPeople(item, peopleSkills);
-    }).map(makeEmailName).map(localizePersonImage);
+    }).map(makeEmailName).filter((entry) => {
+      return hasPersonAvatar(entry);
+    }).map(localizePersonImage);
 
-    let arrProjects = projects.map((item) => {
+    let arrProjects = projects.filter((entry) => {
+      return entry.logo !== '';
+    }).map((item) => {
       return mapSkillsToProjects(item, projectSkills);
     }).map((item) => {
       return mapPeopleToProjects(item, projectMembers, arrPeople);

@@ -369,13 +369,8 @@ PPSWidget {
         text-transform: uppercase;
       }
 
-      &.pps__is-disabled a.pps__btn-viewall {
-        color: #ddd;
-        cursor: default;
-        border: none;
-        &:hover {
-          text-decoration: none;
-        };
+      &.pps__is-disabled {
+        display: none;
       }
     }
   }

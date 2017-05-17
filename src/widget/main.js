@@ -533,6 +533,7 @@
 
     let arr = _projects.map((item) => {
       return {
+        alias: item.alias,
         name: item.name,
         logo: item.logo
       };

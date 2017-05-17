@@ -412,6 +412,11 @@
     if (!isAppend) {
       $elProject.empty();
     }
+
+    if (!ppj.length) {
+      return false;
+    }
+
     let remain = [];
     if (!isAppend && ppj.length > 4) {
       remain = ppj.slice(4, ppj.length);
@@ -487,10 +492,6 @@
     return result;
   };
 
-  let getFakeProjects = (len) => {
-    return stabilize(projects).pick(len);
-  };
-
   let onStackSelect = (data, origin) => {
     let skill = data[0];
 
@@ -529,9 +530,6 @@
     randerPeoplePanel(_people, origin);
 
     let _projects = getProjectStacks(skill);
-    if (_projects.length < 2) {
-      _projects = [].concat(_projects, getFakeProjects(2));
-    }
 
     let arr = _projects.map((item) => {
       return {

@@ -37,7 +37,7 @@ var hasTechLogo = (stack) => {
 
 var getYoE = (begin = 0) => {
   let y = THIS_YEAR - begin;
-  if (y > 20) {
+  if (y > 50) {
     let m = y % 12;
     if (m > 1) {
       return `${m} months`;
@@ -52,7 +52,9 @@ var getYoE = (begin = 0) => {
   if (y === 1) {
     return `${y} year`;
   }
-  return '3 months';
+
+  let ran = Math.floor(Math.random() * 7 + 2);
+  return `${ran} months`;
 };
 
 var mapSkillsToPeople = (person, mapper) => {
@@ -222,11 +224,6 @@ var generateJSON = async () => {
         image
       } = item;
       return [name, image, counter[name] || 0];
-    }).sort((a, b) => {
-      if (a[2] === b[2]) {
-        return 0;
-      }
-      return a[2] > b[2] ? -1 : 1;
     }).map(localizeTechstackImage);
 
     let output = {

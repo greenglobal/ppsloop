@@ -30,11 +30,29 @@ var getProjects = (records) => {
 };
 
 var getSkills = (records) => {
-  return records.map((record) => {
+  let entries = records.map((record) => {
     return {
+      priority: record.priority,
       name: record.name,
       image: record.image || ''
     };
+  });
+
+  entries.sort((a, b) => {
+    let ap = a.priority;
+    let bp = b.priority;
+    if (ap === bp) {
+      return 0;
+    }
+    return ap < bp ? -1 : 1;
+  });
+
+  return entries.map((item) => {
+    let {
+      name,
+      image
+    } = item;
+    return {name, image};
   });
 };
 

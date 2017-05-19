@@ -417,6 +417,8 @@
       return false;
     }
 
+    ppj = stabilize(ppj).shuffle();
+
     let remain = [];
     if (!isAppend && ppj.length > 4) {
       remain = ppj.slice(4, ppj.length);
@@ -463,7 +465,7 @@
 
     $elPeople.empty();
 
-    let result = ppl.map((entry) => {
+    let result = stabilize(ppl).shuffle().map((entry) => {
       let card = buildPersonCard(entry);
       $elPeople.appendChild(card);
       return {

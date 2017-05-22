@@ -25,6 +25,9 @@ Example:
   <!-- add widget here -->
   <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks" image-path="/img/widgetimage"></PPSWidget>
 
+  <!-- or display people only version -->
+  <PPSWidget type="simple" project="escope" image-path="/img/widgetimage/"></PPSWidget>
+
   <script src="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js"></script>
   </body>
 </html>

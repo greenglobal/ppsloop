@@ -601,10 +601,10 @@
   let updateSettings = () => {
     let wsize = $elContentBlock.offsetWidth;
     peoplePerPage = 4;
-    if (wsize < 800) {
+    if (wsize < 840) {
       peoplePerPage = 3;
     }
-    if (wsize < 400) {
+    if (wsize < 420) {
       peoplePerPage = 2;
     }
     let blockPeople = $elContentBlock.querySelector('.pps__block--people');

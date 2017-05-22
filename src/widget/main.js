@@ -26,10 +26,10 @@
 
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -100;
+  const PERSON_CARD_SIZE = 200;
 
   let imgPath = '';
 
-  let peoplePerPage = 4;
   let deltaPaddingLeft = 20;
 
   let people = [];
@@ -137,20 +137,25 @@
     };
   };
 
-  let setupSliderEvents = (id, total = 0) => {
+  var setupSlider = (container, total) => {
+    let wrapper = container.querySelector('.pps__swiper-wrapper');
+    let slider = wrapper.querySelector('.pps__swiper-container');
+    let wsize = wrapper.offsetWidth;
+    let esize = PERSON_CARD_SIZE;
+    let perPage = 1;
 
-    let wd = doc.get(id);
+    while (esize * perPage < wsize) {
+      perPage++;
+    }
 
-    let perPage = peoplePerPage;
-
-    let btns = wd.querySelectorAll('.pps__swiper--nav');
+    let siema;
+    let btns = container.querySelectorAll('.pps__swiper--nav');
 
     let bprev = doc.get(btns[0]);
     let bnext = doc.get(btns[1]);
 
-    let siema;
-
     let resetState = (cslide) => {
+
       bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
       bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
 
@@ -158,7 +163,7 @@
         if (cslide < 1) {
           bprev.addClass('pps__swiper--nav--disable');
           bnext.addClass('pps__swiper--nav--enable');
-        } else if (cslide >= total - perPage) {
+        } else if (cslide >= total - perPage - 1) {
           bprev.addClass('pps__swiper--nav--enable');
           bnext.addClass('pps__swiper--nav--disable');
         } else {
@@ -166,7 +171,7 @@
           bnext.addClass('pps__swiper--nav--enable');
         }
 
-        let els = Array.from(wd.querySelectorAll('.pps__btn-link'));
+        let els = Array.from(container.querySelectorAll('.pps__btn-link'));
         els.forEach((btn) => {
           let b = doc.get(btn);
           let p = doc.get(b.parentNode);
@@ -188,19 +193,16 @@
       }
     };
 
-    let righPanel = doc.all('.pps__frame--right')[0];
-
     siema = new Siema({
-      selector: '.pps__swiper-container',
+      selector: slider,
       duration: 200,
       easing: 'ease-out',
       perPage,
       startIndex: 0,
-      draggable: !(righPanel && righPanel.offsetParent),
+      draggable: true,
       threshold: 20,
       loop: false,
       onInit: () => {
-        $elPeople.style.cursor = 'default';
         resetState(0);
       },
       onChange: () => {
@@ -208,7 +210,7 @@
       }
     });
 
-    return siema;
+    return {siema, perPage};
   };
 
   let setActiveState = (origin) => {
@@ -232,7 +234,7 @@
     };
   };
 
-  let applyEffect = (cards, pointer) => {
+  let applyEffect = (cards, pointer, perPage = 4) => {
 
     let {
       left: pleft,
@@ -243,7 +245,7 @@
 
     let t = 20;
 
-    let arr = cards.splice(0, peoplePerPage);
+    let arr = cards.splice(0, perPage);
 
     let ot = $elSwiperWapper.offsetTop;
     let ol = $elSwiperWapper.offsetLeft;
@@ -487,10 +489,11 @@
       txt = `${total} members`;
     }
     $elTeamNum.html(txt);
-    setupSliderEvents(widgetId, total);
+
+    let {perPage} = setupSlider($elContentBlock, total);
 
     if (peopleCards.length) {
-      applyEffect(peopleCards, pointer);
+      applyEffect(peopleCards, pointer, perPage);
     }
     return result;
   };
@@ -599,14 +602,6 @@
   };
 
   let updateSettings = () => {
-    let wsize = $elContentBlock.offsetWidth;
-    peoplePerPage = 4;
-    if (wsize < 840) {
-      peoplePerPage = 3;
-    }
-    if (wsize < 420) {
-      peoplePerPage = 2;
-    }
     let blockPeople = $elContentBlock.querySelector('.pps__block--people');
     let cstyle = window.getComputedStyle(blockPeople, null);
     let paddingLeft = cstyle.getPropertyValue('padding-left');
@@ -670,7 +665,6 @@
       onStackSelect(pickedStacks[0], el);
     }
 
-
     return isStarted;
   };
 
@@ -720,78 +714,7 @@
 
       container.innerHTML = layout;
 
-      let wrapper = container.querySelector('.pps__swiper-wrapper');
-      let wsize = wrapper.offsetWidth;
-      let esize = 180;
-      let perPage = 1;
-
-      while (esize * perPage < wsize) {
-        perPage++;
-      }
-
-      let siema;
-      let btns = container.querySelectorAll('.pps__swiper--nav');
-
-      let bprev = doc.get(btns[0]);
-      let bnext = doc.get(btns[1]);
-
-      let resetState = (cslide) => {
-
-        bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
-        bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
-
-        if (total > perPage) {
-          if (cslide < 1) {
-            bprev.addClass('pps__swiper--nav--disable');
-            bnext.addClass('pps__swiper--nav--enable');
-          } else if (cslide >= total - perPage - 1) {
-            bprev.addClass('pps__swiper--nav--enable');
-            bnext.addClass('pps__swiper--nav--disable');
-          } else {
-            bprev.addClass('pps__swiper--nav--enable');
-            bnext.addClass('pps__swiper--nav--enable');
-          }
-
-          let els = Array.from(container.querySelectorAll('.pps__btn-link'));
-          els.forEach((btn) => {
-            let b = doc.get(btn);
-            let p = doc.get(b.parentNode);
-            if (p.hasClass('pps__swiper--nav--enable')) {
-              b.addClass('ripple');
-              p.onclick = () => {
-                if (b.hasClass('prev')) {
-                  siema.prev(perPage);
-                } else if (b.hasClass('next')) {
-                  siema.next(perPage);
-                }
-              };
-            } else {
-              setTimeout(() => {
-                b.removeClass('ripple');
-              }, 500);
-            }
-          });
-        }
-      };
-
-      siema = new Siema({
-        selector: '.pps__swiper-container-simple',
-        duration: 200,
-        easing: 'ease-out',
-        perPage,
-        startIndex: 0,
-        draggable: true,
-        threshold: 20,
-        loop: false,
-        onInit: () => {
-          resetState(0);
-        },
-        onChange: () => {
-          resetState(siema.currentSlide);
-        }
-      });
-
-      return siema;
+      setupSlider(container, total, true);
     }
 
     return false;

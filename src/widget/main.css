@@ -186,7 +186,6 @@ PPSWidget {
       background-color: #fff;
       transition: all 300ms ease;
 
-      display: none;
       opacity: 0;
       cursor: default;
 

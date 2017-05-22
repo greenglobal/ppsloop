@@ -55,7 +55,7 @@ var publish = () => {
   let imagePath = '/ppsloop/img/widgetimage/';
 
   let html = readFile(`${dist}/index.html`);
-  html = html.replace('/img/widgetimage/', imagePath);
+  html = html.replace(new RegExp('/img/widgetimage/', 'gi'), imagePath);
   html = html.replace('widget/ppsloop.css', cssLink);
   html = html.replace('widget/ppsloop.js', jsLink);
   html = html.replace('<script type="text/javascript" src="widget/ppsloop.init.js"></script>', '');

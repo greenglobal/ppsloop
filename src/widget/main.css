@@ -220,8 +220,8 @@ PPSWidget {
         }
 
         & .pps__techlogo-image {
-          width: 160px;
-          height: 60px;
+          width: 120px;
+          height: 50px;
           background: transparent none no-repeat center center;
           background-size: contain;
         }
@@ -405,6 +405,11 @@ PPSWidget {
         }
         & .pps__techlogo {
           border-bottom: solid 1px transparent;
+
+          & .pps__techlogo-image {
+            width: 160px;
+            height: 60px;
+          }
 
           & a.pps__techselect-arrow {
             display: none;

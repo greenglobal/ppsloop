@@ -808,7 +808,7 @@
     let labels = [
       'Team',
       'Projects',
-      'Tech stacks'
+      'Our expertise'
     ];
 
     let ipath = container.getAttribute('image-path');

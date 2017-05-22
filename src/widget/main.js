@@ -138,11 +138,13 @@
   };
 
   var setupSlider = (container, total) => {
+
     let wrapper = container.querySelector('.pps__swiper-wrapper');
     let slider = wrapper.querySelector('.pps__swiper-container');
+
+    let perPage = 1;
     let wsize = wrapper.offsetWidth;
     let esize = PERSON_CARD_SIZE;
-    let perPage = 1;
 
     while (esize * perPage < wsize) {
       perPage++;
@@ -700,15 +702,16 @@
     let total = members.length;
 
     if (total > 0) {
-
-      let html = members.filter((mem) => {
-        return mem.image && mem.person;
-      }).map((mem) => {
-        let name = mem.person;
-        let avatar = ipath + mem.image;
-        return template.replace('{{image}}', avatar)
-                        .replace('{{name}}', name);
-      }).join('');
+      let html = stabilize(members)
+                  .shuffle()
+                  .filter((mem) => {
+                    return mem.image && mem.person;
+                  }).map((mem) => {
+                    let name = mem.person;
+                    let avatar = ipath + mem.image;
+                    return template.replace('{{image}}', avatar)
+                                    .replace('{{name}}', name);
+                  }).join('');
 
       layout = layout.replace('{{content}}', html);
 

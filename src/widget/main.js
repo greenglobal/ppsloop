@@ -20,8 +20,9 @@
   }
 })('PPSW', () => {
 
-  const DEFAULT_AVATAR = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/1b48edb4cfa5a98a42526f942d97f7e9/no-avatar.png';
-  const DEFAULT_PHOTO = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/fcd6027aedffad62752e7e5fd84d12e3/no-image.png';
+  const TRELLO_LINK = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/';
+  const DEFAULT_AVATAR = `${TRELLO_LINK}1b48edb4cfa5a98a42526f942d97f7e9/no-avatar.png`;
+  const DEFAULT_PHOTO = `${TRELLO_LINK}fcd6027aedffad62752e7e5fd84d12e3/no-image.png`;
 
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -100;
@@ -714,18 +715,15 @@
       <div class="pps__frame--left">
         <div class="pps__frame--top">
           <div class="pps__techlogo-outer">
-            <label class="pps__label pps__label--no-padding">
-              ${labels[2]}
-            </label>
             <div class="pps__techlogo">
+              <label class="pps__label pps__label--no-padding">${labels[2]}</label>
               <div class="pps__techlogo-image" id="${widgetId}_ppsTechLogo"></div>
-              <div class="pps__select-outer">
-                <select class="pps__select" id="${widgetId}_ppsStackSelector">
-                  <option value="">Choose technology:</option>
-                  ${sltOption}
-                </select>
-              </div>
               <a class="pps__techselect-arrow"></a>
+            </div>
+            <div class="pps__select-outer">
+              <select class="pps__select" id="${widgetId}_ppsStackSelector">
+                ${sltOption}
+              </select>
             </div>
           </div>
           <div class="pps__block--people">

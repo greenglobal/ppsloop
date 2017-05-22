@@ -137,7 +137,7 @@
     };
   };
 
-  var setupSlider = (container, total) => {
+  var setupSlider = (container) => {
 
     let wrapper = container.querySelector('.pps__swiper-wrapper');
     let slider = wrapper.querySelector('.pps__swiper-container');
@@ -161,11 +161,16 @@
       bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
       bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
 
+      let total = slider.querySelectorAll('.pps__swiper-slide').length;
+
+      let max = 1;
+      let min = total - perPage;
+
       if (total > perPage) {
-        if (cslide < 1) {
+        if (cslide < max) {
           bprev.addClass('pps__swiper--nav--disable');
           bnext.addClass('pps__swiper--nav--enable');
-        } else if (cslide >= total - perPage - 1) {
+        } else if (cslide >= min) {
           bprev.addClass('pps__swiper--nav--enable');
           bnext.addClass('pps__swiper--nav--disable');
         } else {
@@ -492,7 +497,7 @@
     }
     $elTeamNum.html(txt);
 
-    let {perPage} = setupSlider($elContentBlock, total);
+    let {perPage} = setupSlider($elContentBlock);
 
     if (peopleCards.length) {
       applyEffect(peopleCards, pointer, perPage);
@@ -716,7 +721,7 @@
 
       container.innerHTML = layout;
 
-      setupSlider(container, total, true);
+      setupSlider(container);
     }
 
     return false;

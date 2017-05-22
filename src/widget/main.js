@@ -674,12 +674,150 @@
     return isStarted;
   };
 
+  var renderSimpleVersion = (container, project) => {
+
+    let ipath = container.getAttribute('image-path');
+    if (ipath) {
+      if (ipath.endsWidth === '/') {
+        ipath = ipath.slice(0, -1);
+      }
+    }
+
+    let layout = `
+      <div class="pps__swiper-wrapper pps__swiper-wrapper-simple">
+        <div class="pps__swiper--nav pps__swiper--prev">
+          <a class="pps__btn-link prev"></a>
+        </div>
+        <div class="pps__swiper-container pps__swiper-container-simple">{{content}}</div>
+        <div class="pps__swiper--nav pps__swiper--next">
+          <a class="pps__btn-link next"></a>
+        </div>
+      </div>
+    `;
+
+    let template = `
+      <div class="pps__swiper-slide">
+        <div class="pps__person-avatar" style="background-image:url({{image}})"></div>
+        <div class="pps__person-name">{{name}}</div>
+      </div>
+    `;
+
+    let members = getProjectMembers(project);
+    let total = members.length;
+
+    if (total > 0) {
+
+      let html = members.filter((mem) => {
+        return mem.image && mem.person;
+      }).map((mem) => {
+        let name = mem.person;
+        let avatar = ipath + mem.image;
+        return template.replace('{{image}}', avatar)
+                        .replace('{{name}}', name);
+      }).join('');
+
+      layout = layout.replace('{{content}}', html);
+
+      container.innerHTML = layout;
+
+      let wrapper = container.querySelector('.pps__swiper-wrapper');
+      let wsize = wrapper.offsetWidth;
+      let esize = 180;
+      let perPage = 1;
+
+      while (esize * perPage < wsize) {
+        perPage++;
+      }
+
+      let siema;
+      let btns = container.querySelectorAll('.pps__swiper--nav');
+
+      let bprev = doc.get(btns[0]);
+      let bnext = doc.get(btns[1]);
+
+      let resetState = (cslide) => {
+
+        bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
+        bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
+
+        if (total > perPage) {
+          if (cslide < 1) {
+            bprev.addClass('pps__swiper--nav--disable');
+            bnext.addClass('pps__swiper--nav--enable');
+          } else if (cslide >= total - perPage - 1) {
+            bprev.addClass('pps__swiper--nav--enable');
+            bnext.addClass('pps__swiper--nav--disable');
+          } else {
+            bprev.addClass('pps__swiper--nav--enable');
+            bnext.addClass('pps__swiper--nav--enable');
+          }
+
+          let els = Array.from(container.querySelectorAll('.pps__btn-link'));
+          els.forEach((btn) => {
+            let b = doc.get(btn);
+            let p = doc.get(b.parentNode);
+            if (p.hasClass('pps__swiper--nav--enable')) {
+              b.addClass('ripple');
+              p.onclick = () => {
+                if (b.hasClass('prev')) {
+                  siema.prev(perPage);
+                } else if (b.hasClass('next')) {
+                  siema.next(perPage);
+                }
+              };
+            } else {
+              setTimeout(() => {
+                b.removeClass('ripple');
+              }, 500);
+            }
+          });
+        }
+      };
+
+      siema = new Siema({
+        selector: '.pps__swiper-container-simple',
+        duration: 200,
+        easing: 'ease-out',
+        perPage,
+        startIndex: 0,
+        draggable: true,
+        threshold: 20,
+        loop: false,
+        onInit: () => {
+          resetState(0);
+        },
+        onChange: () => {
+          resetState(siema.currentSlide);
+        }
+      });
+
+      return siema;
+    }
+
+    return false;
+  };
+
   let setupLayout = (container) => {
+
+    let type = container.getAttribute('type');
+    if (type === 'simple') {
+      let prj = container.getAttribute('project');
+      return renderSimpleVersion(container, prj);
+    }
+
     let labels = [
       'Team',
       'Projects',
       'Tech stacks'
     ];
+
+    let ipath = container.getAttribute('image-path');
+    if (ipath) {
+      if (ipath.endsWidth === '/') {
+        ipath = ipath.slice(0, -1);
+      }
+      imgPath = ipath;
+    }
 
     widgetId = container.getAttribute('id');
     let attrSectionLabel = container.getAttribute('section-labels');
@@ -690,14 +828,6 @@
           labels[i] = arrLabels[i];
         }
       }
-    }
-
-    let ipath = container.getAttribute('image-path');
-    if (ipath) {
-      if (ipath.endsWidth === '/') {
-        ipath = ipath.slice(0, -1);
-      }
-      imgPath = ipath;
     }
 
     let contentBlock = doc.add('DIV', container);
@@ -762,6 +892,7 @@
         </div>
       </div>
     `;
+
     contentBlock.html(layout);
 
     $elStack = doc.get(`${widgetId}_ppsStackList`);
@@ -787,6 +918,8 @@
     window.onscroll = onscroll;
 
     onscroll();
+
+    return container;
   };
 
   let init = (json) => {

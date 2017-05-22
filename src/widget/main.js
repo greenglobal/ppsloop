@@ -698,20 +698,19 @@
       </div>
     `;
 
-    let members = getProjectMembers(project);
+    let members = getProjectMembers(project).filter((mem) => {
+      return mem.image && mem.person;
+    });
+
     let total = members.length;
 
     if (total > 0) {
-      let html = stabilize(members)
-                  .shuffle()
-                  .filter((mem) => {
-                    return mem.image && mem.person;
-                  }).map((mem) => {
-                    let name = mem.person;
-                    let avatar = ipath + mem.image;
-                    return template.replace('{{image}}', avatar)
-                                    .replace('{{name}}', name);
-                  }).join('');
+      let html = stabilize(members).shuffle().map((mem) => {
+        let name = mem.person;
+        let avatar = ipath + mem.image;
+        return template.replace('{{image}}', avatar)
+                        .replace('{{name}}', name);
+      }).join('');
 
       layout = layout.replace('{{content}}', html);
 

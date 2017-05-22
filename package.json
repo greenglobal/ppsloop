@@ -42,7 +42,7 @@
     "eslint": "3.x.x",
     "eslint-config-ggc": "1.x.x",
     "html-minifier": "3.x.x",
-    "jsdom": "10.x.x",
+    "jsdom": "11.x.x",
     "jsdom-global": "3.x.x",
     "mkdirp": "0.x.x",
     "node-fetch": "1.x.x",
@@ -55,7 +55,7 @@
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",
     "rollup-plugin-node-resolve": "3.x.x",
-    "rollup-plugin-uglify": "1.x.x",
+    "rollup-plugin-uglify": "2.x.x",
     "tap-spec": "4.x.x",
     "tape": "4.x.x"
   },

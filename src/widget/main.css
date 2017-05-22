@@ -6,7 +6,7 @@ PPSWidget * {
 }
 
 :root {
-  --widgetMinWidth: 300px;
+  --widgetMinWidth: 260px;
   --widgetMinHeight: 400px;
   --widgetMinHeightFull: 600px;
   --widgetMaxWidth: 1280px;
@@ -188,7 +188,6 @@ PPSWidget {
 
       & .pps__frame--top {
         width: 100%;
-        height: 390px;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -254,15 +253,15 @@ PPSWidget {
     }
 
     & .pps__block--project {
-      padding: 0px 0px 20px;
+      padding: 10px 0px 20px;
     }
 
     & .pps__list--project {
-      padding: 10px;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
+      padding: 5px;
 
       & .pps__list--project-item {
         width: 49%;
@@ -287,7 +286,7 @@ PPSWidget {
     }
 
     & .pps__list--stack {
-      padding: 10px;
+      padding: 5px;
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
@@ -423,7 +422,7 @@ PPSWidget {
       }
 
       & .pps__block--project {
-        padding: 0px 20px 20px;
+        padding: 10px 20px 20px;
       }
       & .pps__list--project {
         & .pps__list--project-item {

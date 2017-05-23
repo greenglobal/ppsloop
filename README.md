@@ -3,6 +3,7 @@ Demo animation effect for new home page
 
 [![Build Status](https://travis-ci.org/greenglobal/ppsloop.svg?branch=master)](https://travis-ci.org/greenglobal/ppsloop)
 [![Dependency Status](https://gemnasium.com/badges/github.com/greenglobal/ppsloop.svg)](https://gemnasium.com/github.com/greenglobal/ppsloop)
+[![NSP Status](https://nodesecurity.io/orgs/techpush/projects/94c68af0-9eee-4861-8cb8-07939b3ba87b/badge)](https://nodesecurity.io/orgs/techpush/projects/94c68af0-9eee-4861-8cb8-07939b3ba87b)
 
 [![Video](https://raw.githubusercontent.com/greenglobal/ppsloop/dev/docs/img/screenshot.png)](https://youtu.be/oLzDV8Va2vE)
 

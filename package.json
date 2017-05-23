@@ -1,5 +1,5 @@
 {
-  "version": "0.5.31",
+  "version": "0.5.32",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "https://techpush.xyz",
@@ -55,9 +55,9 @@
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",
     "rollup-plugin-node-resolve": "3.x.x",
-    "rollup-plugin-uglify": "2.x.x",
     "tap-spec": "4.x.x",
-    "tape": "4.x.x"
+    "tape": "4.x.x",
+    "uglify-js": "3.x.x"
   },
   "license": "MIT"
 }

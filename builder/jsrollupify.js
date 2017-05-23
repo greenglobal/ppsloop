@@ -9,11 +9,17 @@ var rollup = require('rollup');
 var babel = require('rollup-plugin-babel');
 var nodeResolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
-var uglify = require('rollup-plugin-uglify');
+
+var UglifyJS = require('uglify-js');
 
 var readFile = require('./readFile');
 
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
+
+var jsminify = (source = '') => {
+  let {code} = UglifyJS.minify(source);
+  return code;
+};
 
 var rollupify = (entry) => {
   info('Rollup start...');
@@ -40,8 +46,7 @@ var rollupify = (entry) => {
         plugins: [
           'external-helpers'
         ]
-      }),
-      ENV === 'production' && uglify()
+      })
     ]
   }).then((bundle) => {
     info('Generating code with bundle...');
@@ -51,7 +56,11 @@ var rollupify = (entry) => {
       moduleName: 'PPSW'
     });
     info('Rolling finished.');
-    return result.code;
+    let {code} = result;
+    if (ENV === 'production') {
+      return jsminify(code);
+    }
+    return code;
   }).catch((err) => {
     error(err);
   });

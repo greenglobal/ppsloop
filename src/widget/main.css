@@ -14,7 +14,8 @@ PPSWidget * {
   --swiperNavWidth: 30px;
   --peopleAvatar: 150px;
 
-  --fontFamily: Roboto;
+  --fontFamily: Roboto-Regular;
+  --boldTextFontFamily: Roboto-Bold;
 
   --transitionTimer: 400ms;
 }
@@ -61,6 +62,7 @@ PPSWidget {
       padding: 20px 0px;
       background-color: #fff;
     }
+
   }
 
   & .pps__swiper-container {
@@ -92,6 +94,11 @@ PPSWidget {
   }
   .pps__swiper--nav--disable {
     opacity: 0.4;
+  }
+
+  & .pps__swiper-wrapper:hover .pps__swiper--nav--enable .pps__btn-link {
+    background-color: rgba(221, 255, 221, .5);
+    transition: all ease .5s
   }
 
   & .pps__swiper--prev {
@@ -160,6 +167,7 @@ PPSWidget {
     margin: auto;
 
     & label.pps__label {
+      font-family: var(--boldTextFontFamily);
       font-size: 16px;
       font-weight: 800;
       line-height: 2;

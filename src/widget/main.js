@@ -67,10 +67,6 @@
     return true;
   };
 
-  let random = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  };
-
   let getPeople = () => {
     return [...people];
   };
@@ -471,7 +467,20 @@
 
   let randerPeoplePanel = (ppl, origin) => {
 
-    let pointer = getLocatePoint(origin);
+    let pointer;
+    let righPanel = doc.all('.pps__frame--right')[0];
+
+    if (righPanel && righPanel.offsetParent) {
+      pointer = getLocatePoint(origin);
+    } else {
+      pointer = getLocatePoint($elLogo);
+      let {
+        width,
+        height
+      } = pointer;
+      pointer.left += width / 2;
+      pointer.top += height / 2;
+    }
 
     $elPeople.empty();
 
@@ -520,13 +529,7 @@
         return sk[0] === skill;
       });
 
-      let yoe = '';
-      if (yys.length) {
-        yoe = yys[0][1];
-      } else {
-        let _y = random(1, 9);
-        yoe = `${_y} year${_y > 0 ? 's' : ''} of exp`;
-      }
+      let yoe = yys[0][1];
 
       return {
         name,
@@ -614,7 +617,7 @@
     let paddingLeft = cstyle.getPropertyValue('padding-left');
     if (paddingLeft) {
       let pl = parseInt(paddingLeft, 10);
-      deltaPaddingLeft = pl ? pl + 5 : -5;
+      deltaPaddingLeft = pl ? pl + 5 : 20;
     }
   };
 

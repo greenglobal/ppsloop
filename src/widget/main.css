@@ -97,8 +97,8 @@ PPSWidget {
   }
 
   & .pps__swiper-wrapper:hover .pps__swiper--nav--enable .pps__btn-link {
-    background-color: rgba(221, 255, 221, .5);
-    transition: all ease .5s
+    background-color: rgba(221, 215, 221, .4);
+    transition: background-color ease .5s
   }
 
   & .pps__swiper--prev {

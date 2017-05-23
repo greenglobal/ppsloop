@@ -295,7 +295,7 @@
       });
       node.style.left = `${pleft + pwidth / 2}px`;
       node.style.top = `${ptop - pheight / 2}px`;
-      node.style.transform = 'scale(0.05)';
+      node.style.transform = 'scale(0.1)';
 
       $elContentBlock.appendChild(node);
 
@@ -425,7 +425,7 @@
         card.removeClass('pps-card--transition');
       }, t);
 
-      t += 20;
+      t += 60;
 
       return {
         $el: card,

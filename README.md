@@ -4,7 +4,7 @@ Demo animation effect for new home page
 [![Build Status](https://travis-ci.org/greenglobal/ppsloop.svg?branch=master)](https://travis-ci.org/greenglobal/ppsloop)
 [![Dependency Status](https://gemnasium.com/badges/github.com/greenglobal/ppsloop.svg)](https://gemnasium.com/github.com/greenglobal/ppsloop)
 
-[![Video](https://raw.githubusercontent.com/greenglobal/ppsloop/dev/docs/img/screenshot.png)](https://www.youtube.com/watch?v=wCwRiyowXO0)
+[![Video](https://raw.githubusercontent.com/greenglobal/ppsloop/dev/docs/img/screenshot.png)](https://youtu.be/oLzDV8Va2vE)
 
 ## Usage
 

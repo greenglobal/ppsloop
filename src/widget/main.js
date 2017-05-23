@@ -25,7 +25,7 @@
   const DEFAULT_PHOTO = `${TRELLO_LINK}fcd6027aedffad62752e7e5fd84d12e3/no-image.png`;
 
   const TECH_STACK_NUMBER = 27;
-  const DELTA_TO_START = -100;
+  const DELTA_TO_START = -80;
   const PERSON_CARD_SIZE = 200;
 
   let imgPath = '';
@@ -850,7 +850,7 @@
     window.onresize = onresize;
     window.onscroll = onscroll;
 
-    onscroll();
+    window.onload = onscroll;
 
     return container;
   };

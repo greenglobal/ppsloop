@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema */
+/* global doc Siema */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -59,6 +59,16 @@
       return [].slice.call(arr);
     };
   }
+
+  let shuffle = (arr) => {
+    return arr.sort(() => {
+      let r = Math.random();
+      if (r === 0 || r === 0.5 || r === 1) {
+        return 0;
+      }
+      return r > 0.5;
+    });
+  };
 
   let getPeople = () => {
     return [...people];
@@ -392,7 +402,7 @@
       return false;
     }
 
-    ppj = stabilize(ppj).shuffle();
+    ppj = shuffle(ppj);
 
     let remain = [];
     if (!isAppend && ppj.length > 4) {
@@ -454,7 +464,7 @@
 
     $elPeople.empty();
 
-    let result = stabilize(ppl).shuffle().map((entry) => {
+    let result = shuffle(ppl).map((entry) => {
       let card = buildPersonCard(entry);
       $elPeople.appendChild(card);
       return {
@@ -511,7 +521,12 @@
     setActiveState(origin);
 
     if (_people.length > 1) {
-      _people = stabilize(_people).msort({yoe: -1});
+      _people.sort((a, b) => {
+        if (a.yoe === b.yoe) {
+          return 0;
+        }
+        return a.yoe > b.yoe;
+      });
     }
     randerPeoplePanel(_people, origin);
 
@@ -526,7 +541,7 @@
     });
 
     if (arr.length > 1) {
-      arr = stabilize(_projects).shuffle();
+      arr = shuffle(_projects);
     }
 
     randerProjectPanel(arr);
@@ -673,7 +688,7 @@
     let total = members.length;
 
     if (total > 0) {
-      let html = stabilize(members).shuffle().map((mem) => {
+      let html = shuffle(members).map((mem) => {
         let name = mem.person;
         let avatar = ipath + mem.image;
         return template.replace('{{image}}', avatar)

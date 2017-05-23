@@ -200,7 +200,7 @@ var generateJSON = async () => {
     }).map(localizePersonImage);
 
     let arrProjects = projects.filter((entry) => {
-      return entry.logo !== '';
+      return hasProjectImage(entry);
     }).map((item) => {
       return mapSkillsToProjects(item, projectSkills);
     }).map((item) => {

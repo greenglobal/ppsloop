@@ -466,13 +466,13 @@ PPSWidget {
 @media (width >= 760px) and (width <= 1000px) {
   PPSWidget {
     & .pps__wrapper--fluid {
-      & .pps__list--stack {
-        & .pps__list--stack-item {
-          width: 49%;
-          & a.inner {
-            height: 40px;
-          }
-        }
+
+      & .pps__frame--left {
+        min-width: 60%;
+      }
+
+      & .pps__frame--right {
+        min-width: 40%;
       }
 
       & .pps__list--project {

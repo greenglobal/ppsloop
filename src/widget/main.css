@@ -270,6 +270,14 @@ PPSWidget {
         width: 49%;
         float: left;
         padding: 7px;
+        opacity: 1;
+        transform: translateX(0px);
+
+        &.pps-card--transition {
+          transition: all 100ms;
+          opacity: 0.3;
+          transform: translateX(1000px);
+        }
 
         & a.pps-inner {
           display: block;

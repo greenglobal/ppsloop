@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc stabilize Siema */
+/* global doc Siema */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -59,12 +59,15 @@
       return [].slice.call(arr);
     };
   }
-  let onscroll = () => {
-    return true;
-  };
 
-  let onresize = () => {
-    return true;
+  let shuffle = (arr) => {
+    return arr.sort(() => {
+      let r = Math.random();
+      if (r === 0 || r === 0.5 || r === 1) {
+        return 0;
+      }
+      return r > 0.5;
+    });
   };
 
   let getPeople = () => {
@@ -316,25 +319,6 @@
     });
   };
 
-  let applySimpleEffect = (cards) => {
-    let timeout = 10;
-    cards.filter((item) => {
-      return item && item.$el;
-    }).map((item) => {
-      return item.$el;
-    }).map((el) => {
-      el.style.opacity = '0.1';
-      el.style.transform = `translate(400px, 0px)`;
-      return el;
-    }).forEach((el) => {
-      setTimeout(() => {
-        el.style.opacity = '1.0';
-        el.style.transform = `translate(0px, 0px)`;
-      }, timeout);
-      timeout += 30;
-    });
-  };
-
   let buildStackCard = (entry) => {
     let card = doc.create('DIV');
     card.addClass('pps__list--stack-item');
@@ -385,7 +369,7 @@
 
   let buildProjectCard = (entry) => {
     let card = doc.create('DIV');
-    card.addClass('pps__list--project-item pps-card');
+    card.addClass('pps__list--project-item pps-card pps-card--transition');
 
     let {
       logo: image,
@@ -395,12 +379,7 @@
 
     let atag = doc.add('A', card);
     atag.addClass('pps-inner');
-    let link = `/${alias}`;
-    if (document.URL.indexOf('.greenglobal.vn') === -1) {
-      link = `http://test-v2.greenglobal.vn:9500/${alias}`;
-    }
-    atag.setAttribute('href', link);
-
+    atag.setAttribute('href', `/${alias}`);
     atag.setAttribute('title', name);
 
     if (image) {
@@ -423,7 +402,7 @@
       return false;
     }
 
-    ppj = stabilize(ppj).shuffle();
+    ppj = shuffle(ppj);
 
     let remain = [];
     if (!isAppend && ppj.length > 4) {
@@ -432,6 +411,7 @@
       ppj = arr;
     }
 
+    let t = 20;
     let result = ppj.map((entry) => {
       let card = buildProjectCard(entry);
       if (isAppend) {
@@ -440,18 +420,18 @@
       } else {
         $elProject.appendChild(card);
       }
+
+      setTimeout(() => {
+        card.removeClass('pps-card--transition');
+      }, t);
+
+      t += 20;
+
       return {
         $el: card,
         data: entry
       };
     });
-    let projectCards = result.reduce((prev, curr) => {
-      return prev.concat(curr);
-    }, []);
-
-    if (projectCards.length) {
-      applySimpleEffect(projectCards);
-    }
 
     $btnViewAllProject.onclick = null;
     $btnViewAllProject.addClass('pps__is-disabled');
@@ -484,7 +464,7 @@
 
     $elPeople.empty();
 
-    let result = stabilize(ppl).shuffle().map((entry) => {
+    let result = shuffle(ppl).map((entry) => {
       let card = buildPersonCard(entry);
       $elPeople.appendChild(card);
       return {
@@ -541,7 +521,12 @@
     setActiveState(origin);
 
     if (_people.length > 1) {
-      _people = stabilize(_people).msort({yoe: -1});
+      _people.sort((a, b) => {
+        if (a.yoe === b.yoe) {
+          return 0;
+        }
+        return a.yoe > b.yoe;
+      });
     }
     randerPeoplePanel(_people, origin);
 
@@ -556,7 +541,7 @@
     });
 
     if (arr.length > 1) {
-      arr = stabilize(_projects).shuffle();
+      arr = shuffle(_projects);
     }
 
     randerProjectPanel(arr);
@@ -609,16 +594,6 @@
         data: entry
       };
     }).map(setupStackClickEvent);
-  };
-
-  let updateSettings = () => {
-    let blockPeople = $elContentBlock.querySelector('.pps__block--people');
-    let cstyle = window.getComputedStyle(blockPeople, null);
-    let paddingLeft = cstyle.getPropertyValue('padding-left');
-    if (paddingLeft) {
-      let pl = parseInt(paddingLeft, 10);
-      deltaPaddingLeft = pl ? pl + 5 : 20;
-    }
   };
 
   let activateRipple = (target) => {
@@ -713,7 +688,7 @@
     let total = members.length;
 
     if (total > 0) {
-      let html = stabilize(members).shuffle().map((mem) => {
+      let html = shuffle(members).map((mem) => {
         let name = mem.person;
         let avatar = ipath + mem.image;
         return template.replace('{{image}}', avatar)
@@ -841,16 +816,37 @@
 
     $btnViewAllProject = doc.get(`${widgetId}_ppsProjectViewAll`);
 
-    updateSettings();
+    let onscroll = () => {
+      if (!isStarted) {
+        let offsetTop = getPosition($elContentBlock).y;
+        let wHeight = window.innerHeight;
+        let delta = offsetTop - wHeight;
+        if (delta < DELTA_TO_START) {
+          start(delta, offsetTop, wHeight);
+        }
+      }
+    };
+
+    let onresize = () => {
+      let blockPeople = $elContentBlock.querySelector('.pps__block--people');
+      let cstyle = window.getComputedStyle(blockPeople, null);
+      let paddingLeft = cstyle.getPropertyValue('padding-left');
+      if (paddingLeft) {
+        let pl = parseInt(paddingLeft, 10);
+        deltaPaddingLeft = pl ? pl + 5 : 20;
+      }
+    };
 
     setupSelectorEvent();
-
     randerStackPanel(pickedStacks);
 
     window.onresize = onresize;
     window.onscroll = onscroll;
 
-    window.onload = onscroll;
+    window.onload = () => {
+      onresize();
+      onscroll();
+    };
 
     return container;
   };
@@ -877,21 +873,6 @@
     }
   };
 
-  onscroll = () => {
-    if (!isStarted) {
-      let offsetTop = getPosition($elContentBlock).y;
-      let wHeight = window.innerHeight;
-      let delta = offsetTop - wHeight;
-      if (delta < DELTA_TO_START) {
-        start(delta, offsetTop, wHeight);
-      }
-    }
-
-  };
-
-  onresize = () => {
-    updateSettings();
-  };
 
   return {
     init: (data) => {

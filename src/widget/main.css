@@ -273,7 +273,7 @@ PPSWidget {
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
-      padding: 5px;
+      padding: 1px 5px;
 
       & .pps__list--project-item {
         width: 49%;

@@ -701,34 +701,27 @@
     return false;
   };
 
-  let preloadImages = (arr) => {
-    let P = new Image();
-    arr.forEach((img) => {
-      P.onerror = () => {
-        console.log(`Couldn't load the image "${img}"`);
+  let preloadImages = (images) => {
+
+    let preload = () => {
+
+      let src = images.shift();
+
+      let next = () => {
+        if (images.length > 0) {
+          preload();
+        }
       };
-      P.src = imgPath + img;
-    });
+
+      let P = new Image();
+      P.onerror = next;
+      P.onload = next;
+      P.src = imgPath + src;
+    };
+
+    preload();
   };
 
-
-  let extractImages = () => {
-    let peopleAvatars = people.map((item) => {
-      return item.image;
-    });
-
-    let projectLogos = projects.map((item) => {
-      return item.logo;
-    });
-
-    let techLogos = techstacks.map((item) => {
-      return item[1];
-    });
-
-    let arr = techLogos.concat(peopleAvatars, projectLogos);
-
-    return preloadImages(arr);
-  };
 
   let setupLayout = (container) => {
 
@@ -752,7 +745,15 @@
       imgPath = ipath;
     }
 
-    extractImages();
+    let avatars = people.map((item) => {
+      return item.image;
+    });
+
+    let logos = projects.map((item) => {
+      return item.logo;
+    });
+
+    preloadImages(avatars.concat(logos));
 
     widgetId = container.getAttribute('id');
     let attrSectionLabel = container.getAttribute('section-labels');

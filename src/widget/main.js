@@ -20,10 +20,6 @@
   }
 })('PPSW', () => {
 
-  const TRELLO_LINK = 'https://trello-attachments.s3.amazonaws.com/5718abe55503a09d21d311cc/58ddb4c8718b316eb81fea48/';
-  const DEFAULT_AVATAR = `${TRELLO_LINK}1b48edb4cfa5a98a42526f942d97f7e9/no-avatar.png`;
-  const DEFAULT_PHOTO = `${TRELLO_LINK}fcd6027aedffad62752e7e5fd84d12e3/no-image.png`;
-
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -80;
   const PERSON_CARD_SIZE = 200;
@@ -351,19 +347,22 @@
       yoe
     } = entry;
 
+    let $avatar = doc.add('DIV', card);
+    $avatar.addClass('pps__person-avatar');
+
     if (image) {
       image = `${imgPath}${image}`;
-    } else {
-      image = DEFAULT_AVATAR;
+      $avatar.style.backgroundImage = `url(${image})`;
     }
 
-    let tpl = `
-      <div class="pps__person-avatar" style="background-image:url(${image})"></div>
-      <div class="pps__person-name">${name}</div>
-      <div class="pps__person-exp">${yoe} of experience</div>
-    `;
+    let $name = doc.add('DIV', card);
+    $name.addClass('pps__person-name');
+    $name.html(name);
 
-    card.html(tpl);
+    let $exp = doc.add('DIV', card);
+    $exp.addClass('pps__person-exp');
+    $exp.html(`${yoe} of experience`);
+
     return card;
   };
 
@@ -384,11 +383,8 @@
 
     if (image) {
       image = `${imgPath}${image}`;
-    } else {
-      image = DEFAULT_PHOTO;
+      atag.style.backgroundImage = `url(${image})`;
     }
-
-    atag.style.backgroundImage = `url(${image})`;
 
     return card;
   };
@@ -705,6 +701,35 @@
     return false;
   };
 
+  let preloadImages = (arr) => {
+    let P = new Image();
+    arr.forEach((img) => {
+      P.onerror = () => {
+        console.log(`Couldn't load the image "${img}"`);
+      };
+      P.src = imgPath + img;
+    });
+  };
+
+
+  let extractImages = () => {
+    let peopleAvatars = people.map((item) => {
+      return item.image;
+    });
+
+    let projectLogos = projects.map((item) => {
+      return item.logo;
+    });
+
+    let techLogos = techstacks.map((item) => {
+      return item[1];
+    });
+
+    let arr = techLogos.concat(peopleAvatars, projectLogos);
+
+    return preloadImages(arr);
+  };
+
   let setupLayout = (container) => {
 
     let type = container.getAttribute('type');
@@ -721,11 +746,13 @@
 
     let ipath = container.getAttribute('image-path');
     if (ipath) {
-      if (ipath.endsWidth === '/') {
+      if (ipath.endsWith('/')) {
         ipath = ipath.slice(0, -1);
       }
       imgPath = ipath;
     }
+
+    extractImages();
 
     widgetId = container.getAttribute('id');
     let attrSectionLabel = container.getAttribute('section-labels');

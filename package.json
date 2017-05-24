@@ -1,17 +1,18 @@
 {
-  "version": "0.5.48",
+  "version": "0.5.51",
   "name": "ppsw",
   "description": "ppsloop demo",
-  "homepage": "https://techpush.xyz",
+  "homepage": "http://beta.greenglobal.vn",
   "repository": {
     "type": "git",
     "url": "git@github.com:greenglobal/ppsloop.git"
   },
   "author": "@ndaidong",
   "keywords": [
+    "animation",
+    "widget",
     "presentation",
-    "slideshow",
-    "revealjs"
+    "slideshow"
   ],
   "main": "./index.js",
   "engines": {

@@ -10,14 +10,14 @@ var babel = require('rollup-plugin-babel');
 var nodeResolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
 
-var UglifyJS = require('uglify-js');
+var {minify} = require('uglify-js');
 
 var readFile = require('./readFile');
 
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 var jsminify = (source = '') => {
-  let {code} = UglifyJS.minify(source);
+  let {code} = minify(source);
   return code;
 };
 

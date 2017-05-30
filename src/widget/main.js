@@ -343,8 +343,7 @@
 
     let {
       image,
-      name,
-      yoe
+      name
     } = entry;
 
     let $avatar = doc.add('DIV', card);
@@ -358,10 +357,6 @@
     let $name = doc.add('DIV', card);
     $name.addClass('pps__person-name');
     $name.html(name);
-
-    let $exp = doc.add('DIV', card);
-    $exp.addClass('pps__person-exp');
-    $exp.html(`${yoe} of experience`);
 
     return card;
   };
@@ -431,8 +426,11 @@
 
     $btnViewAllProject.onclick = null;
     $btnViewAllProject.addClass('pps__is-disabled');
-    if (remain.length > 0) {
+
+    let rest = remain.length;
+    if (rest > 0) {
       $btnViewAllProject.removeClass('pps__is-disabled');
+      $btnViewAllProject.html(`<a class="pps__btn-viewall"><b>+${rest}</b> more</a>`);
       $btnViewAllProject.onclick = () => {
         randerProjectPanel(remain, true);
       };

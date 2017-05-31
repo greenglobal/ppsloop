@@ -29,15 +29,11 @@ var rollupify = (entry) => {
       nodeResolve({
         module: true,
         jsnext: true,
-        main: true,
         extensions: [
-          '.js',
-          '.json'
+          '.js'
         ]
       }),
-      commonjs({
-        include: 'node_modules/**'
-      }),
+      commonjs(),
       babel({
         babelrc: false,
         exclude: 'node_modules/**',

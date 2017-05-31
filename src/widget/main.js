@@ -11,7 +11,7 @@ import {
   create as createElement,
   queryAll,
   Event
-} from './vendor/realdom.js';
+} from 'realdom';
 
 const TECH_STACK_NUMBER = 27;
 const DELTA_TO_START = -80;

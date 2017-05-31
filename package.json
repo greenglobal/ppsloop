@@ -1,5 +1,5 @@
 {
-  "version": "0.6.02",
+  "version": "0.6.1",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -14,7 +14,9 @@
     "presentation",
     "slideshow"
   ],
-  "main": "./index.js",
+  "main": "./dist/ppsloop.js",
+  "module": "./src/widget/main.js",
+  "jsnext:main": "./src/widget/main.js",
   "engines": {
     "node": ">= 7.6"
   },
@@ -53,7 +55,7 @@
     "postcss-cssnext": "2.x.x",
     "postcss-filter-plugins": "2.x.x",
     "postcss-nested": "2.x.x",
-    "realdom": "3.x.x",
+    "realdom": "^3.1.1",
     "rollup": "0.x.x",
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",

@@ -37,7 +37,11 @@ app.use((req, res, next) => {
 
   if (req.path === '/widget/ppsloop.init.js') {
     let json = readFile('./src/widget/data.json');
-    let js = `PPSW.init(${json});`;
+    let js = `
+      if (window.PPSW) {
+        PPSW.init(${json});
+      }
+    `;
     return res.status(200).type('text/javascript').send(js);
   }
 

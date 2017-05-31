@@ -17,7 +17,6 @@ var js = () => {
       'vendor/array.from.js',
       'vendor/array.includes.js',
       'vendor/string.endsWith.js',
-      'vendor/realdom.min.js',
       'vendor/siema.min.js'
     ],
     './src/widget/'

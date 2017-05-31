@@ -1,5 +1,5 @@
 {
-  "version": "0.6.01",
+  "version": "0.6.11",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -14,15 +14,18 @@
     "presentation",
     "slideshow"
   ],
-  "main": "./index.js",
+  "main": "./dist/ppsloop.js",
+  "module": "./src/widget/main.js",
+  "jsnext:main": "./src/widget/main.js",
   "engines": {
     "node": ">= 7.6"
   },
   "scripts": {
+    "lint": "eslint src/widget",
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
     "nsp": "nsp check --output checkstyle",
-    "tape": "tape tests/start.js | tap-spec",
-    "pretest": "eslint .",
+    "tape": "babel-node node_modules/.bin/tape tests/start.js | tap-spec",
+    "pretest": "npm run lint && npm run build",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
     "build": "DEBUG=pps:* NODE_ENV=production node builder/bin/build",
@@ -34,7 +37,9 @@
     "minimist": "1.x.x"
   },
   "devDependencies": {
+    "babel-cli": "6.x.x",
     "babel-plugin-external-helpers": "6.x.x",
+    "babel-preset-env": "1.x.x",
     "babel-preset-es2015-rollup": "3.x.x",
     "bellajs": "6.x.x",
     "copy-dir": "0.x.x",
@@ -52,6 +57,7 @@
     "postcss-cssnext": "2.x.x",
     "postcss-filter-plugins": "2.x.x",
     "postcss-nested": "2.x.x",
+    "realdom": "3.x.x",
     "rollup": "0.x.x",
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",
@@ -59,6 +65,13 @@
     "tap-spec": "4.x.x",
     "tape": "4.x.x",
     "uglify-js": "3.x.x"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env"
+      ]
+    ]
   },
   "license": "MIT"
 }

@@ -348,8 +348,8 @@ PPSWidget {
             height: 70px;
             position: absolute;
             z-index: 10;
-            top: 24px;
-            left: 52px;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
 
             &:before,

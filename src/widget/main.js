@@ -590,14 +590,6 @@
     }).map(setupStackClickEvent);
   };
 
-  let activateRipple = (target) => {
-    let ripple = doc.add('DIV', target);
-    ripple.addClass('pps-flash');
-    ripple.addEventListener('animationend', () => {
-      ripple.destroy();
-    });
-  };
-
   let start = (delta, offsetTop) => {
     if (isStarted) {
       return false;
@@ -620,25 +612,16 @@
       el.addClass('pps-highlight');
 
       let hand = doc.add('DIV', el);
-      hand.addClass('pps-hand');
+      hand.addClass('blink');
 
       setTimeout(() => {
-        hand.addClass('pps-hand-move');
-      }, 100);
-
-      hand.addEventListener('transitionend', () => {
-        let target = doc.get(el.querySelector('a.ripple'));
-        activateRipple(target);
         onStackSelect(pickedStacks[0], el);
+      }, 1000);
 
-        setTimeout(() => {
-          hand.addClass('pps-hand-disappear');
-        }, 100);
-        hand.addEventListener('transitionend', () => {
-          hand.destroy();
-          el.removeClass('pps-highlight');
-        });
-      });
+      setTimeout(() => {
+        hand.destroy();
+        el.removeClass('pps-highlight');
+      }, 3000);
 
     } else {
       onStackSelect(pickedStacks[0], el);

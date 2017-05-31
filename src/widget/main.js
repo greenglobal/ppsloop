@@ -60,12 +60,6 @@
     Event
   } = realdom;
 
-  if (!Array.from) {
-    Array.from = (arr) => {
-      return [].slice.call(arr);
-    };
-  }
-
   let isSafari = () => {
     let reg = /Macintosh; Intel Mac OS X/i;
     return reg.test(UA) && !(/chrome/i).test(UA);

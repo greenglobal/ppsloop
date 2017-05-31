@@ -14,7 +14,9 @@ var js = () => {
   return jsrollupify(
     'main.js',
     [
+      'vendor/array.from.js',
       'vendor/array.includes.js',
+      'vendor/string.endsWith.js',
       'vendor/realdom.min.js',
       'vendor/siema.min.js'
     ],

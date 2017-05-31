@@ -58,7 +58,7 @@
     create: createElement,
     all: queryAll,
     Event
-  } = realdom;
+  } = window.realdom ? realdom : {}; // just for passing test :(
 
   let isSafari = () => {
     let reg = /Macintosh; Intel Mac OS X/i;

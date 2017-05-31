@@ -1,5 +1,5 @@
 {
-  "version": "0.6.01",
+  "version": "0.6.02",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -19,10 +19,11 @@
     "node": ">= 7.6"
   },
   "scripts": {
+    "lint": "eslint src/widget",
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
     "nsp": "nsp check --output checkstyle",
     "tape": "tape tests/start.js | tap-spec",
-    "pretest": "eslint .",
+    "pretest": "npm run lint && npm run build",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
     "build": "DEBUG=pps:* NODE_ENV=production node builder/bin/build",
@@ -52,6 +53,7 @@
     "postcss-cssnext": "2.x.x",
     "postcss-filter-plugins": "2.x.x",
     "postcss-nested": "2.x.x",
+    "realdom": "3.x.x",
     "rollup": "0.x.x",
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",

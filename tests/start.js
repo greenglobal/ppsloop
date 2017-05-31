@@ -3,9 +3,10 @@
  */
 
 var files = [
-  'overview',
-  'widget',
-  'widget.apis'
+  // 'overview',
+  // 'widget',
+  // 'widget.apis',
+  'packed.full'
 ];
 
 files.forEach((fname) => {

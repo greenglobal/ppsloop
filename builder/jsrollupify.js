@@ -27,6 +27,7 @@ var rollupify = (entry) => {
     entry,
     plugins: [
       nodeResolve({
+        module: true,
         jsnext: true,
         main: true,
         extensions: [
@@ -53,6 +54,7 @@ var rollupify = (entry) => {
     let result = bundle.generate({
       format: 'umd',
       indent: true,
+      moduleId: 'PPSW',
       moduleName: 'PPSW'
     });
     info('Rolling finished.');
@@ -76,7 +78,7 @@ var compileJS = async (jsEntry, jsFiles, source) => {
   }, []).join('\n');
 
   let js = await rollupify(`${source}/${jsEntry}`);
-  return [vendorJS, js].join('\n\n');
+  return [jsminify(vendorJS), js].join('\n\n');
 };
 
 module.exports = compileJS;

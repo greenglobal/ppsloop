@@ -5,9 +5,9 @@ var test = require('tape');
 
 require('jsdom-global')();
 
-let data = require('../../dist/ppsloop.json');
+let data = require('../../src/widget/data.json');
 
-let PPSW = require('../../src/widget/main');
+let PPSW = require('../../src/widget/main.js');
 
 let hasProps = (ob, props) => {
   return props.every((p) => {

@@ -239,7 +239,7 @@ PPSWidget {
           background-size: contain;
         }
 
-        & a.pps__techselect-arrow {
+        & .pps__techselect-arrow {
           display: inline-block;
           width: 30px;
           height: 30px;
@@ -288,7 +288,7 @@ PPSWidget {
           transform: scale(0.5, 0.5) translateX(60px);
         }
 
-        & a.pps-inner {
+        & .pps-inner {
           display: block;
           background: #fff none no-repeat center center;
           background-size: contain;
@@ -318,7 +318,7 @@ PPSWidget {
         padding: 0 4px;
         margin-bottom: 7px;
 
-        & a.pps-inner {
+        & .pps-inner {
           display: block;
           width: 100%;
           height: 50px;
@@ -329,7 +329,7 @@ PPSWidget {
           cursor: pointer;
         }
 
-        &.pps-active a.pps-inner {
+        &.pps-active .pps-inner {
           border-color: #5fe2a4;
           background-color: #e6fff3;
         }
@@ -337,7 +337,7 @@ PPSWidget {
         &.pps-highlight {
           position: relative;
 
-          a {
+          .pps-inner {
             animation: highlight 1s 2 ease-in-out;
           }
 
@@ -388,7 +388,7 @@ PPSWidget {
         opacity: .5;
         height: 1px;
         position: absolute;
-        top: 50%;
+        top: 60%;
         left: 50%;
         z-index: 1;
         transform: translate(-50%,-50%);
@@ -440,7 +440,7 @@ PPSWidget {
             height: 60px;
           }
 
-          & a.pps__techselect-arrow {
+          & .pps__techselect-arrow {
             display: none;
           }
         }

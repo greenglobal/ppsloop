@@ -15,7 +15,7 @@ var js = () => {
     'main.js',
     [
       'vendor/array.includes.js',
-      'vendor/doc.min.js',
+      'vendor/realdom.min.js',
       'vendor/siema.min.js'
     ],
     './src/widget/'

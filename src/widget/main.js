@@ -24,6 +24,8 @@
   const DELTA_TO_START = -80;
   const PERSON_CARD_SIZE = 200;
 
+  const UA = navigator.userAgent;
+
   let imgPath = '';
 
   let deltaPaddingLeft = 20;
@@ -63,6 +65,11 @@
       return [].slice.call(arr);
     };
   }
+
+  let isSafari = () => {
+    let reg = /Macintosh; Intel Mac OS X/i;
+    return reg.test(UA) && !(/chrome/i).test(UA);
+  };
 
   let shuffle = (arr) => {
     return arr.sort(() => {
@@ -260,6 +267,10 @@
     let ot = $elSwiperWapper.offsetTop;
     let ol = $elSwiperWapper.offsetLeft;
 
+    let iss = isSafari();
+    let realTopDelta = iss ? 180 : 0;
+    let realLeftDelta = iss ? 45 : -5;
+
     arr.filter((item) => {
       return item && item.$el;
     }).map((item) => {
@@ -309,8 +320,8 @@
 
       t += 60;
       setTimeout(() => {
-        node.style.left = `${left}px`;
-        node.style.top = `${top}px`;
+        node.style.left = `${left - realLeftDelta}px`;
+        node.style.top = `${top - realTopDelta}px`;
         node.style.transform = 'scale(1)';
       }, t);
 
@@ -847,7 +858,7 @@
       let paddingLeft = cstyle.getPropertyValue('padding-left');
       if (paddingLeft) {
         let pl = parseInt(paddingLeft, 10);
-        deltaPaddingLeft = pl ? pl + 5 : 20;
+        deltaPaddingLeft = pl || 20;
       }
     };
 

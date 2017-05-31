@@ -3,7 +3,7 @@
  * @ndaidong
  */
 
-/* global doc Siema */
+/* global realdom Siema */
 
 ((name, factory) => {
   if (typeof module !== 'undefined' && module.exports) {
@@ -23,6 +23,8 @@
   const TECH_STACK_NUMBER = 27;
   const DELTA_TO_START = -80;
   const PERSON_CARD_SIZE = 200;
+
+  const UA = navigator.userAgent;
 
   let imgPath = '';
 
@@ -50,11 +52,18 @@
   let isStarted = false;
   let widgetId = '';
 
-  if (!Array.from) {
-    Array.from = (arr) => {
-      return [].slice.call(arr);
-    };
-  }
+  let {
+    get: getElement,
+    add: addElement,
+    create: createElement,
+    all: queryAll,
+    Event
+  } = window.realdom ? realdom : {}; // just for passing test :(
+
+  let isSafari = () => {
+    let reg = /Macintosh; Intel Mac OS X/i;
+    return reg.test(UA) && !(/chrome/i).test(UA);
+  };
 
   let shuffle = (arr) => {
     return arr.sort(() => {
@@ -134,8 +143,8 @@
 
   var setupSlider = (container) => {
 
-    let wrapper = container.querySelector('.pps__swiper-wrapper');
-    let slider = wrapper.querySelector('.pps__swiper-container');
+    let wrapper = container.query('.pps__swiper-wrapper');
+    let slider = wrapper.query('.pps__swiper-container');
 
     let perPage = 1;
     let wsize = wrapper.offsetWidth;
@@ -146,17 +155,17 @@
     }
 
     let siema;
-    let btns = container.querySelectorAll('.pps__swiper--nav');
+    let btns = container.queryAll('.pps__swiper--nav');
 
-    let bprev = doc.get(btns[0]);
-    let bnext = doc.get(btns[1]);
+    let bprev = getElement(btns[0]);
+    let bnext = getElement(btns[1]);
 
     let resetState = (cslide) => {
 
       bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
       bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
 
-      let total = slider.querySelectorAll('.pps__swiper-slide').length;
+      let total = slider.queryAll('.pps__swiper-slide').length;
 
       let max = 1;
       let min = total - perPage;
@@ -173,10 +182,10 @@
           bnext.addClass('pps__swiper--nav--enable');
         }
 
-        let els = Array.from(container.querySelectorAll('.pps__btn-link'));
+        let els = container.queryAll('.pps__btn-link');
         els.forEach((btn) => {
-          let b = doc.get(btn);
-          let p = doc.get(b.parentNode);
+          let b = getElement(btn);
+          let p = getElement(b.parentNode);
           if (p.hasClass('pps__swiper--nav--enable')) {
             b.addClass('ripple');
             p.onclick = () => {
@@ -216,7 +225,7 @@
   };
 
   let setActiveState = (origin) => {
-    doc.all('.pps__list--stack-item.pps-active').forEach((el) => {
+    queryAll('.pps__list--stack-item.pps-active').forEach((el) => {
       el.removeClass('pps-active');
     });
     origin.addClass('pps-active');
@@ -252,6 +261,10 @@
     let ot = $elSwiperWapper.offsetTop;
     let ol = $elSwiperWapper.offsetLeft;
 
+    let iss = isSafari();
+    let realTopDelta = iss ? 180 : 0;
+    let realLeftDelta = iss ? 45 : -5;
+
     arr.filter((item) => {
       return item && item.$el;
     }).map((item) => {
@@ -272,7 +285,7 @@
         height,
         $el
       } = data;
-      let shadow = doc.create('DIV');
+      let shadow = createElement('DIV');
       shadow.addClass('pps__swiper-slide');
       shadow.setStyle({
         top,
@@ -282,7 +295,7 @@
         border: 'solid px #eee'
       });
 
-      let node = doc.get($el.cloneNode(true));
+      let node = getElement($el.cloneNode(true));
       node.setStyle({
         position: 'absolute',
         zIndex: 10,
@@ -301,8 +314,8 @@
 
       t += 60;
       setTimeout(() => {
-        node.style.left = `${left}px`;
-        node.style.top = `${top}px`;
+        node.style.left = `${left - realLeftDelta}px`;
+        node.style.top = `${top - realTopDelta}px`;
         node.style.transform = 'scale(1)';
       }, t);
 
@@ -316,7 +329,7 @@
   };
 
   let buildStackCard = (entry) => {
-    let card = doc.create('DIV');
+    let card = createElement('DIV');
     card.addClass('pps__list--stack-item');
 
     let [
@@ -324,10 +337,10 @@
       image
     ] = entry;
 
-    let atag = doc.add('A', card);
-    atag.addClass('pps-inner ripple');
-    atag.style.backgroundImage = `url(${imgPath}${image})`;
-    atag.setAttribute('title', name);
+    let rect = addElement('SPAN', card);
+    rect.addClass('pps-inner ripple');
+    rect.style.backgroundImage = `url(${imgPath}${image})`;
+    rect.setAttribute('title', name);
 
     return card;
   };
@@ -338,7 +351,7 @@
   };
 
   let buildPersonCard = (entry) => {
-    let card = doc.create('DIV');
+    let card = createElement('DIV');
     card.addClass('pps__swiper-slide pps-card');
 
     let {
@@ -346,7 +359,7 @@
       name
     } = entry;
 
-    let $avatar = doc.add('DIV', card);
+    let $avatar = addElement('DIV', card);
     $avatar.addClass('pps__person-avatar');
 
     if (image) {
@@ -354,7 +367,7 @@
       $avatar.style.backgroundImage = `url(${image})`;
     }
 
-    let $name = doc.add('DIV', card);
+    let $name = addElement('DIV', card);
     $name.addClass('pps__person-name');
     $name.html(name);
 
@@ -362,7 +375,7 @@
   };
 
   let buildProjectCard = (entry) => {
-    let card = doc.create('DIV');
+    let card = createElement('DIV');
     card.addClass('pps__list--project-item pps-card pps-card--transition');
 
     let {
@@ -371,7 +384,7 @@
       alias
     } = entry;
 
-    let atag = doc.add('A', card);
+    let atag = addElement('A', card);
     atag.addClass('pps-inner');
     atag.setAttribute('href', `/${alias}`);
     atag.setAttribute('title', name);
@@ -406,7 +419,7 @@
     let result = ppj.map((entry) => {
       let card = buildProjectCard(entry);
       if (isAppend) {
-        let last = $elProject.querySelector('.pps__view-all');
+        let last = $elProject.query('.pps__view-all');
         $elProject.insertBefore(card, last);
       } else {
         $elProject.appendChild(card);
@@ -430,7 +443,7 @@
     let rest = remain.length;
     if (rest > 0) {
       $btnViewAllProject.removeClass('pps__is-disabled');
-      $btnViewAllProject.html(`<a class="pps__btn-viewall"><b>+${rest}</b> more</a>`);
+      $btnViewAllProject.html(`<span class="pps__btn-viewall"><b>+${rest}</b> more</span>`);
       $btnViewAllProject.onclick = () => {
         randerProjectPanel(remain, true);
       };
@@ -442,7 +455,7 @@
   let randerPeoplePanel = (ppl, origin) => {
 
     let pointer;
-    let righPanel = doc.all('.pps__frame--right')[0];
+    let righPanel = queryAll('.pps__frame--right')[0];
 
     if (righPanel && righPanel.offsetParent) {
       pointer = getLocatePoint(origin);
@@ -547,7 +560,7 @@
       data
     } = stack;
 
-    doc.Event.on($el, 'click', () => {
+    Event.on($el, 'click', () => {
       onStackSelect(data, $el);
     });
 
@@ -562,10 +575,10 @@
       });
       if (skills && skills.length > 0) {
         let origin;
-        doc.all('.pps__list--stack-item').forEach((el) => {
+        queryAll('.pps__list--stack-item').forEach((el) => {
           el.removeClass('pps-active');
-          let a = el.querySelector('a.pps-inner');
-          if (a.getAttribute('title') === v) {
+          let stack = el.query('.pps-inner');
+          if (stack.getAttribute('title') === v) {
             origin = el;
           }
         });
@@ -597,7 +610,7 @@
 
     isStarted = true;
 
-    let items = doc.all('.pps__list--stack-item');
+    let items = queryAll('.pps__list--stack-item');
 
     if (!items.length) {
       return false;
@@ -605,23 +618,22 @@
 
     let el = items[0];
 
-    let righPanel = doc.all('.pps__frame--right')[0];
+    let righPanel = queryAll('.pps__frame--right')[0];
 
     if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
 
       el.addClass('pps-highlight');
 
-      let hand = doc.add('DIV', el);
+      let hand = addElement('DIV', el);
       hand.addClass('blink');
 
       setTimeout(() => {
         onStackSelect(pickedStacks[0], el);
+        setTimeout(() => {
+          hand.destroy();
+          el.removeClass('pps-highlight');
+        }, 2000);
       }, 1000);
-
-      setTimeout(() => {
-        hand.destroy();
-        el.removeClass('pps-highlight');
-      }, 3000);
 
     } else {
       onStackSelect(pickedStacks[0], el);
@@ -642,11 +654,11 @@
     let layout = `
       <div class="pps__swiper-wrapper pps__swiper-wrapper-simple">
         <div class="pps__swiper--nav pps__swiper--prev">
-          <a class="pps__btn-link prev"></a>
+          <span class="pps__btn-link prev"></span>
         </div>
         <div class="pps__swiper-container pps__swiper-container-simple">{{content}}</div>
         <div class="pps__swiper--nav pps__swiper--next">
-          <a class="pps__btn-link next"></a>
+          <span class="pps__btn-link next"></span>
         </div>
       </div>
     `;
@@ -747,7 +759,7 @@
       }
     }
 
-    let contentBlock = doc.add('DIV', container);
+    let contentBlock = addElement('DIV', container);
     contentBlock.addClass('pps__wrapper--fluid');
 
     let maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
@@ -765,7 +777,7 @@
             <div class="pps__techlogo">
               <label class="pps__label pps__label--no-padding">${labels[2]}</label>
               <div class="pps__techlogo-image" id="${widgetId}_ppsTechLogo"></div>
-              <a class="pps__techselect-arrow"></a>
+              <span class="pps__techselect-arrow"></span>
             </div>
             <div class="pps__select-outer">
               <select class="pps__select" id="${widgetId}_ppsStackSelector">
@@ -779,11 +791,11 @@
             </label>
             <div class="pps__swiper-wrapper" id="${widgetId}_ppsSwiperWapper">
               <div class="pps__swiper--nav pps__swiper--prev">
-                <a class="pps__btn-link prev"></a>
+                <span class="pps__btn-link prev"></span>
               </div>
               <div class="pps__swiper-container" id="${widgetId}_ppsSwiperContainer"></div>
               <div class="pps__swiper--nav pps__swiper--next">
-                <a class="pps__btn-link next"></a>
+                <span class="pps__btn-link next"></span>
               </div>
             </div>
           </div>
@@ -794,9 +806,7 @@
               ${labels[1]}
             </label>
             <div class="pps__list--project" id="${widgetId}_ppsProjectList"></div>
-            <div class="pps__view-all pps__is-disabled" id="${widgetId}_ppsProjectViewAll">
-              <a class="pps__btn-viewall">View all</a>
-            </div>
+            <div class="pps__view-all pps__is-disabled" id="${widgetId}_ppsProjectViewAll"></div>
           </div>
         </div>
       </div>
@@ -812,18 +822,18 @@
 
     contentBlock.html(layout);
 
-    $elStack = doc.get(`${widgetId}_ppsStackList`);
-    $elPeople = doc.get(`${widgetId}_ppsSwiperContainer`);
-    $elProject = doc.get(`${widgetId}_ppsProjectList`);
+    $elStack = getElement(`${widgetId}_ppsStackList`);
+    $elPeople = getElement(`${widgetId}_ppsSwiperContainer`);
+    $elProject = getElement(`${widgetId}_ppsProjectList`);
 
-    $elLogo = doc.get(`${widgetId}_ppsTechLogo`);
-    $elTeamNum = doc.get(`${widgetId}_ppsTeamNumber`);
-    $elSelector = doc.get(`${widgetId}_ppsStackSelector`);
-    $elSwiperWapper = doc.get(`${widgetId}_ppsSwiperWapper`);
+    $elLogo = getElement(`${widgetId}_ppsTechLogo`);
+    $elTeamNum = getElement(`${widgetId}_ppsTeamNumber`);
+    $elSelector = getElement(`${widgetId}_ppsStackSelector`);
+    $elSwiperWapper = getElement(`${widgetId}_ppsSwiperWapper`);
 
     $elContentBlock = contentBlock;
 
-    $btnViewAllProject = doc.get(`${widgetId}_ppsProjectViewAll`);
+    $btnViewAllProject = getElement(`${widgetId}_ppsProjectViewAll`);
 
     let onscroll = () => {
       if (!isStarted) {
@@ -837,12 +847,12 @@
     };
 
     let onresize = () => {
-      let blockPeople = $elContentBlock.querySelector('.pps__block--people');
+      let blockPeople = $elContentBlock.query('.pps__block--people');
       let cstyle = window.getComputedStyle(blockPeople, null);
       let paddingLeft = cstyle.getPropertyValue('padding-left');
       if (paddingLeft) {
         let pl = parseInt(paddingLeft, 10);
-        deltaPaddingLeft = pl ? pl + 5 : 20;
+        deltaPaddingLeft = pl || 20;
       }
     };
 
@@ -872,8 +882,8 @@
       projects = [..._projects];
       techstacks = [..._techstacks];
 
-      if (window.doc) {
-        let els = doc.all('ppswidget') || [];
+      if (window.realdom) {
+        let els = queryAll('ppswidget') || [];
         els.map(setupLayout);
       }
 

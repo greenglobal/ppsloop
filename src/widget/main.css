@@ -129,7 +129,8 @@ PPSWidget {
     & .pps__person-name {
       margin: 20px 0px 5px;
       font-size: 14px;
-      font-weight: 800;
+      font-weight: normal;
+      font-family: var(--boldTextFontFamily);
       color: #000;
     }
 
@@ -169,7 +170,7 @@ PPSWidget {
     & label.pps__label {
       font-family: var(--boldTextFontFamily);
       font-size: 16px;
-      font-weight: 800;
+      font-weight: normal;
       line-height: 2;
       padding: 10px;
       color: #000;

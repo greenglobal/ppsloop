@@ -207,19 +207,15 @@ var setupSlider = (container) => {
 let setActiveState = (origin) => {
   queryAll('.pps__list--stack-item.pps-active').forEach((el) => {
     el.removeClass('pps-active');
-    if (el.hasClass('pps-highlight')) {
-      el.removeClass('pps-highlight');
-      let inner = el.query('.pps-inner');
-      if (inner.hasClass('pps-highlight--actual')) {
-        inner.removeClass('pps-highlight--actual');
-      }
-      let blink = el.query('.blink');
-      if (blink) {
-        blink.destroy();
-      }
+    let _rip = el.query('.pps-ripple');
+    if (_rip) {
+      _rip.destroy();
     }
   });
   origin.addClass('pps-active');
+  let inner = origin.query('.pps-inner');
+  let ripple = addElement('DIV', inner);
+  ripple.addClass('pps-ripple');
 };
 
 let buildStackCard = (entry) => {
@@ -232,10 +228,9 @@ let buildStackCard = (entry) => {
   ] = entry;
 
   let rect = addElement('SPAN', card);
-  rect.addClass('pps-inner ripple');
+  rect.addClass('pps-inner');
   rect.style.backgroundImage = `url(${imgPath}${image})`;
-  rect.setAttribute('title', name);
-
+  rect.setAttribute('pps-stack--name', name);
   return card;
 };
 
@@ -281,7 +276,7 @@ let buildProjectCard = (entry) => {
   let atag = addElement('A', card);
   atag.addClass('pps-inner');
   atag.setAttribute('href', `/${alias}`);
-  atag.setAttribute('title', name);
+  atag.setAttribute('pps-project--name', name);
 
   if (image) {
     image = `${imgPath}${image}`;
@@ -323,7 +318,7 @@ let randerProjectPanel = (ppj, isAppend = false) => {
       card.removeClass('pps-card--transition');
     }, t);
 
-    t += 60;
+    t += 200;
 
     return {
       $el: card,
@@ -385,7 +380,7 @@ let randerPeoplePanel = (ppl) => {
       return item.$el;
     }).map((el) => {
       el.addClass('pps-card--transition');
-      t += 40;
+      t += 220;
       return setTimeout(() => {
         el.removeClass('pps-card--transition');
       }, t);
@@ -463,7 +458,7 @@ let setupSelectorEvent = () => {
       queryAll('.pps__list--stack-item').forEach((el) => {
         el.removeClass('pps-active');
         let stack = el.query('.pps-inner');
-        if (stack.getAttribute('title') === v) {
+        if (stack.getAttribute('pps-stack--name') === v) {
           origin = el;
         }
       });
@@ -488,30 +483,7 @@ let randerStackPanel = (stacks) => {
   }).map(setupStackClickEvent);
 };
 
-let applyHighlightEffect = (el, times = 1) => {
-  if (times === 1) {
-    el.addClass('pps-highlight');
-  }
-  if (el.hasClass('pps-highlight')) {
-    let inner = el.query('.pps-inner');
-    inner.addClass('pps-highlight--actual');
-    let hand = addElement('DIV', inner);
-    hand.addClass('blink');
-    hand.addEventListener('animationend', () => {
-      hand.destroy();
-      inner.removeClass('pps-highlight--actual');
-      if (times < 3) {
-        setTimeout(() => {
-          applyHighlightEffect(el, times + 1);
-        }, 2000);
-      } else {
-        el.removeClass('pps-highlight');
-      }
-    });
-  }
-};
-
-let start = (delta, offsetTop) => {
+let start = () => {
   if (_isStarted) {
     return false;
   }
@@ -524,21 +496,7 @@ let start = (delta, offsetTop) => {
     return false;
   }
 
-  let el = items[0];
-
-  let righPanel = queryAll('.pps__frame--right')[0];
-
-  if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
-
-    applyHighlightEffect(el);
-
-    setTimeout(() => {
-      onStackSelect(pickedStacks[0], el);
-    }, 1000);
-
-  } else {
-    onStackSelect(pickedStacks[0], el);
-  }
+  onStackSelect(pickedStacks[0], items[0]);
 
   return _isStarted;
 };

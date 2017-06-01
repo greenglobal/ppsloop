@@ -1,4 +1,4 @@
-/** ppsw@0.6.3 - full, no data */
+/** ppsw@0.6.4 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -649,19 +649,15 @@
 	var setActiveState = function setActiveState(origin) {
 	  queryAll('.pps__list--stack-item.pps-active').forEach(function (el) {
 	    el.removeClass('pps-active');
-	    if (el.hasClass('pps-highlight')) {
-	      el.removeClass('pps-highlight');
-	      var inner = el.query('.pps-inner');
-	      if (inner.hasClass('pps-highlight--actual')) {
-	        inner.removeClass('pps-highlight--actual');
-	      }
-	      var blink = el.query('.blink');
-	      if (blink) {
-	        blink.destroy();
-	      }
+	    var _rip = el.query('.pps-ripple');
+	    if (_rip) {
+	      _rip.destroy();
 	    }
 	  });
 	  origin.addClass('pps-active');
+	  var inner = origin.query('.pps-inner');
+	  var ripple = add('DIV', inner);
+	  ripple.addClass('pps-ripple');
 	};
 	var buildStackCard = function buildStackCard(entry) {
 	  var card = create('DIV');
@@ -670,9 +666,9 @@
 	      name = _entry[0],
 	      image = _entry[1];
 	  var rect = add('SPAN', card);
-	  rect.addClass('pps-inner ripple');
+	  rect.addClass('pps-inner');
 	  rect.style.backgroundImage = 'url(' + imgPath + image + ')';
-	  rect.setAttribute('title', name);
+	  rect.setAttribute('pps-stack--name', name);
 	  return card;
 	};
 	var updateLeftPanelLogo = function updateLeftPanelLogo(stack, image) {
@@ -704,7 +700,7 @@
 	  var atag = add('A', card);
 	  atag.addClass('pps-inner');
 	  atag.setAttribute('href', '/' + alias);
-	  atag.setAttribute('title', name);
+	  atag.setAttribute('pps-project--name', name);
 	  if (image) {
 	    image = '' + imgPath + image;
 	    atag.style.backgroundImage = 'url(' + image + ')';
@@ -738,7 +734,7 @@
 	    setTimeout(function () {
 	      card.removeClass('pps-card--transition');
 	    }, t);
-	    t += 60;
+	    t += 200;
 	    return {
 	      $el: card,
 	      data: entry
@@ -788,7 +784,7 @@
 	      return item.$el;
 	    }).map(function (el) {
 	      el.addClass('pps-card--transition');
-	      t += 40;
+	      t += 220;
 	      return setTimeout(function () {
 	        el.removeClass('pps-card--transition');
 	      }, t);
@@ -848,7 +844,7 @@
 	      queryAll('.pps__list--stack-item').forEach(function (el) {
 	        el.removeClass('pps-active');
 	        var stack = el.query('.pps-inner');
-	        if (stack.getAttribute('title') === v) {
+	        if (stack.getAttribute('pps-stack--name') === v) {
 	          origin = el;
 	        }
 	      });
@@ -870,30 +866,7 @@
 	    };
 	  }).map(setupStackClickEvent);
 	};
-	var applyHighlightEffect = function applyHighlightEffect(el) {
-	  var times = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-	  if (times === 1) {
-	    el.addClass('pps-highlight');
-	  }
-	  if (el.hasClass('pps-highlight')) {
-	    var inner = el.query('.pps-inner');
-	    inner.addClass('pps-highlight--actual');
-	    var hand = add('DIV', inner);
-	    hand.addClass('blink');
-	    hand.addEventListener('animationend', function () {
-	      hand.destroy();
-	      inner.removeClass('pps-highlight--actual');
-	      if (times < 3) {
-	        setTimeout(function () {
-	          applyHighlightEffect(el, times + 1);
-	        }, 2000);
-	      } else {
-	        el.removeClass('pps-highlight');
-	      }
-	    });
-	  }
-	};
-	var start = function start(delta, offsetTop) {
+	var start = function start() {
 	  if (_isStarted) {
 	    return false;
 	  }
@@ -902,16 +875,7 @@
 	  if (!items.length) {
 	    return false;
 	  }
-	  var el = items[0];
-	  var righPanel = queryAll('.pps__frame--right')[0];
-	  if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
-	    applyHighlightEffect(el);
-	    setTimeout(function () {
-	      onStackSelect(pickedStacks[0], el);
-	    }, 1000);
-	  } else {
-	    onStackSelect(pickedStacks[0], el);
-	  }
+	  onStackSelect(pickedStacks[0], items[0]);
 	  return _isStarted;
 	};
 	var renderSimpleVersion = function renderSimpleVersion(container, project) {

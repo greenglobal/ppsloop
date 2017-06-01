@@ -16,7 +16,8 @@ PPSWidget * {
   --fontFamily: Roboto-Regular;
   --boldTextFontFamily: Roboto-Bold;
 
-  --transitionTimer: 400ms;
+  --rippleEffectDuration: 2.5s;
+  --transitionTimer: 0.6s;
 }
 
 @custom-media --normal-viewport (min-width: 760px);
@@ -42,32 +43,37 @@ PPSWidget {
     transition: all var(--transitionTimer) ease-in-out;
   }
 
-  & .ripple {
-    position: relative;
-    overflow: hidden;
-    transform: translate3d(0, 0, 0);
+  & .pps-ripple {
+    display: inline-block;
+    border-radius: 50px;
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    will-change: transform;
 
+    &:before,
     &:after {
-      content: "";
-      display: block;
+      content: '';
       position: absolute;
-      width: 100%;
-      height: 100%;
       top: 0;
       left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, #000 10%,transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10,10);
+      width: 100%;
+      height: 100%;
+      background: rgba(180, 180, 180, 0.6);
+      border-radius: 50px;
       opacity: 0;
-      transition: transform .5s, opacity 1s;
     }
-
-    &:active:after {
-      transform: scale(0, 0);
-      opacity: .2;
-      transition: 0s;
+    &:before {
+      transform: scale(2);
+      animation: blink var(--rippleEffectDuration) infinite normal forwards linear;
+    }
+    &:after {
+      background: rgba(180, 210, 220, 0.6);
+      animation: blink var(--rippleEffectDuration) 0.3s infinite normal forwards linear;
     }
   }
 
@@ -170,9 +176,8 @@ PPSWidget {
     }
 
     &.pps-card--transition {
-      transition: all 300ms ease;
+      transition: all 20s ease-in-out;
       opacity: 0;
-      transform: scale(0.7, 0.7) translateX(30px);
       will-change: transform;
     }
   }
@@ -306,9 +311,7 @@ PPSWidget {
         transform: scale(1, 1) translateX(0px);
 
         &.pps-card--transition {
-          transition: all 300ms ease-in-out;
           opacity: 0;
-          transform: scale(0.5, 0.5) translateX(60px);
           will-change: transform;
         }
 
@@ -320,6 +323,13 @@ PPSWidget {
           border-radius: 2px;
           width: 100%;
           height: 100px;
+          transition: box-shadow 0.8s;
+        }
+
+        &:hover {
+          & .pps-inner {
+            box-shadow: 0px 0px 10px 2px rgba(60, 60, 60, 0.5);
+          }
         }
 
       }
@@ -351,52 +361,20 @@ PPSWidget {
           background: #fff none no-repeat center center;
           background-size: 50%;
           cursor: pointer;
+          transition: box-shadow 1s;
         }
 
         &.pps-active .pps-inner {
           border-color: #5fe2a4;
           background-color: #e6fff3;
-        }
-
-        .pps-inner.pps-highlight--actual {
-          animation: highlight 1s 2 ease-in-out;
-        }
-
-        &.pps-highlight {
           position: relative;
           overflow: hidden;
+          box-shadow: 0px 0px 5px 1px rgba(60, 60, 60, 0.2);
+        }
 
-          & .blink {
-            display: inline-block;
-            border-radius: 50px;
-            width: 70px;
-            height: 70px;
-            position: absolute;
-            z-index: 10;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            will-change: transform;
-
-            &:before,
-            &:after {
-              content: '';
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: rgba(100, 155, 255, 0.6);
-              border-radius: 50px;
-              opacity: 0;
-            }
-            &:before {
-              transform: scale(2);
-              animation: blink 0.8s 3 linear;
-            }
-            &:after {
-              animation: blink 0.8s 1.2s 3 linear;
-            }
+        &:hover {
+          & .pps-inner {
+            box-shadow: 0px 0px 5px 1px rgba(60, 60, 60, 0.5);
           }
         }
       }
@@ -441,6 +419,35 @@ PPSWidget {
       &.pps__is-disabled {
         display: none;
       }
+    }
+  }
+
+  & .ripple {
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(0, 0, 0);
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #000 10%,transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(10,10);
+      opacity: 0;
+      transition: transform .5s, opacity 1s;
+    }
+
+    &:active:after {
+      transform: scale(0, 0);
+      opacity: .2;
+      transition: 0s;
     }
   }
 }
@@ -548,13 +555,21 @@ PPSWidget {
     opacity: 0;
     transform: scale(0.2);
   }
-  33.33333% {
+  8% {
     opacity: 1;
     transform: scale(0.6);
   }
-  100% {
+  20% {
     opacity: 0;
     transform: scale(1.2);
+  }
+  30% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
   }
 }
 

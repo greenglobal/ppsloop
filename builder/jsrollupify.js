@@ -9,6 +9,7 @@ var rollup = require('rollup');
 var babel = require('rollup-plugin-babel');
 var nodeResolve = require('rollup-plugin-node-resolve');
 var commonjs = require('rollup-plugin-commonjs');
+var cleanup = require('rollup-plugin-cleanup');
 
 var {minify} = require('uglify-js');
 
@@ -19,6 +20,10 @@ const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 var jsminify = (source = '') => {
   let {code} = minify(source);
   return code;
+};
+
+let removeBr = (s) => {
+  return s.replace(/(\r\n+|\n+|\r+)/gm, '\n');
 };
 
 var rollupify = (entry) => {
@@ -36,14 +41,14 @@ var rollupify = (entry) => {
       commonjs(),
       babel({
         babelrc: false,
-        exclude: 'node_modules/**',
         presets: [
           'es2015-rollup'
         ],
         plugins: [
           'external-helpers'
         ]
-      })
+      }),
+      cleanup()
     ]
   }).then((bundle) => {
     info('Generating code with bundle...');
@@ -55,7 +60,15 @@ var rollupify = (entry) => {
     });
     info('Rolling finished.');
     let {code} = result;
-    return code;
+
+    let output = {
+      code: removeBr(code)
+    };
+
+    if (ENV === 'production') {
+      output.minified = jsminify(code);
+    }
+    return output;
   }).catch((err) => {
     error(err);
   });
@@ -71,7 +84,10 @@ var compileJS = async (jsEntry, jsFiles, source) => {
   }, []).join('\n');
 
   let js = await rollupify(`${source}${jsEntry}`);
-  return [jsminify(vendorJS), js].join('\n\n');
+  return [
+    jsminify(vendorJS),
+    js.minified || js.code
+  ].join('\n\n');
 };
 
 module.exports = compileJS;

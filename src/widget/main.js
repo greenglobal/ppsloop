@@ -13,6 +13,20 @@ import {
   Event
 } from 'realdom';
 
+import {
+  preloadImages,
+  onTransitionEnd,
+  getElementPosition,
+  getLocatePoint
+} from './utils';
+
+import {
+  tplMainLayout,
+  tplSimpleLayout,
+  tplPersonCard,
+  tplBtnViewAll
+} from './templates';
+
 const TECH_STACK_NUMBER = 27;
 const DELTA_TO_START = -80;
 const PERSON_CARD_SIZE = 200;
@@ -43,7 +57,6 @@ let $btnViewAllProject;
 
 let _isInitialized = false;
 let _isStarted = false;
-let widgetId = '';
 
 let isSafari = () => {
   let reg = /Macintosh; Intel Mac OS X/i;
@@ -113,30 +126,6 @@ let getImgPath = (c) => {
   return ipath;
 };
 
-let getPosition = (el) => {
-
-  let xPos = 0;
-  let yPos = 0;
-
-  while (el) {
-    if (el.tagName === 'BODY') {
-      var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-      var yScroll = el.scrollTop || document.documentElement.scrollTop;
-
-      xPos += el.offsetLeft - xScroll + el.clientLeft;
-      yPos += el.offsetTop - yScroll + el.clientTop;
-    } else {
-      xPos += el.offsetLeft - el.scrollLeft + el.clientLeft;
-      yPos += el.offsetTop - el.scrollTop + el.clientTop;
-    }
-
-    el = el.offsetParent;
-  }
-  return {
-    x: xPos,
-    y: yPos
-  };
-};
 
 var setupSlider = (container) => {
 
@@ -228,19 +217,6 @@ let setActiveState = (origin) => {
   origin.addClass('pps-active');
 };
 
-let getLocatePoint = (origin) => {
-  let ol = origin.offsetLeft;
-  let ot = origin.offsetTop;
-  let ow = origin.offsetWidth;
-  let oh = origin.offsetHeight;
-
-  return {
-    left: Math.floor(ol - ow),
-    top: Math.floor(ot - oh),
-    width: ow,
-    height: oh
-  };
-};
 
 let applyEffect = (cards, pointer, perPage = 4) => {
 
@@ -316,7 +292,7 @@ let applyEffect = (cards, pointer, perPage = 4) => {
       node.style.transform = 'scale(1)';
     }, t);
 
-    node.addEventListener('transitionend', () => {
+    onTransitionEnd(node, () => {
       node.destroy();
       if (shadow.parentNode) {
         shadow.parentNode.replaceChild($el, shadow);
@@ -440,7 +416,7 @@ let randerProjectPanel = (ppj, isAppend = false) => {
   let rest = remain.length;
   if (rest > 0) {
     $btnViewAllProject.removeClass('pps__is-disabled');
-    $btnViewAllProject.html(`<span class="pps__btn-viewall"><b>+${rest}</b> more</span>`);
+    $btnViewAllProject.html(tplBtnViewAll.replace('{{count}}', rest));
     $btnViewAllProject.onclick = () => {
       randerProjectPanel(remain, true);
     };
@@ -643,25 +619,6 @@ var renderSimpleVersion = (container, project) => {
 
   let ipath = getImgPath(container);
 
-  let layout = `
-    <div class="pps__swiper-wrapper pps__swiper-wrapper-simple">
-      <div class="pps__swiper--nav pps__swiper--prev">
-        <span class="pps__btn-link prev"></span>
-      </div>
-      <div class="pps__swiper-container pps__swiper-container-simple">{{content}}</div>
-      <div class="pps__swiper--nav pps__swiper--next">
-        <span class="pps__btn-link next"></span>
-      </div>
-    </div>
-  `;
-
-  let template = `
-    <div class="pps__swiper-slide">
-      <div class="pps__person-avatar" style="background-image:url({{image}})"></div>
-      <div class="pps__person-name">{{name}}</div>
-    </div>
-  `;
-
   let members = getProjectMembers(project).filter((mem) => {
     return mem.image && mem.person;
   });
@@ -672,11 +629,11 @@ var renderSimpleVersion = (container, project) => {
     let html = shuffle(members).map((mem) => {
       let name = mem.person;
       let avatar = ipath + mem.image;
-      return template.replace('{{image}}', avatar)
+      return tplPersonCard.replace('{{image}}', avatar)
                       .replace('{{name}}', name);
     }).join('');
 
-    layout = layout.replace('{{content}}', html);
+    let layout = tplSimpleLayout.replace('{{content}}', html);
 
     container.innerHTML = layout;
 
@@ -685,28 +642,6 @@ var renderSimpleVersion = (container, project) => {
 
   return false;
 };
-
-let preloadImages = (images) => {
-
-  let preload = () => {
-
-    let src = images.shift();
-
-    let next = () => {
-      if (images.length > 0) {
-        preload();
-      }
-    };
-
-    let P = new Image();
-    P.onerror = next;
-    P.onload = next;
-    P.src = imgPath + src;
-  };
-
-  preload();
-};
-
 
 let setupLayout = (container) => {
 
@@ -732,9 +667,8 @@ let setupLayout = (container) => {
     return item.logo;
   });
 
-  preloadImages(avatars.concat(logos));
+  preloadImages(avatars.concat(logos), imgPath);
 
-  widgetId = container.getAttribute('id');
   let attrSectionLabel = container.getAttribute('section-labels');
   if (attrSectionLabel) {
     let arrLabels = attrSectionLabel.split('|');
@@ -756,74 +690,29 @@ let setupLayout = (container) => {
     return `<option value="${st}">${st}</option>`;
   }).join('');
 
-  let layout = `
-    <div class="pps__frame--left">
-      <div class="pps__frame--top">
-        <div class="pps__techlogo-outer">
-          <div class="pps__techlogo">
-            <label class="pps__label pps__label--no-padding">${labels[2]}</label>
-            <div class="pps__techlogo-image" id="${widgetId}_ppsTechLogo"></div>
-            <span class="pps__techselect-arrow"></span>
-          </div>
-          <div class="pps__select-outer">
-            <select class="pps__select" id="${widgetId}_ppsStackSelector">
-              ${sltOption}
-            </select>
-          </div>
-        </div>
-        <div class="pps__block--people">
-          <label class="pps__label">
-            ${labels[0]} <span class="pps__teamnumber--small" id="${widgetId}_ppsTeamNumber"></span>
-          </label>
-          <div class="pps__swiper-wrapper" id="${widgetId}_ppsSwiperWapper">
-            <div class="pps__swiper--nav pps__swiper--prev">
-              <span class="pps__btn-link prev"></span>
-            </div>
-            <div class="pps__swiper-container" id="${widgetId}_ppsSwiperContainer"></div>
-            <div class="pps__swiper--nav pps__swiper--next">
-              <span class="pps__btn-link next"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="pps__frame--bottom">
-        <div class="pps__block--project">
-          <label class="pps__label">
-            ${labels[1]}
-          </label>
-          <div class="pps__list--project" id="${widgetId}_ppsProjectList"></div>
-          <div class="pps__view-all pps__is-disabled" id="${widgetId}_ppsProjectViewAll"></div>
-        </div>
-      </div>
-    </div>
-    <div class="pps__frame--right">
-      <div class="pps__block--stack">
-        <label class="pps__label">
-          ${labels[2]}
-        </label>
-        <div class="pps__list--stack" id="${widgetId}_ppsStackList"></div>
-      </div>
-    </div>
-  `;
+  let layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[0])
+                          .replace('{{labelProject}}', labels[3])
+                          .replace('{{labelPeople}}', labels[2])
+                          .replace('{{options}}', sltOption);
 
   contentBlock.html(layout);
 
-  $elStack = getElement(`${widgetId}_ppsStackList`);
-  $elPeople = getElement(`${widgetId}_ppsSwiperContainer`);
-  $elProject = getElement(`${widgetId}_ppsProjectList`);
+  $elStack = contentBlock.query('.pps__list--stack');
+  $elPeople = contentBlock.query('.pps__swiper-container');
+  $elProject = contentBlock.query('.pps__list--project');
 
-  $elLogo = getElement(`${widgetId}_ppsTechLogo`);
-  $elTeamNum = getElement(`${widgetId}_ppsTeamNumber`);
-  $elSelector = getElement(`${widgetId}_ppsStackSelector`);
-  $elSwiperWapper = getElement(`${widgetId}_ppsSwiperWapper`);
+  $elLogo = contentBlock.query('.pps__techlogo-image');
+  $elTeamNum = contentBlock.query('.pps__teamnumber--small');
+  $elSelector = contentBlock.query('.pps__stack-selector');
+  $elSwiperWapper = contentBlock.query('.pps__swiper-wrapper');
+
+  $btnViewAllProject = contentBlock.query('.pps__view-all');
 
   $elContentBlock = contentBlock;
 
-  $btnViewAllProject = getElement(`${widgetId}_ppsProjectViewAll`);
-
   let onscroll = () => {
     if (!_isStarted) {
-      let offsetTop = getPosition($elContentBlock).y;
+      let offsetTop = getElementPosition($elContentBlock).y;
       let wHeight = window.innerHeight;
       let delta = offsetTop - wHeight;
       if (delta < DELTA_TO_START) {

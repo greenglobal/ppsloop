@@ -1,8 +1,8 @@
 // rollupify
 
 var debug = require('debug');
-var info = debug('app:info');
-var error = debug('app:error');
+var info = debug('pps:info');
+var error = debug('pps:error');
 
 var rollup = require('rollup');
 

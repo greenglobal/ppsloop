@@ -1,5 +1,5 @@
 {
-  "version": "0.6.21",
+  "version": "0.6.22",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -37,6 +37,7 @@
     "minimist": "1.x.x"
   },
   "devDependencies": {
+    "autoprefixer": "^7.1.1",
     "babel-cli": "6.x.x",
     "babel-plugin-external-helpers": "6.x.x",
     "babel-preset-env": "1.x.x",
@@ -74,8 +75,6 @@
         {
           "targets": {
             "browsers": [
-              "last 2 versions",
-              "safari >= 7",
               "> 1%"
             ]
           }

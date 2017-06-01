@@ -16,8 +16,7 @@ var {minify} = require('uglify-js');
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 var jsminify = (source = '') => {
-  let {code} = minify(source);
-  return code;
+  return minify(source, {sourceMap: true});
 };
 
 let removeBr = (s) => {
@@ -53,7 +52,6 @@ var rollupify = (entry) => {
     let result = bundle.generate({
       format: 'umd',
       indent: true,
-      sourceMap: true,
       moduleId: 'PPSW',
       moduleName: 'PPSW'
     });
@@ -66,7 +64,11 @@ var rollupify = (entry) => {
     };
 
     if (ENV === 'production') {
-      output.minified = jsminify(code);
+      let min = jsminify(code);
+      if (!min.error) {
+        output.minified = min.code;
+        output.map = min.map;
+      }
     }
     return output;
   }).catch((err) => {

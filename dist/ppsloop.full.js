@@ -1,4 +1,4 @@
-/** ppsw@0.6.25 - full, no data */
+/** ppsw@0.6.26 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :

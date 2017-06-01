@@ -15,9 +15,7 @@ import Siema from 'siema';
 
 import {
   preloadImages,
-  onTransitionEnd,
-  getElementPosition,
-  getLocatePoint
+  getElementPosition
 } from './utils';
 
 import {
@@ -31,11 +29,7 @@ const TECH_STACK_NUMBER = 27;
 const DELTA_TO_START = -80;
 const PERSON_CARD_SIZE = 200;
 
-const UA = navigator.userAgent;
-
 let imgPath = '';
-
-let deltaPaddingLeft = 20;
 
 let people = [];
 let projects = [];
@@ -46,7 +40,6 @@ let pickedStacks = [];
 let $elLogo;
 let $elTeamNum;
 let $elSelector;
-let $elSwiperWapper;
 let $elContentBlock;
 
 let $elPeople;
@@ -57,11 +50,6 @@ let $btnViewAllProject;
 
 let _isInitialized = false;
 let _isStarted = false;
-
-let isSafari = () => {
-  let reg = /Macintosh; Intel Mac OS X/i;
-  return reg.test(UA) && !(/chrome/i).test(UA);
-};
 
 let shuffle = (arr) => {
   return arr.sort(() => {
@@ -223,90 +211,6 @@ let setActiveState = (origin) => {
   origin.addClass('pps-active');
 };
 
-
-let applyEffect = (cards, pointer, perPage = 4) => {
-
-  let {
-    left: pleft,
-    top: ptop,
-    width: pwidth,
-    height: pheight
-  } = pointer;
-
-  let t = 20;
-
-  let arr = cards.splice(0, perPage);
-
-  let ot = $elSwiperWapper.offsetTop;
-  let ol = $elSwiperWapper.offsetLeft;
-
-  let iss = isSafari();
-  let realTopDelta = iss ? 180 : 0;
-  let realLeftDelta = iss ? 45 : -5;
-
-  arr.filter((item) => {
-    return item && item.$el;
-  }).map((item) => {
-    return item.$el;
-  }).map((el) => {
-    return {
-      top: ot + el.offsetTop,
-      left: ol + el.offsetLeft + deltaPaddingLeft,
-      width: el.offsetWidth,
-      height: el.offsetHeight,
-      $el: el
-    };
-  }).forEach((data) => {
-    let {
-      top,
-      left,
-      width,
-      height,
-      $el
-    } = data;
-    let shadow = createElement('DIV');
-    shadow.addClass('pps__swiper-slide');
-    shadow.setStyle({
-      top,
-      left,
-      width,
-      height,
-      border: 'solid px #eee'
-    });
-
-    let node = getElement($el.cloneNode(true));
-    node.setStyle({
-      position: 'absolute',
-      zIndex: 10,
-      width,
-      height
-    });
-    node.style.left = `${pleft + pwidth / 2}px`;
-    node.style.top = `${ptop - pheight / 2}px`;
-    node.style.transform = 'scale(0.1)';
-
-    $elContentBlock.appendChild(node);
-
-    if ($el.parentNode) {
-      $el.parentNode.replaceChild(shadow, $el);
-    }
-
-    t += 60;
-    setTimeout(() => {
-      node.style.left = `${left - realLeftDelta}px`;
-      node.style.top = `${top - realTopDelta}px`;
-      node.style.transform = 'scale(1)';
-    }, t);
-
-    onTransitionEnd(node, () => {
-      node.destroy();
-      if (shadow.parentNode) {
-        shadow.parentNode.replaceChild($el, shadow);
-      }
-    });
-  });
-};
-
 let buildStackCard = (entry) => {
   let card = createElement('DIV');
   card.addClass('pps__list--stack-item');
@@ -431,22 +335,7 @@ let randerProjectPanel = (ppj, isAppend = false) => {
   return result;
 };
 
-let randerPeoplePanel = (ppl, origin) => {
-
-  let pointer;
-  let righPanel = queryAll('.pps__frame--right')[0];
-
-  if (righPanel && righPanel.offsetParent) {
-    pointer = getLocatePoint(origin);
-  } else {
-    pointer = getLocatePoint($elLogo);
-    let {
-      width,
-      height
-    } = pointer;
-    pointer.left += width / 2;
-    pointer.top += height / 2;
-  }
+let randerPeoplePanel = (ppl) => {
 
   $elPeople.empty();
 
@@ -475,7 +364,21 @@ let randerPeoplePanel = (ppl, origin) => {
   let {perPage} = setupSlider($elContentBlock);
 
   if (peopleCards.length) {
-    applyEffect(peopleCards, pointer, perPage);
+    let t = 20;
+
+    let arr = peopleCards.splice(0, perPage);
+
+    arr.filter((item) => {
+      return item && item.$el;
+    }).map((item) => {
+      return item.$el;
+    }).map((el) => {
+      el.addClass('pps-card--transition');
+      t += 40;
+      return setTimeout(() => {
+        el.removeClass('pps-card--transition');
+      }, t);
+    });
   }
   return result;
 };
@@ -506,15 +409,7 @@ let onStackSelect = (data, origin) => {
 
   setActiveState(origin);
 
-  if (_people.length > 1) {
-    _people.sort((a, b) => {
-      if (a.yoe === b.yoe) {
-        return 0;
-      }
-      return a.yoe > b.yoe;
-    });
-  }
-  randerPeoplePanel(_people, origin);
+  randerPeoplePanel(_people);
 
   let _projects = getProjectStacks(skill);
 
@@ -710,7 +605,6 @@ let setupLayout = (container) => {
   $elLogo = contentBlock.query('.pps__techlogo-image');
   $elTeamNum = contentBlock.query('.pps__teamnumber--small');
   $elSelector = contentBlock.query('.pps__stack-selector');
-  $elSwiperWapper = contentBlock.query('.pps__swiper-wrapper');
 
   $btnViewAllProject = contentBlock.query('.pps__view-all');
 
@@ -727,24 +621,12 @@ let setupLayout = (container) => {
     }
   };
 
-  let onresize = () => {
-    let blockPeople = $elContentBlock.query('.pps__block--people');
-    let cstyle = window.getComputedStyle(blockPeople, null);
-    let paddingLeft = cstyle.getPropertyValue('padding-left');
-    if (paddingLeft) {
-      let pl = parseInt(paddingLeft, 10);
-      deltaPaddingLeft = pl || 20;
-    }
-  };
-
   setupSelectorEvent();
   randerStackPanel(pickedStacks);
 
-  window.onresize = onresize;
   window.onscroll = onscroll;
 
   window.onload = () => {
-    onresize();
     onscroll();
   };
 

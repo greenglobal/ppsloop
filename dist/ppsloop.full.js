@@ -1,4 +1,4 @@
-/** ppsw@0.6.26 - full, no data */
+/** ppsw@0.6.3 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -474,30 +474,6 @@
 	  };
 	  preload();
 	};
-	var getEventName = function getEventName(elt) {
-	  var t = void 0;
-	  var transitions = {
-	    transition: 'transitionend',
-	    OTransition: 'oTransitionEnd',
-	    MozTransition: 'transitionend',
-	    WebkitTransition: 'webkitTransitionEnd'
-	  };
-	  for (t in transitions) {
-	    if (elt.style[t] !== undefined) {
-	      return transitions[t];
-	    }
-	  }
-	  return false;
-	};
-	var onTransitionEnd = function onTransitionEnd(el, callback) {
-	  var timeout = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 3000;
-	  var ev = getEventName(el);
-	  if (ev) {
-	    el.addEventListener(ev, callback);
-	    return ev;
-	  }
-	  return setTimeout(callback, timeout);
-	};
 	var getElementPosition = function getElementPosition(el) {
 	  var xPos = 0;
 	  var yPos = 0;
@@ -519,18 +495,6 @@
 	    y: yPos
 	  };
 	};
-	var getLocatePoint = function getLocatePoint(origin) {
-	  var ol = origin.offsetLeft;
-	  var ot = origin.offsetTop;
-	  var ow = origin.offsetWidth;
-	  var oh = origin.offsetHeight;
-	  return {
-	    left: Math.floor(ol - ow),
-	    top: Math.floor(ot - oh),
-	    width: ow,
-	    height: oh
-	  };
-	};
 	var tplMainLayout = "\n  <div class=\"pps__frame--left\">\n    <div class=\"pps__frame--top\">\n      <div class=\"pps__techlogo-outer\">\n        <div class=\"pps__techlogo\">\n          <label class=\"pps__label pps__label--no-padding\">{{labelTech}}</label>\n          <div class=\"pps__techlogo-image\"></div>\n          <span class=\"pps__techselect-arrow\"></span>\n        </div>\n        <div class=\"pps__select-outer\">\n          <select class=\"pps__select pps__stack-selector\">\n            {{options}}\n          </select>\n        </div>\n      </div>\n      <div class=\"pps__block--people\">\n        <label class=\"pps__label\">\n          {{labelPeople}} <span class=\"pps__teamnumber--small\"></span>\n        </label>\n        <div class=\"pps__swiper-wrapper\">\n          <div class=\"pps__swiper--nav pps__swiper--prev\">\n            <span class=\"pps__btn-link prev\"></span>\n          </div>\n          <div class=\"pps__swiper-container\"></div>\n          <div class=\"pps__swiper--nav pps__swiper--next\">\n            <span class=\"pps__btn-link next\"></span>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"pps__frame--bottom\">\n      <div class=\"pps__block--project\">\n        <label class=\"pps__label\">\n          {{labelProject}}\n        </label>\n        <div class=\"pps__list--project\"></div>\n        <div class=\"pps__view-all pps__is-disabled\"></div>\n      </div>\n    </div>\n  </div>\n  <div class=\"pps__frame--right\">\n    <div class=\"pps__block--stack\">\n      <label class=\"pps__label\">\n        {{labelTech}}\n      </label>\n      <div class=\"pps__list--stack\"></div>\n    </div>\n  </div>\n";
 	var tplBtnViewAll = "<span class=\"pps__btn-viewall\"><b>+{{count}}</b> more</span>";
 	var tplSimpleLayout = "\n  <div class=\"pps__swiper-wrapper pps__swiper-wrapper-simple\">\n    <div class=\"pps__swiper--nav pps__swiper--prev\">\n      <span class=\"pps__btn-link prev\"></span>\n    </div>\n    <div class=\"pps__swiper-container pps__swiper-container-simple\">{{content}}</div>\n    <div class=\"pps__swiper--nav pps__swiper--next\">\n      <span class=\"pps__btn-link next\"></span>\n    </div>\n  </div>\n";
@@ -538,9 +502,7 @@
 	var TECH_STACK_NUMBER = 27;
 	var DELTA_TO_START = -80;
 	var PERSON_CARD_SIZE = 200;
-	var UA = navigator.userAgent;
 	var imgPath = '';
-	var deltaPaddingLeft = 20;
 	var people = [];
 	var projects = [];
 	var techstacks = [];
@@ -548,7 +510,6 @@
 	var $elLogo = void 0;
 	var $elTeamNum = void 0;
 	var $elSelector = void 0;
-	var $elSwiperWapper = void 0;
 	var $elContentBlock = void 0;
 	var $elPeople = void 0;
 	var $elProject = void 0;
@@ -556,10 +517,6 @@
 	var $btnViewAllProject = void 0;
 	var _isInitialized = false;
 	var _isStarted = false;
-	var isSafari = function isSafari() {
-	  var reg = /Macintosh; Intel Mac OS X/i;
-	  return reg.test(UA) && !/chrome/i.test(UA);
-	};
 	var shuffle = function shuffle(arr) {
 	  return arr.sort(function () {
 	    var r = Math.random();
@@ -695,74 +652,6 @@
 	  });
 	  origin.addClass('pps-active');
 	};
-	var applyEffect = function applyEffect(cards, pointer) {
-	  var perPage = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 4;
-	  var pleft = pointer.left,
-	      ptop = pointer.top,
-	      pwidth = pointer.width,
-	      pheight = pointer.height;
-	  var t = 20;
-	  var arr = cards.splice(0, perPage);
-	  var ot = $elSwiperWapper.offsetTop;
-	  var ol = $elSwiperWapper.offsetLeft;
-	  var iss = isSafari();
-	  var realTopDelta = iss ? 180 : 0;
-	  var realLeftDelta = iss ? 45 : -5;
-	  arr.filter(function (item) {
-	    return item && item.$el;
-	  }).map(function (item) {
-	    return item.$el;
-	  }).map(function (el) {
-	    return {
-	      top: ot + el.offsetTop,
-	      left: ol + el.offsetLeft + deltaPaddingLeft,
-	      width: el.offsetWidth,
-	      height: el.offsetHeight,
-	      $el: el
-	    };
-	  }).forEach(function (data) {
-	    var top = data.top,
-	        left = data.left,
-	        width = data.width,
-	        height = data.height,
-	        $el = data.$el;
-	    var shadow = create('DIV');
-	    shadow.addClass('pps__swiper-slide');
-	    shadow.setStyle({
-	      top: top,
-	      left: left,
-	      width: width,
-	      height: height,
-	      border: 'solid px #eee'
-	    });
-	    var node = get$$1($el.cloneNode(true));
-	    node.setStyle({
-	      position: 'absolute',
-	      zIndex: 10,
-	      width: width,
-	      height: height
-	    });
-	    node.style.left = pleft + pwidth / 2 + 'px';
-	    node.style.top = ptop - pheight / 2 + 'px';
-	    node.style.transform = 'scale(0.1)';
-	    $elContentBlock.appendChild(node);
-	    if ($el.parentNode) {
-	      $el.parentNode.replaceChild(shadow, $el);
-	    }
-	    t += 60;
-	    setTimeout(function () {
-	      node.style.left = left - realLeftDelta + 'px';
-	      node.style.top = top - realTopDelta + 'px';
-	      node.style.transform = 'scale(1)';
-	    }, t);
-	    onTransitionEnd(node, function () {
-	      node.destroy();
-	      if (shadow.parentNode) {
-	        shadow.parentNode.replaceChild($el, shadow);
-	      }
-	    });
-	  });
-	};
 	var buildStackCard = function buildStackCard(entry) {
 	  var card = create('DIV');
 	  card.addClass('pps__list--stack-item');
@@ -856,19 +745,7 @@
 	  }
 	  return result;
 	};
-	var randerPeoplePanel = function randerPeoplePanel(ppl, origin) {
-	  var pointer = void 0;
-	  var righPanel = queryAll('.pps__frame--right')[0];
-	  if (righPanel && righPanel.offsetParent) {
-	    pointer = getLocatePoint(origin);
-	  } else {
-	    pointer = getLocatePoint($elLogo);
-	    var _pointer = pointer,
-	        width = _pointer.width,
-	        height = _pointer.height;
-	    pointer.left += width / 2;
-	    pointer.top += height / 2;
-	  }
+	var randerPeoplePanel = function randerPeoplePanel(ppl) {
 	  $elPeople.empty();
 	  var result = shuffle(ppl).map(function (entry) {
 	    var card = buildPersonCard(entry);
@@ -892,7 +769,19 @@
 	  var _setupSlider = setupSlider($elContentBlock),
 	      perPage = _setupSlider.perPage;
 	  if (peopleCards.length) {
-	    applyEffect(peopleCards, pointer, perPage);
+	    var t = 20;
+	    var arr = peopleCards.splice(0, perPage);
+	    arr.filter(function (item) {
+	      return item && item.$el;
+	    }).map(function (item) {
+	      return item.$el;
+	    }).map(function (el) {
+	      el.addClass('pps-card--transition');
+	      t += 40;
+	      return setTimeout(function () {
+	        el.removeClass('pps-card--transition');
+	      }, t);
+	    });
 	  }
 	  return result;
 	};
@@ -915,15 +804,7 @@
 	    };
 	  });
 	  setActiveState(origin);
-	  if (_people.length > 1) {
-	    _people.sort(function (a, b) {
-	      if (a.yoe === b.yoe) {
-	        return 0;
-	      }
-	      return a.yoe > b.yoe;
-	    });
-	  }
-	  randerPeoplePanel(_people, origin);
+	  randerPeoplePanel(_people);
 	  var _projects = getProjectStacks(skill);
 	  var arr = _projects.map(function (item) {
 	    return {
@@ -1063,7 +944,6 @@
 	  $elLogo = contentBlock.query('.pps__techlogo-image');
 	  $elTeamNum = contentBlock.query('.pps__teamnumber--small');
 	  $elSelector = contentBlock.query('.pps__stack-selector');
-	  $elSwiperWapper = contentBlock.query('.pps__swiper-wrapper');
 	  $btnViewAllProject = contentBlock.query('.pps__view-all');
 	  $elContentBlock = contentBlock;
 	  var onscroll = function onscroll() {
@@ -1076,21 +956,10 @@
 	      }
 	    }
 	  };
-	  var onresize = function onresize() {
-	    var blockPeople = $elContentBlock.query('.pps__block--people');
-	    var cstyle = window.getComputedStyle(blockPeople, null);
-	    var paddingLeft = cstyle.getPropertyValue('padding-left');
-	    if (paddingLeft) {
-	      var pl = parseInt(paddingLeft, 10);
-	      deltaPaddingLeft = pl || 20;
-	    }
-	  };
 	  setupSelectorEvent();
 	  randerStackPanel(pickedStacks);
-	  window.onresize = onresize;
 	  window.onscroll = onscroll;
 	  window.onload = function () {
-	    onresize();
 	    onscroll();
 	  };
 	  return container;

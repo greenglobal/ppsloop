@@ -3,8 +3,6 @@
  * @ndaidong
  */
 
-/* global Siema */
-
 import {
   get as getElement,
   add as addElement,
@@ -12,6 +10,8 @@ import {
   queryAll,
   Event
 } from 'realdom';
+
+import Siema from 'siema';
 
 import {
   preloadImages,
@@ -73,6 +73,12 @@ let shuffle = (arr) => {
   });
 };
 
+let existsInArray = (v, arr) => {
+  return arr.some((k) => {
+    return k === v;
+  });
+};
+
 export let getPeople = () => {
   return [...people];
 };
@@ -100,7 +106,7 @@ export let getProjectStacks = (skill) => {
     let stacks = item.stacks.map((st) => {
       return st.toLowerCase();
     });
-    return stacks.includes(sk);
+    return existsInArray(sk, stacks);
   });
 };
 
@@ -119,7 +125,7 @@ export let getProjectMembers = (pname) => {
 let getImgPath = (c) => {
   let ipath = c.getAttribute('image-path');
   if (ipath) {
-    if (ipath.endsWith === '/') {
+    if (ipath.indexOf(ipath.length - 1) === '/') {
       ipath = ipath.slice(0, -1);
     }
   }

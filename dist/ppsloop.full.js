@@ -649,6 +649,17 @@
 	var setActiveState = function setActiveState(origin) {
 	  queryAll('.pps__list--stack-item.pps-active').forEach(function (el) {
 	    el.removeClass('pps-active');
+	    if (el.hasClass('pps-highlight')) {
+	      el.removeClass('pps-highlight');
+	      var inner = el.query('.pps-inner');
+	      if (inner.hasClass('pps-highlight--actual')) {
+	        inner.removeClass('pps-highlight--actual');
+	      }
+	      var blink = el.query('.blink');
+	      if (blink) {
+	        blink.destroy();
+	      }
+	    }
 	  });
 	  origin.addClass('pps-active');
 	};
@@ -859,6 +870,29 @@
 	    };
 	  }).map(setupStackClickEvent);
 	};
+	var applyHighlightEffect = function applyHighlightEffect(el) {
+	  var times = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+	  if (times === 1) {
+	    el.addClass('pps-highlight');
+	  }
+	  if (el.hasClass('pps-highlight')) {
+	    var inner = el.query('.pps-inner');
+	    inner.addClass('pps-highlight--actual');
+	    var hand = add('DIV', inner);
+	    hand.addClass('blink');
+	    hand.addEventListener('animationend', function () {
+	      hand.destroy();
+	      inner.removeClass('pps-highlight--actual');
+	      if (times < 3) {
+	        setTimeout(function () {
+	          applyHighlightEffect(el, times + 1);
+	        }, 2000);
+	      } else {
+	        el.removeClass('pps-highlight');
+	      }
+	    });
+	  }
+	};
 	var start = function start(delta, offsetTop) {
 	  if (_isStarted) {
 	    return false;
@@ -871,15 +905,9 @@
 	  var el = items[0];
 	  var righPanel = queryAll('.pps__frame--right')[0];
 	  if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
-	    el.addClass('pps-highlight');
-	    var hand = add('DIV', el);
-	    hand.addClass('blink');
+	    applyHighlightEffect(el);
 	    setTimeout(function () {
 	      onStackSelect(pickedStacks[0], el);
-	      setTimeout(function () {
-	        hand.destroy();
-	        el.removeClass('pps-highlight');
-	      }, 2000);
 	    }, 1000);
 	  } else {
 	    onStackSelect(pickedStacks[0], el);

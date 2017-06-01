@@ -170,27 +170,11 @@ PPSWidget {
     }
 
     &.pps-card--transition {
-      transition: all 300ms ease-in-out;
+      transition: all 300ms ease;
       opacity: 0;
       transform: scale(0.7, 0.7) translateX(30px);
       will-change: transform;
     }
-  }
-
-  & .pps-flash {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    background-image: radial-gradient(circle, #999 10%, transparent 10.01%);
-    background-repeat: no-repeat;
-    background-position: 50%;
-    animation: ripple 600ms ease-in-out;
-    transition: transform 600ms, opacity 600ms;
-    will-change: transform;
   }
 
   & .pps__wrapper--fluid {
@@ -374,12 +358,13 @@ PPSWidget {
           background-color: #e6fff3;
         }
 
+        .pps-inner.pps-highlight--actual {
+          animation: highlight 1s 2 ease-in-out;
+        }
+
         &.pps-highlight {
           position: relative;
-
-          .pps-inner {
-            animation: highlight 1s 2 ease-in-out;
-          }
+          overflow: hidden;
 
           & .blink {
             display: inline-block;
@@ -406,11 +391,11 @@ PPSWidget {
               opacity: 0;
             }
             &:before {
-              transform: scale(1);
-              animation: blink 0.4s 3 linear;
+              transform: scale(2);
+              animation: blink 0.8s 3 linear;
             }
             &:after {
-              animation: blink 0.5s 0.6s 3 linear;
+              animation: blink 0.8s 1.2s 3 linear;
             }
           }
         }

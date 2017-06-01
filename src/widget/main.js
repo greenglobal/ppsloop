@@ -207,6 +207,17 @@ var setupSlider = (container) => {
 let setActiveState = (origin) => {
   queryAll('.pps__list--stack-item.pps-active').forEach((el) => {
     el.removeClass('pps-active');
+    if (el.hasClass('pps-highlight')) {
+      el.removeClass('pps-highlight');
+      let inner = el.query('.pps-inner');
+      if (inner.hasClass('pps-highlight--actual')) {
+        inner.removeClass('pps-highlight--actual');
+      }
+      let blink = el.query('.blink');
+      if (blink) {
+        blink.destroy();
+      }
+    }
   });
   origin.addClass('pps-active');
 };
@@ -477,6 +488,29 @@ let randerStackPanel = (stacks) => {
   }).map(setupStackClickEvent);
 };
 
+let applyHighlightEffect = (el, times = 1) => {
+  if (times === 1) {
+    el.addClass('pps-highlight');
+  }
+  if (el.hasClass('pps-highlight')) {
+    let inner = el.query('.pps-inner');
+    inner.addClass('pps-highlight--actual');
+    let hand = addElement('DIV', inner);
+    hand.addClass('blink');
+    hand.addEventListener('animationend', () => {
+      hand.destroy();
+      inner.removeClass('pps-highlight--actual');
+      if (times < 3) {
+        setTimeout(() => {
+          applyHighlightEffect(el, times + 1);
+        }, 2000);
+      } else {
+        el.removeClass('pps-highlight');
+      }
+    });
+  }
+};
+
 let start = (delta, offsetTop) => {
   if (_isStarted) {
     return false;
@@ -496,17 +530,10 @@ let start = (delta, offsetTop) => {
 
   if (offsetTop > 0 && righPanel && righPanel.offsetParent) {
 
-    el.addClass('pps-highlight');
-
-    let hand = addElement('DIV', el);
-    hand.addClass('blink');
+    applyHighlightEffect(el);
 
     setTimeout(() => {
       onStackSelect(pickedStacks[0], el);
-      setTimeout(() => {
-        hand.destroy();
-        el.removeClass('pps-highlight');
-      }, 2000);
     }, 1000);
 
   } else {

@@ -21,6 +21,7 @@ export let getEventName = (elt) => {
 
 export let onTransitionEnd = (el, callback, timeout = 3000) => {
   let ev = getEventName(el);
+
   if (ev) {
     el.addEventListener(ev, callback);
     return ev;

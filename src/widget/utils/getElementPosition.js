@@ -7,8 +7,9 @@ export let getElementPosition = (el) => {
 
   while (el) {
     if (el.tagName === 'BODY') {
-      var xScroll = el.scrollLeft || document.documentElement.scrollLeft;
-      var yScroll = el.scrollTop || document.documentElement.scrollTop;
+      let docEl = document.documentElement;
+      let xScroll = el.scrollLeft || docEl.scrollLeft;
+      let yScroll = el.scrollTop || docEl.scrollTop;
 
       xPos += el.offsetLeft - xScroll + el.clientLeft;
       yPos += el.offsetTop - yScroll + el.clientTop;

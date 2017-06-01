@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 
   if (req.path === '/widget/ppsloop.js') {
     return compiler.js().then((js) => {
-      return res.status(200).type('text/javascript').send(js);
+      return res.status(200).type('text/javascript').send(js.code);
     }).catch((err) => {
       return res.status(500).send(err);
     });

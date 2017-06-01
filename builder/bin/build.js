@@ -12,6 +12,7 @@ var {
   compiler,
   readFile,
   writeFile,
+  name,
   version
 } = require('../index');
 
@@ -35,13 +36,34 @@ var makeWidgetCSS = async () => {
 
 var makeWidgetJS = async () => {
   let js = await compiler.js();
-  let json = readFile('./src/widget/data.json');
-  let init = `if (window.PPSW) {PPSW.init(${json});};`;
-  writeFile('./dist/ppsloop.js', [
-    `/** v${version} */`,
-    js,
-    init
-  ].join('\n'));
+
+  if (js.minified) {
+
+    let json = readFile('./src/widget/data.json');
+    let init = json ? `if (window.PPSW) {PPSW.init(${json});};` : '';
+
+    writeFile('./dist/ppsloop.js', [
+      `/** ${name}@${version} - minified, init data */`,
+      js.minified,
+      init
+    ].join('\n'));
+
+    writeFile('./dist/ppsloop.min.js', [
+      `/** ${name}@${version} - minified, no data */`,
+      js.minified
+    ].join('\n'));
+  }
+
+  if (js.code) {
+    writeFile('./dist/ppsloop.full.js', [
+      `/** ${name}@${version} - full, no data */`,
+      js.code
+    ].join('\n'));
+  }
+
+  if (js.map) {
+    writeFile('./dist/ppsloop.js.map', js.map);
+  }
 };
 
 var publish = () => {

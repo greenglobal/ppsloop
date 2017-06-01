@@ -13,8 +13,6 @@ var cleanup = require('rollup-plugin-cleanup');
 
 var {minify} = require('uglify-js');
 
-var readFile = require('./readFile');
-
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 var jsminify = (source = '') => {
@@ -55,10 +53,12 @@ var rollupify = (entry) => {
     let result = bundle.generate({
       format: 'umd',
       indent: true,
+      sourceMap: true,
       moduleId: 'PPSW',
       moduleName: 'PPSW'
     });
     info('Rolling finished.');
+
     let {code} = result;
 
     let output = {
@@ -74,20 +74,7 @@ var rollupify = (entry) => {
   });
 };
 
-var compileJS = async (jsEntry, jsFiles, source) => {
-  let vendorJS = jsFiles.filter((file) => {
-    return file.includes('vendor/');
-  }).map((file) => {
-    return readFile(`${source}/${file}`);
-  }).reduce((prev, curr) => {
-    return prev.concat(curr);
-  }, []).join('\n');
-
-  let js = await rollupify(`${source}${jsEntry}`);
-  return [
-    jsminify(vendorJS),
-    js.minified || js.code
-  ].join('\n\n');
+module.exports = async (entry) => {
+  let output = await rollupify(entry);
+  return output;
 };
-
-module.exports = compileJS;

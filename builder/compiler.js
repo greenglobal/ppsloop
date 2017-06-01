@@ -1,28 +1,25 @@
+// compiler
 
-var csspostify = require('./csspostify');
+var postify = require('./postify');
+var rollupify = require('./rollupify');
 
-var jsrollupify = require('./jsrollupify');
+const ASSET_DIR = './src/widget/';
+
+const CSS_FILES = [
+  'main.css'
+];
+
+const JS_ENTRY = 'main.js';
 
 var css = () => {
-  return csspostify([
-    'main.css'
-  ], './src/widget/');
+  return postify(CSS_FILES, ASSET_DIR);
 };
 
 var js = () => {
-  return jsrollupify(
-    'main.js',
-    [
-      'polyfills/array.from.js',
-      'polyfills/array.includes.js',
-      'polyfills/string.endsWith.js'
-    ],
-    './src/widget/'
-  );
+  return rollupify(`${ASSET_DIR}${JS_ENTRY}`);
 };
 
 module.exports = {
   css,
   js
 };
-

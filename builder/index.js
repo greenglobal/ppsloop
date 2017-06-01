@@ -15,7 +15,7 @@ var compiler = require('./compiler');
 var getFieldbookData = require('./getFieldbookData');
 var generateJSON = require('./generateJSON');
 
-const {version} = require(path.join(__dirname, '../package.json'));
+const {name, version} = require(path.join(__dirname, '../package.json'));
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 var setup = async () => {
@@ -34,5 +34,6 @@ module.exports = {
   readFile,
   writeFile,
   delFile,
+  name,
   version
 };

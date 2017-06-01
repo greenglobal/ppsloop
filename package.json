@@ -1,5 +1,5 @@
 {
-  "version": "0.6.12",
+  "version": "0.6.2",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -60,9 +60,9 @@
     "realdom": "3.x.x",
     "rollup": "0.x.x",
     "rollup-plugin-babel": "2.x.x",
+    "rollup-plugin-cleanup": "1.x.x",
     "rollup-plugin-commonjs": "8.x.x",
     "rollup-plugin-node-resolve": "3.x.x",
-    "rollup-plugin-uglify": "^2.0.1",
     "tap-spec": "4.x.x",
     "tape": "4.x.x",
     "uglify-js": "3.x.x"
@@ -70,7 +70,16 @@
   "babel": {
     "presets": [
       [
-        "env"
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions",
+              "safari >= 7",
+              "> 1%"
+            ]
+          }
+        }
       ]
     ]
   },

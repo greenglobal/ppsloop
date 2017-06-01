@@ -36,11 +36,7 @@ var makeWidgetCSS = async () => {
 var makeWidgetJS = async () => {
   let js = await compiler.js();
   let json = readFile('./src/widget/data.json');
-  let init = `
-    if (window && window.PPSW) {
-      PPSW.init(${json});
-    };
-  `;
+  let init = `PPSW.init(${json});`;
   writeFile('./dist/ppsloop.js', [
     `/** v${version} */`,
     js,

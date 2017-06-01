@@ -10,13 +10,6 @@ var nested = require('postcss-nested');
 var cssnano = require('cssnano');
 var cssnext = require('postcss-cssnext');
 var mqpacker = require('css-mqpacker');
-var autoprefixer = require('autoprefixer');
-
-var {
-  babel: babelConfig
-} = require('../package.json');
-
-var browserList = babelConfig.presets[0][1].targets.browsers;
 
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
@@ -28,10 +21,6 @@ const POSTCSS_PLUGINS = [
   cssnext(),
   mqpacker({
     sort: true
-  }),
-  autoprefixer({
-    add: false,
-    browsers: browserList
   })
 ];
 

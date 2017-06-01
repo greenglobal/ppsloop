@@ -3,8 +3,6 @@
  * @ndaidong
  */
 
-/* global Siema */
-
 import {
   get as getElement,
   add as addElement,
@@ -12,6 +10,8 @@ import {
   queryAll,
   Event
 } from 'realdom';
+
+import Siema from 'siema';
 
 import {
   preloadImages,

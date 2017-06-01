@@ -5,7 +5,6 @@ var jsrollupify = require('./jsrollupify');
 
 var css = () => {
   return csspostify([
-    'vendor/ripple.min.css',
     'main.css'
   ], './src/widget/');
 };
@@ -14,10 +13,9 @@ var js = () => {
   return jsrollupify(
     'main.js',
     [
-      'vendor/array.from.js',
-      'vendor/array.includes.js',
-      'vendor/string.endsWith.js',
-      'vendor/siema.min.js'
+      'polyfills/array.from.js',
+      'polyfills/array.includes.js',
+      'polyfills/string.endsWith.js'
     ],
     './src/widget/'
   );

@@ -1,4 +1,4 @@
-/** ppsw@0.6.24 - full, no data */
+/** ppsw@0.6.25 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -1055,7 +1055,7 @@
 	    var st = item[0];
 	    return '<option value="' + st + '">' + st + '</option>';
 	  }).join('');
-	  var layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[0]).replace('{{labelProject}}', labels[3]).replace('{{labelPeople}}', labels[2]).replace('{{options}}', sltOption);
+	  var layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[2]).replace('{{labelProject}}', labels[1]).replace('{{labelPeople}}', labels[0]).replace('{{options}}', sltOption);
 	  contentBlock.html(layout);
 	  $elStack = contentBlock.query('.pps__list--stack');
 	  $elPeople = contentBlock.query('.pps__swiper-container');

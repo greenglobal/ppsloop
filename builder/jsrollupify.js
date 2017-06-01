@@ -55,9 +55,6 @@ var rollupify = (entry) => {
     });
     info('Rolling finished.');
     let {code} = result;
-    if (ENV === 'production') {
-      return jsminify(code);
-    }
     return code;
   }).catch((err) => {
     error(err);
@@ -73,7 +70,7 @@ var compileJS = async (jsEntry, jsFiles, source) => {
     return prev.concat(curr);
   }, []).join('\n');
 
-  let js = await rollupify(`${source}/${jsEntry}`);
+  let js = await rollupify(`${source}${jsEntry}`);
   return [jsminify(vendorJS), js].join('\n\n');
 };
 

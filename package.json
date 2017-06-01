@@ -1,5 +1,5 @@
 {
-  "version": "0.6.11",
+  "version": "0.6.12",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -62,6 +62,7 @@
     "rollup-plugin-babel": "2.x.x",
     "rollup-plugin-commonjs": "8.x.x",
     "rollup-plugin-node-resolve": "3.x.x",
+    "rollup-plugin-uglify": "^2.0.1",
     "tap-spec": "4.x.x",
     "tape": "4.x.x",
     "uglify-js": "3.x.x"

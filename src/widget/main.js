@@ -696,9 +696,9 @@ let setupLayout = (container) => {
     return `<option value="${st}">${st}</option>`;
   }).join('');
 
-  let layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[0])
-                          .replace('{{labelProject}}', labels[3])
-                          .replace('{{labelPeople}}', labels[2])
+  let layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[2])
+                          .replace('{{labelProject}}', labels[1])
+                          .replace('{{labelPeople}}', labels[0])
                           .replace('{{options}}', sltOption);
 
   contentBlock.html(layout);

@@ -20,6 +20,63 @@ PPSWidget * {
   --transitionTimer: 0.6s;
 }
 
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(20);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pointing {
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px) rotate(10deg);
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  8% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  20% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+  30% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@keyframes highlight {
+  0% {
+    border-color: #ffa2a4;
+    background-color: #f6efe3;
+  }
+  70% {
+    border-color: #fff294;
+    background-color: #e6efe3;
+  }
+  100% {
+    border-color: #90f2f4;
+    background-color: #e6ffe3;
+  }
+}
+
+
 @custom-media --normal-viewport (min-width: 760px);
 
 PPSWidget {
@@ -532,58 +589,3 @@ PPSWidget {
   }
 }
 
-@keyframes ripple {
-  0% {
-    transform: scale(0);
-    opacity: 0.1;
-  }
-  100% {
-    transform: scale(20);
-    opacity: 0.6;
-  }
-}
-
-@keyframes pointing {
-  100% {
-    opacity: 1;
-    transform: translate(0px, 0px) rotate(10deg);
-  }
-}
-
-@-webkit-keyframes blink {
-  0% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  8% {
-    opacity: 1;
-    transform: scale(0.6);
-  }
-  20% {
-    opacity: 0;
-    transform: scale(1.2);
-  }
-  30% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.2);
-  }
-}
-
-@-webkit-keyframes highlight {
-  0% {
-    border-color: #ffa2a4;
-    background-color: #f6efe3;
-  }
-  70% {
-    border-color: #fff294;
-    background-color: #e6efe3;
-  }
-  100% {
-    border-color: #90f2f4;
-    background-color: #e6ffe3;
-  }
-}

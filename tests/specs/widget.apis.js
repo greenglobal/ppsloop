@@ -36,7 +36,7 @@ let apiCheck = (PPSW) => {
         assert.ok(bella.isObject(item), 'Returned people must be an object');
 
         [
-          'id', 'name', 'email', 'image', 'skills', 'fullname'
+          'id', 'name', 'skills'
         ].forEach((k) => {
           assert.ok(bella.hasProperty(item, k), `Returned people must have property ${k}`);
         });
@@ -49,8 +49,12 @@ let apiCheck = (PPSW) => {
           assert.ok(bella.hasProperty(item, k), `Returned project must have property ${k}`);
         });
       } else if (met === 'getTechstacks') {
-        assert.ok(bella.isArray(item), 'Returned tech stack must be an array');
-        assert.ok(item.length === 3, 'Returned tech stack must have 3 entries');
+        assert.ok(bella.isObject(item), 'Returned tech stack must be an array');
+        [
+          'name', 'logo', 'count', 'alias', 'id'
+        ].forEach((k) => {
+          assert.ok(bella.hasProperty(item, k), `Returned k stack must have property ${k}`);
+        });
       }
     });
 
@@ -60,7 +64,7 @@ let apiCheck = (PPSW) => {
     assert.ok(javaDevs.length > 0, '$javaDevs must contain many entries');
 
     [
-      'id', 'name', 'email', 'image', 'skills', 'fullname'
+      'name', 'avatar'
     ].forEach((k) => {
       assert.ok(bella.hasProperty(javaDevs[0], k), `$javaDevs entry must have property ${k}`);
     });
@@ -73,7 +77,7 @@ let apiCheck = (PPSW) => {
     assert.ok(ngProjects.length > 0, '$ngProjects must contain many entries');
 
     [
-      'name', 'logo', 'stacks', 'members'
+      'name', 'alias', 'logo'
     ].forEach((k) => {
       assert.ok(bella.hasProperty(ngProjects[0], k), `$ngProjects entry must have property ${k}`);
     });
@@ -85,9 +89,20 @@ let apiCheck = (PPSW) => {
     assert.ok(teamEscope.length > 0, '$teamEscope must contain many entries');
 
     [
-      'person', 'image', 'role'
+      'id', 'name', 'avatar', 'skills'
     ].forEach((k) => {
       assert.ok(bella.hasProperty(teamEscope[0], k), `$teamEscope entry must have property ${k}`);
+    });
+
+
+    assert.comment(` - Test .getTechstackById(9) method`);
+    let stack = PPSW.getTechstackById(9);
+    assert.ok(bella.isObject(stack), `Returned - $stack - must be an object`);
+
+    [
+      'name', 'logo', 'count', 'alias', 'id'
+    ].forEach((k) => {
+      assert.ok(bella.hasProperty(stack, k), `$stack entry must have property ${k}`);
     });
 
     assert.end();

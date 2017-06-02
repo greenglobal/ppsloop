@@ -11,6 +11,11 @@ import {
   Event
 } from 'realdom';
 
+import {
+  isString,
+  createAlias
+} from 'bellajs';
+
 import Siema from 'siema';
 
 import {
@@ -25,17 +30,25 @@ import {
   tplBtnViewAll
 } from './templates';
 
-const TECH_STACK_NUMBER = 27;
 const DELTA_TO_START = -80;
 const PERSON_CARD_SIZE = 200;
+
+const DELTA_PEOPLE_START_LOADING = 10;
+const DELTA_PEOPLE_CONTINUOUS_LOADING = 180;
+
+const DELTA_PROJECT_START_LOADING = 20;
+const DELTA_PROJECT_CONTINUOUS_LOADING = 120;
+
+const PERSON_IMG_DIR = encodeURIComponent('People');
+const PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
+const TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
+const IMG_FILE_EXT = '.png';
 
 let imgPath = '';
 
 let people = [];
 let projects = [];
 let techstacks = [];
-
-let pickedStacks = [];
 
 let $elLogo;
 let $elTeamNum;
@@ -67,6 +80,37 @@ let existsInArray = (v, arr) => {
   });
 };
 
+let normalizeData = () => {
+  techstacks = [...techstacks].map((item) => {
+    return {
+      id: item[0],
+      name: item[1],
+      logo: `/${TECHSTACK_IMG_DIR}/${encodeURIComponent(item[1])}${IMG_FILE_EXT}`,
+      count: item[2],
+      alias: createAlias(item[1])
+    };
+  });
+
+  people = [...people].map((item) => {
+    return {
+      id: item[0],
+      name: item[1],
+      avatar: `/${PERSON_IMG_DIR}/${encodeURIComponent(item[2])}${IMG_FILE_EXT}`,
+      skills: item[3]
+    };
+  });
+
+  projects = [...projects].map((item) => {
+    return {
+      name: item[0],
+      alias: createAlias(item[0]),
+      logo: `/${PROJECT_IMG_DIR}/${encodeURIComponent(item[0])}${IMG_FILE_EXT}`,
+      stacks: item[1],
+      members: item[2]
+    };
+  });
+};
+
 export let getPeople = () => {
   return [...people];
 };
@@ -79,22 +123,71 @@ export let getTechstacks = () => {
   return [...techstacks];
 };
 
+let getItemFrom = (arr) => {
+  return {
+    by: (key, value) => {
+      let candidates = arr.filter((item) => {
+        return item[key] === value;
+      });
+      return candidates.length > 0 ? candidates[0] : false;
+    }
+  };
+};
+
+export let getTechstackById = (id) => {
+  return getItemFrom(getTechstacks()).by('id', id);
+};
+
+export let getPersonById = (id) => {
+  return getItemFrom(getPeople()).by('id', id);
+};
+
+export let getProjectById = (id) => {
+  return getItemFrom(getProjects()).by('id', id);
+};
+
 export let getPeopleBySkill = (skill) => {
-  let sk = skill.toLowerCase();
-  return getPeople().filter((item) => {
-    return item.skills.some((prope) => {
-      return prope[0].toLowerCase() === sk;
+  let arr = [];
+  let candidates = getPeople();
+  if (isString(skill)) {
+    let sk = skill.toLowerCase();
+    let stack = getItemFrom(getTechstacks()).by('alias', sk);
+    arr = candidates.filter((item) => {
+      return existsInArray(stack.id, item.skills);
     });
+  } else {
+    arr = candidates.filter((item) => {
+      return existsInArray(skill, item.skills);
+    });
+  }
+  return arr.map((item) => {
+    return {
+      name: item.name,
+      avatar: item.avatar
+    };
   });
 };
 
 export let getProjectStacks = (skill) => {
-  let sk = skill.toLowerCase();
-  return getProjects().filter((item) => {
-    let stacks = item.stacks.map((st) => {
-      return st.toLowerCase();
+  let arr = [];
+  let candidates = getProjects();
+  if (isString(skill)) {
+    let sk = skill.toLowerCase();
+    let stack = getItemFrom(getTechstacks()).by('alias', sk);
+    arr = candidates.filter((item) => {
+      return existsInArray(stack.id, item.stacks);
     });
-    return existsInArray(sk, stacks);
+  } else {
+    arr = candidates.filter((item) => {
+      return existsInArray(skill, item.stacks);
+    });
+  }
+  return arr.map((item) => {
+    return {
+      alias: item.alias,
+      name: item.name,
+      logo: item.logo
+    };
   });
 };
 
@@ -105,7 +198,9 @@ export let getProjectMembers = (pname) => {
     return name === nlower || name === item.alias;
   });
   if (p.length > 0) {
-    return p[0].members;
+    return p[0].members.map((id) => {
+      return getPersonById(id);
+    });
   }
   return [];
 };
@@ -222,15 +317,16 @@ let buildStackCard = (entry) => {
   let card = createElement('DIV');
   card.addClass('pps__list--stack-item');
 
-  let [
-    name,
-    image
-  ] = entry;
+  let {
+    id,
+    logo
+  } = entry;
 
   let rect = addElement('SPAN', card);
   rect.addClass('pps-inner');
-  rect.style.backgroundImage = `url(${imgPath}${image})`;
-  rect.setAttribute('pps-stack--name', name);
+
+  rect.style.backgroundImage = `url(${imgPath}${logo})`;
+  rect.setAttribute('stackid', id);
   return card;
 };
 
@@ -244,17 +340,14 @@ let buildPersonCard = (entry) => {
   card.addClass('pps__swiper-slide pps-card');
 
   let {
-    image,
+    avatar,
     name
   } = entry;
 
   let $avatar = addElement('DIV', card);
   $avatar.addClass('pps__person-avatar');
 
-  if (image) {
-    image = `${imgPath}${image}`;
-    $avatar.style.backgroundImage = `url(${image})`;
-  }
+  $avatar.style.backgroundImage = `url(${imgPath}${avatar})`;
 
   let $name = addElement('DIV', card);
   $name.addClass('pps__person-name');
@@ -268,20 +361,15 @@ let buildProjectCard = (entry) => {
   card.addClass('pps__list--project-item pps-card pps-card--transition');
 
   let {
-    logo: image,
-    name,
+    logo,
     alias
   } = entry;
 
   let atag = addElement('A', card);
   atag.addClass('pps-inner');
   atag.setAttribute('href', `/${alias}`);
-  atag.setAttribute('pps-project--name', name);
 
-  if (image) {
-    image = `${imgPath}${image}`;
-    atag.style.backgroundImage = `url(${image})`;
-  }
+  atag.style.backgroundImage = `url(${imgPath}${logo})`;
 
   return card;
 };
@@ -295,16 +383,15 @@ let randerProjectPanel = (ppj, isAppend = false) => {
     return false;
   }
 
-  ppj = shuffle(ppj);
-
   let remain = [];
   if (!isAppend && ppj.length > 4) {
-    remain = ppj.slice(4, ppj.length);
-    let arr = ppj.slice(0, 4);
-    ppj = arr;
+    let arr = shuffle(ppj);
+    remain = arr.slice(4, ppj.length);
+    ppj = arr.slice(0, 4);
   }
 
-  let t = 20;
+  let t = DELTA_PROJECT_START_LOADING;
+
   let result = ppj.map((entry) => {
     let card = buildProjectCard(entry);
     if (isAppend) {
@@ -318,7 +405,7 @@ let randerProjectPanel = (ppj, isAppend = false) => {
       card.removeClass('pps-card--transition');
     }, t);
 
-    t += 200;
+    t += DELTA_PROJECT_CONTINUOUS_LOADING;
 
     return {
       $el: card,
@@ -370,7 +457,7 @@ let randerPeoplePanel = (ppl) => {
   let {perPage} = setupSlider($elContentBlock);
 
   if (peopleCards.length) {
-    let t = 20;
+    let t = DELTA_PEOPLE_START_LOADING;
 
     let arr = peopleCards.splice(0, perPage);
 
@@ -380,7 +467,7 @@ let randerPeoplePanel = (ppl) => {
       return item.$el;
     }).map((el) => {
       el.addClass('pps-card--transition');
-      t += 220;
+      t += DELTA_PEOPLE_CONTINUOUS_LOADING;
       return setTimeout(() => {
         el.removeClass('pps-card--transition');
       }, t);
@@ -389,49 +476,17 @@ let randerPeoplePanel = (ppl) => {
   return result;
 };
 
-let onStackSelect = (data, origin) => {
-  let skill = data[0];
+let onStackSelect = (skill, origin) => {
+  let {
+    id
+  } = skill;
 
-  updateLeftPanelLogo(skill, data[1]);
-
-  let _people = getPeopleBySkill(skill).map((item) => {
-    let {
-      name,
-      image,
-      skills = []
-    } = item;
-    let yys = skills.filter((sk) => {
-      return sk[0] === skill;
-    });
-
-    let yoe = yys[0][1];
-
-    return {
-      name,
-      image,
-      yoe
-    };
-  });
+  updateLeftPanelLogo(id, skill.logo);
 
   setActiveState(origin);
 
-  randerPeoplePanel(_people);
-
-  let _projects = getProjectStacks(skill);
-
-  let arr = _projects.map((item) => {
-    return {
-      alias: item.alias,
-      name: item.name,
-      logo: item.logo
-    };
-  });
-
-  if (arr.length > 1) {
-    arr = shuffle(_projects);
-  }
-
-  randerProjectPanel(arr);
+  randerPeoplePanel(getPeopleBySkill(id));
+  randerProjectPanel(getProjectStacks(id));
 };
 
 let setupStackClickEvent = (stack) => {
@@ -449,23 +504,20 @@ let setupStackClickEvent = (stack) => {
 
 let setupSelectorEvent = () => {
   $elSelector.onchange = () => {
-    let v = $elSelector.value;
-    let skills = pickedStacks.filter((item) => {
-      return item[0] === v;
-    });
-    if (skills && skills.length > 0) {
+    let v = Number($elSelector.value);
+    if (v >= 0) {
       let origin;
+      let stack = getTechstackById(v);
       queryAll('.pps__list--stack-item').forEach((el) => {
-        el.removeClass('pps-active');
-        let stack = el.query('.pps-inner');
-        if (stack.getAttribute('pps-stack--name') === v) {
+        let card = el.query('.pps-inner');
+        let cv = Number(card.getAttribute('stackid'));
+        if (cv === v) {
           origin = el;
         }
       });
 
       if (origin) {
-        let sk = skills[0];
-        onStackSelect(sk, origin);
+        onStackSelect(stack, origin);
       }
     }
   };
@@ -496,7 +548,7 @@ let start = () => {
     return false;
   }
 
-  onStackSelect(pickedStacks[0], items[0]);
+  onStackSelect(getTechstacks()[0], items[0]);
 
   return _isStarted;
 };
@@ -546,7 +598,7 @@ let setupLayout = (container) => {
   imgPath = getImgPath(container);
 
   let avatars = people.map((item) => {
-    return item.image;
+    return item.avatar;
   });
 
   let logos = projects.map((item) => {
@@ -568,12 +620,12 @@ let setupLayout = (container) => {
   let contentBlock = addElement('DIV', container);
   contentBlock.addClass('pps__wrapper--fluid');
 
-  let maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
-  pickedStacks = techstacks.splice(0, maxsize);
-
-  let sltOption = pickedStacks.map((item) => {
-    let st = item[0];
-    return `<option value="${st}">${st}</option>`;
+  let sltOption = techstacks.map((item) => {
+    let {
+      id,
+      name
+    } = item;
+    return `<option value="${id}">${name}</option>`;
   }).join('');
 
   let layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[2])
@@ -607,7 +659,7 @@ let setupLayout = (container) => {
   };
 
   setupSelectorEvent();
-  randerStackPanel(pickedStacks);
+  randerStackPanel(techstacks);
 
   window.onscroll = onscroll;
 
@@ -626,12 +678,14 @@ let _init = (json) => {
       projects: _projects,
       techstacks: _techstacks
     } = o;
+
     people = [..._people];
     projects = [..._projects];
     techstacks = [..._techstacks];
 
-    let els = queryAll('ppswidget') || [];
-    els.map(setupLayout);
+    normalizeData();
+
+    queryAll('ppswidget').map(setupLayout);
 
   } catch (err) {
     console.error(err);

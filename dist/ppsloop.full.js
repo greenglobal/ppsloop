@@ -1,4 +1,4 @@
-/** ppsw@0.6.4 - full, no data */
+/** ppsw@0.7.0 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -9,39 +9,6 @@
 	} : function (obj) {
 	  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 	};
-	var slicedToArray = function () {
-	  function sliceIterator(arr, i) {
-	    var _arr = [];
-	    var _n = true;
-	    var _d = false;
-	    var _e = undefined;
-	    try {
-	      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-	        _arr.push(_s.value);
-	        if (i && _arr.length === i) break;
-	      }
-	    } catch (err) {
-	      _d = true;
-	      _e = err;
-	    } finally {
-	      try {
-	        if (!_n && _i["return"]) _i["return"]();
-	      } finally {
-	        if (_d) throw _e;
-	      }
-	    }
-	    return _arr;
-	  }
-	  return function (arr, i) {
-	    if (Array.isArray(arr)) {
-	      return arr;
-	    } else if (Symbol.iterator in Object(arr)) {
-	      return sliceIterator(arr, i);
-	    } else {
-	      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-	    }
-	  };
-	}();
 	var toConsumableArray = function (arr) {
 	  if (Array.isArray(arr)) {
 	    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
@@ -328,6 +295,108 @@
 	    }
 	  };
 	}();
+	var ob2Str$1 = function ob2Str(val) {
+	  return {}.toString.call(val);
+	};
+	var isString$1 = function isString(val) {
+	  return ob2Str$1(val) === '[object String]';
+	};
+	var isNumber$1 = function isNumber(val) {
+	  return ob2Str$1(val) === '[object Number]';
+	};
+	var isArray = function isArray(val) {
+	  return Array.isArray(val);
+	};
+	var hasProperty = function hasProperty(ob, k) {
+	  if (!ob || !k) {
+	    return false;
+	  }
+	  return Object.prototype.hasOwnProperty.call(ob, k);
+	};
+	var toString = function toString(input) {
+	  var s = isNumber$1(input) ? String(input) : input;
+	  if (!isString$1(s)) {
+	    throw new Error('InvalidInput: String required.');
+	  }
+	  return s;
+	};
+	var trim$1 = function trim(s) {
+	  var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	  var x = toString(s);
+	  x = x.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
+	  if (x && all) {
+	    x = x.replace(/\r?\n|\r/g, ' ').replace(/\s\s+|\r/g, ' ');
+	  }
+	  return x;
+	};
+	var replaceAll = function replaceAll(s, a, b) {
+	  var x = toString(s);
+	  if (isNumber$1(a)) {
+	    a = String(a);
+	  }
+	  if (isNumber$1(b)) {
+	    b = String(b);
+	  }
+	  if (isString$1(a) && isString$1(b)) {
+	    var aa = x.split(a);
+	    x = aa.join(b);
+	  } else if (isArray(a) && isString$1(b)) {
+	    a.forEach(function (v) {
+	      x = replaceAll(x, v, b);
+	    });
+	  } else if (isArray(a) && isArray(b) && a.length === b.length) {
+	    var k = a.length;
+	    if (k > 0) {
+	      for (var i = 0; i < k; i++) {
+	        var aaa = a[i];
+	        var bb = b[i];
+	        x = replaceAll(x, aaa, bb);
+	      }
+	    }
+	  }
+	  return x;
+	};
+	var stripAccent = function stripAccent(s) {
+	  var x = toString(s);
+	  var map = {
+	    a: 'á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ|ä',
+	    A: 'Á|À|Ả|Ã|Ạ|Ă|Ắ|Ặ|Ằ|Ẳ|Ẵ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ|Ä',
+	    c: 'ç',
+	    C: 'Ç',
+	    d: 'đ',
+	    D: 'Đ',
+	    e: 'é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ|ë',
+	    E: 'É|È|Ẻ|Ẽ|Ẹ|Ê|Ế|Ề|Ể|Ễ|Ệ|Ë',
+	    i: 'í|ì|ỉ|ĩ|ị|ï|î',
+	    I: 'Í|Ì|Ỉ|Ĩ|Ị|Ï|Î',
+	    o: 'ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ|ö',
+	    O: 'Ó|Ò|Ỏ|Õ|Ọ|Ô|Ố|Ồ|Ổ|Ô|Ộ|Ơ|Ớ|Ờ|Ở|Ỡ|Ợ|Ö',
+	    u: 'ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự|û',
+	    U: 'Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự|Û',
+	    y: 'ý|ỳ|ỷ|ỹ|ỵ',
+	    Y: 'Ý|Ỳ|Ỷ|Ỹ|Ỵ'
+	  };
+	  var updateS = function updateS(ai, key) {
+	    x = replaceAll(x, ai, key);
+	  };
+	  var _loop = function _loop(key) {
+	    if (hasProperty(map, key)) {
+	      var a = map[key].split('|');
+	      a.forEach(function (item) {
+	        return updateS(item, key);
+	      });
+	    }
+	  };
+	  for (var key in map) {
+	    _loop(key);
+	  }
+	  return x;
+	};
+	var createAlias = function createAlias(s, delimiter) {
+	  var x = trim$1(stripAccent(s));
+	  var d = delimiter || '-';
+	  return x.toLowerCase().replace(/\W+/g, ' ').replace(/\s+/g, ' ').replace(/\s/g, d);
+	};
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 	function unwrapExports (x) {
 		return x && x.__esModule ? x['default'] : x;
@@ -499,14 +568,20 @@
 	var tplBtnViewAll = "<span class=\"pps__btn-viewall\"><b>+{{count}}</b> more</span>";
 	var tplSimpleLayout = "\n  <div class=\"pps__swiper-wrapper pps__swiper-wrapper-simple\">\n    <div class=\"pps__swiper--nav pps__swiper--prev\">\n      <span class=\"pps__btn-link prev\"></span>\n    </div>\n    <div class=\"pps__swiper-container pps__swiper-container-simple\">{{content}}</div>\n    <div class=\"pps__swiper--nav pps__swiper--next\">\n      <span class=\"pps__btn-link next\"></span>\n    </div>\n  </div>\n";
 	var tplPersonCard = "\n  <div class=\"pps__swiper-slide\">\n    <div class=\"pps__person-avatar\" style=\"background-image:url({{image}})\"></div>\n    <div class=\"pps__person-name\">{{name}}</div>\n  </div>\n";
-	var TECH_STACK_NUMBER = 27;
 	var DELTA_TO_START = -80;
 	var PERSON_CARD_SIZE = 200;
+	var DELTA_PEOPLE_START_LOADING = 10;
+	var DELTA_PEOPLE_CONTINUOUS_LOADING = 180;
+	var DELTA_PROJECT_START_LOADING = 20;
+	var DELTA_PROJECT_CONTINUOUS_LOADING = 120;
+	var PERSON_IMG_DIR = encodeURIComponent('People');
+	var PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
+	var TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
+	var IMG_FILE_EXT = '.png';
 	var imgPath = '';
 	var people = [];
 	var projects = [];
 	var techstacks = [];
-	var pickedStacks = [];
 	var $elLogo = void 0;
 	var $elTeamNum = void 0;
 	var $elSelector = void 0;
@@ -531,6 +606,34 @@
 	    return k === v;
 	  });
 	};
+	var normalizeData = function normalizeData() {
+	  techstacks = [].concat(toConsumableArray(techstacks)).map(function (item) {
+	    return {
+	      id: item[0],
+	      name: item[1],
+	      logo: '/' + TECHSTACK_IMG_DIR + '/' + encodeURIComponent(item[1]) + IMG_FILE_EXT,
+	      count: item[2],
+	      alias: createAlias(item[1])
+	    };
+	  });
+	  people = [].concat(toConsumableArray(people)).map(function (item) {
+	    return {
+	      id: item[0],
+	      name: item[1],
+	      avatar: '/' + PERSON_IMG_DIR + '/' + encodeURIComponent(item[2]) + IMG_FILE_EXT,
+	      skills: item[3]
+	    };
+	  });
+	  projects = [].concat(toConsumableArray(projects)).map(function (item) {
+	    return {
+	      name: item[0],
+	      alias: createAlias(item[0]),
+	      logo: '/' + PROJECT_IMG_DIR + '/' + encodeURIComponent(item[0]) + IMG_FILE_EXT,
+	      stacks: item[1],
+	      members: item[2]
+	    };
+	  });
+	};
 	var getPeople = function getPeople() {
 	  return [].concat(toConsumableArray(people));
 	};
@@ -540,21 +643,66 @@
 	var getTechstacks = function getTechstacks() {
 	  return [].concat(toConsumableArray(techstacks));
 	};
+	var getItemFrom = function getItemFrom(arr) {
+	  return {
+	    by: function by(key, value) {
+	      var candidates = arr.filter(function (item) {
+	        return item[key] === value;
+	      });
+	      return candidates.length > 0 ? candidates[0] : false;
+	    }
+	  };
+	};
+	var getTechstackById = function getTechstackById(id) {
+	  return getItemFrom(getTechstacks()).by('id', id);
+	};
+	var getPersonById = function getPersonById(id) {
+	  return getItemFrom(getPeople()).by('id', id);
+	};
+	var getProjectById = function getProjectById(id) {
+	  return getItemFrom(getProjects()).by('id', id);
+	};
 	var getPeopleBySkill = function getPeopleBySkill(skill) {
-	  var sk = skill.toLowerCase();
-	  return getPeople().filter(function (item) {
-	    return item.skills.some(function (prope) {
-	      return prope[0].toLowerCase() === sk;
+	  var arr = [];
+	  var candidates = getPeople();
+	  if (isString$1(skill)) {
+	    var sk = skill.toLowerCase();
+	    var stack = getItemFrom(getTechstacks()).by('alias', sk);
+	    arr = candidates.filter(function (item) {
+	      return existsInArray(stack.id, item.skills);
 	    });
+	  } else {
+	    arr = candidates.filter(function (item) {
+	      return existsInArray(skill, item.skills);
+	    });
+	  }
+	  return arr.map(function (item) {
+	    return {
+	      name: item.name,
+	      avatar: item.avatar
+	    };
 	  });
 	};
 	var getProjectStacks = function getProjectStacks(skill) {
-	  var sk = skill.toLowerCase();
-	  return getProjects().filter(function (item) {
-	    var stacks = item.stacks.map(function (st) {
-	      return st.toLowerCase();
+	  var arr = [];
+	  var candidates = getProjects();
+	  if (isString$1(skill)) {
+	    var sk = skill.toLowerCase();
+	    var stack = getItemFrom(getTechstacks()).by('alias', sk);
+	    arr = candidates.filter(function (item) {
+	      return existsInArray(stack.id, item.stacks);
 	    });
-	    return existsInArray(sk, stacks);
+	  } else {
+	    arr = candidates.filter(function (item) {
+	      return existsInArray(skill, item.stacks);
+	    });
+	  }
+	  return arr.map(function (item) {
+	    return {
+	      alias: item.alias,
+	      name: item.name,
+	      logo: item.logo
+	    };
 	  });
 	};
 	var getProjectMembers = function getProjectMembers(pname) {
@@ -564,7 +712,9 @@
 	    return name === nlower || name === item.alias;
 	  });
 	  if (p.length > 0) {
-	    return p[0].members;
+	    return p[0].members.map(function (id) {
+	      return getPersonById(id);
+	    });
 	  }
 	  return [];
 	};
@@ -662,13 +812,12 @@
 	var buildStackCard = function buildStackCard(entry) {
 	  var card = create('DIV');
 	  card.addClass('pps__list--stack-item');
-	  var _entry = slicedToArray(entry, 2),
-	      name = _entry[0],
-	      image = _entry[1];
+	  var id = entry.id,
+	      logo = entry.logo;
 	  var rect = add('SPAN', card);
 	  rect.addClass('pps-inner');
-	  rect.style.backgroundImage = 'url(' + imgPath + image + ')';
-	  rect.setAttribute('pps-stack--name', name);
+	  rect.style.backgroundImage = 'url(' + imgPath + logo + ')';
+	  rect.setAttribute('stackid', id);
 	  return card;
 	};
 	var updateLeftPanelLogo = function updateLeftPanelLogo(stack, image) {
@@ -678,14 +827,11 @@
 	var buildPersonCard = function buildPersonCard(entry) {
 	  var card = create('DIV');
 	  card.addClass('pps__swiper-slide pps-card');
-	  var image = entry.image,
+	  var avatar = entry.avatar,
 	      name = entry.name;
 	  var $avatar = add('DIV', card);
 	  $avatar.addClass('pps__person-avatar');
-	  if (image) {
-	    image = '' + imgPath + image;
-	    $avatar.style.backgroundImage = 'url(' + image + ')';
-	  }
+	  $avatar.style.backgroundImage = 'url(' + imgPath + avatar + ')';
 	  var $name = add('DIV', card);
 	  $name.addClass('pps__person-name');
 	  $name.html(name);
@@ -694,17 +840,12 @@
 	var buildProjectCard = function buildProjectCard(entry) {
 	  var card = create('DIV');
 	  card.addClass('pps__list--project-item pps-card pps-card--transition');
-	  var image = entry.logo,
-	      name = entry.name,
+	  var logo = entry.logo,
 	      alias = entry.alias;
 	  var atag = add('A', card);
 	  atag.addClass('pps-inner');
 	  atag.setAttribute('href', '/' + alias);
-	  atag.setAttribute('pps-project--name', name);
-	  if (image) {
-	    image = '' + imgPath + image;
-	    atag.style.backgroundImage = 'url(' + image + ')';
-	  }
+	  atag.style.backgroundImage = 'url(' + imgPath + logo + ')';
 	  return card;
 	};
 	var randerProjectPanel = function randerProjectPanel(ppj) {
@@ -715,14 +856,13 @@
 	  if (!ppj.length) {
 	    return false;
 	  }
-	  ppj = shuffle(ppj);
 	  var remain = [];
 	  if (!isAppend && ppj.length > 4) {
-	    remain = ppj.slice(4, ppj.length);
-	    var arr = ppj.slice(0, 4);
-	    ppj = arr;
+	    var arr = shuffle(ppj);
+	    remain = arr.slice(4, ppj.length);
+	    ppj = arr.slice(0, 4);
 	  }
-	  var t = 20;
+	  var t = DELTA_PROJECT_START_LOADING;
 	  var result = ppj.map(function (entry) {
 	    var card = buildProjectCard(entry);
 	    if (isAppend) {
@@ -734,7 +874,7 @@
 	    setTimeout(function () {
 	      card.removeClass('pps-card--transition');
 	    }, t);
-	    t += 200;
+	    t += DELTA_PROJECT_CONTINUOUS_LOADING;
 	    return {
 	      $el: card,
 	      data: entry
@@ -776,7 +916,7 @@
 	  var _setupSlider = setupSlider($elContentBlock),
 	      perPage = _setupSlider.perPage;
 	  if (peopleCards.length) {
-	    var t = 20;
+	    var t = DELTA_PEOPLE_START_LOADING;
 	    var arr = peopleCards.splice(0, perPage);
 	    arr.filter(function (item) {
 	      return item && item.$el;
@@ -784,7 +924,7 @@
 	      return item.$el;
 	    }).map(function (el) {
 	      el.addClass('pps-card--transition');
-	      t += 220;
+	      t += DELTA_PEOPLE_CONTINUOUS_LOADING;
 	      return setTimeout(function () {
 	        el.removeClass('pps-card--transition');
 	      }, t);
@@ -792,38 +932,12 @@
 	  }
 	  return result;
 	};
-	var onStackSelect = function onStackSelect(data, origin) {
-	  var skill = data[0];
-	  updateLeftPanelLogo(skill, data[1]);
-	  var _people = getPeopleBySkill(skill).map(function (item) {
-	    var name = item.name,
-	        image = item.image,
-	        _item$skills = item.skills,
-	        skills = _item$skills === undefined ? [] : _item$skills;
-	    var yys = skills.filter(function (sk) {
-	      return sk[0] === skill;
-	    });
-	    var yoe = yys[0][1];
-	    return {
-	      name: name,
-	      image: image,
-	      yoe: yoe
-	    };
-	  });
+	var onStackSelect = function onStackSelect(skill, origin) {
+	  var id = skill.id;
+	  updateLeftPanelLogo(id, skill.logo);
 	  setActiveState(origin);
-	  randerPeoplePanel(_people);
-	  var _projects = getProjectStacks(skill);
-	  var arr = _projects.map(function (item) {
-	    return {
-	      alias: item.alias,
-	      name: item.name,
-	      logo: item.logo
-	    };
-	  });
-	  if (arr.length > 1) {
-	    arr = shuffle(_projects);
-	  }
-	  randerProjectPanel(arr);
+	  randerPeoplePanel(getPeopleBySkill(id));
+	  randerProjectPanel(getProjectStacks(id));
 	};
 	var setupStackClickEvent = function setupStackClickEvent(stack) {
 	  var $el = stack.$el,
@@ -835,22 +949,19 @@
 	};
 	var setupSelectorEvent = function setupSelectorEvent() {
 	  $elSelector.onchange = function () {
-	    var v = $elSelector.value;
-	    var skills = pickedStacks.filter(function (item) {
-	      return item[0] === v;
-	    });
-	    if (skills && skills.length > 0) {
+	    var v = Number($elSelector.value);
+	    if (v >= 0) {
 	      var origin = void 0;
+	      var stack = getTechstackById(v);
 	      queryAll('.pps__list--stack-item').forEach(function (el) {
-	        el.removeClass('pps-active');
-	        var stack = el.query('.pps-inner');
-	        if (stack.getAttribute('pps-stack--name') === v) {
+	        var card = el.query('.pps-inner');
+	        var cv = Number(card.getAttribute('stackid'));
+	        if (cv === v) {
 	          origin = el;
 	        }
 	      });
 	      if (origin) {
-	        var sk = skills[0];
-	        onStackSelect(sk, origin);
+	        onStackSelect(stack, origin);
 	      }
 	    }
 	  };
@@ -875,7 +986,7 @@
 	  if (!items.length) {
 	    return false;
 	  }
-	  onStackSelect(pickedStacks[0], items[0]);
+	  onStackSelect(getTechstacks()[0], items[0]);
 	  return _isStarted;
 	};
 	var renderSimpleVersion = function renderSimpleVersion(container, project) {
@@ -905,7 +1016,7 @@
 	  var labels = ['Team', 'Projects', 'Our expertise'];
 	  imgPath = getImgPath(container);
 	  var avatars = people.map(function (item) {
-	    return item.image;
+	    return item.avatar;
 	  });
 	  var logos = projects.map(function (item) {
 	    return item.logo;
@@ -922,11 +1033,10 @@
 	  }
 	  var contentBlock = add('DIV', container);
 	  contentBlock.addClass('pps__wrapper--fluid');
-	  var maxsize = Math.min(TECH_STACK_NUMBER, techstacks.length);
-	  pickedStacks = techstacks.splice(0, maxsize);
-	  var sltOption = pickedStacks.map(function (item) {
-	    var st = item[0];
-	    return '<option value="' + st + '">' + st + '</option>';
+	  var sltOption = techstacks.map(function (item) {
+	    var id = item.id,
+	        name = item.name;
+	    return '<option value="' + id + '">' + name + '</option>';
 	  }).join('');
 	  var layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[2]).replace('{{labelProject}}', labels[1]).replace('{{labelPeople}}', labels[0]).replace('{{options}}', sltOption);
 	  contentBlock.html(layout);
@@ -949,7 +1059,7 @@
 	    }
 	  };
 	  setupSelectorEvent();
-	  randerStackPanel(pickedStacks);
+	  randerStackPanel(techstacks);
 	  window.onscroll = onscroll;
 	  window.onload = function () {
 	    onscroll();
@@ -965,8 +1075,8 @@
 	    people = [].concat(toConsumableArray(_people));
 	    projects = [].concat(toConsumableArray(_projects));
 	    techstacks = [].concat(toConsumableArray(_techstacks));
-	    var els = queryAll('ppswidget') || [];
-	    els.map(setupLayout);
+	    normalizeData();
+	    queryAll('ppswidget').map(setupLayout);
 	  } catch (err) {
 	    console.error(err);
 	  }
@@ -983,6 +1093,9 @@
 	exports.getPeople = getPeople;
 	exports.getProjects = getProjects;
 	exports.getTechstacks = getTechstacks;
+	exports.getTechstackById = getTechstackById;
+	exports.getPersonById = getPersonById;
+	exports.getProjectById = getProjectById;
 	exports.getPeopleBySkill = getPeopleBySkill;
 	exports.getProjectStacks = getProjectStacks;
 	exports.getProjectMembers = getProjectMembers;

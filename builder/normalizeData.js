@@ -31,10 +31,17 @@ var getProjects = (records) => {
 
 var getSkills = (records) => {
   let entries = records.map((record) => {
+    let {
+      id,
+      priority = 0,
+      name,
+      image = ''
+    } = record;
     return {
-      priority: record.priority,
-      name: record.name,
-      image: record.image || ''
+      id,
+      priority,
+      name,
+      image
     };
   });
 
@@ -49,10 +56,11 @@ var getSkills = (records) => {
 
   return entries.map((item) => {
     let {
+      id,
       name,
       image
     } = item;
-    return {name, image};
+    return {id, name, image};
   });
 };
 
@@ -64,7 +72,8 @@ var getK = (records) => {
     return {
       id: record.id,
       since: record.since,
-      name: record.tech_stacks[0].name
+      name: record.tech_stacks[0].name,
+      key: record.tech_stacks[0].id
     };
   });
 };
@@ -75,7 +84,8 @@ var getU = (records) => {
   }).map((record) => {
     return {
       id: record.id,
-      name: record.tech_stacks[0].name
+      name: record.tech_stacks[0].name,
+      key: record.tech_stacks[0].id
     };
   });
 };

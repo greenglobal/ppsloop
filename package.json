@@ -1,5 +1,5 @@
 {
-  "version": "0.6.4",
+  "version": "0.7.0",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -41,7 +41,7 @@
     "babel-plugin-external-helpers": "6.x.x",
     "babel-preset-env": "1.x.x",
     "babel-preset-es2015-rollup": "3.x.x",
-    "bellajs": "6.x.x",
+    "bellajs": "7.x.x",
     "copy-dir": "0.x.x",
     "css-mqpacker": "6.x.x",
     "cssnano": "3.x.x",

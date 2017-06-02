@@ -12,8 +12,6 @@ var writeFile = require('./writeFile');
 var removeAccents = require('../builder/removeAccents');
 var normalizeData = require('../builder/normalizeData');
 
-const THIS_YEAR = (new Date()).getFullYear();
-
 const IMAGE_DIR = './src/consumer/img/widgetimage';
 
 const PERSON_IMAGE_FOLDER = 'People';
@@ -31,30 +29,8 @@ var hasProjectImage = (project) => {
 };
 
 var hasTechLogo = (stack) => {
-  let file = `${IMAGE_DIR}/${TECHSTACK_IMAGE_FOLDER}/${stack[0]}.png`;
+  let file = `${IMAGE_DIR}/${TECHSTACK_IMAGE_FOLDER}/${stack.name}.png`;
   return fs.existsSync(file);
-};
-
-var getYoE = (begin = 0) => {
-  let y = THIS_YEAR - begin;
-  if (y > 50) {
-    let m = y % 12;
-    if (m > 1) {
-      return `${m} months`;
-    }
-    if (m === 1) {
-      return `${m} month`;
-    }
-  }
-  if (y > 1) {
-    return `${y} years`;
-  }
-  if (y === 1) {
-    return `${y} year`;
-  }
-
-  let ran = Math.floor(Math.random() * 7 + 2);
-  return `${ran} months`;
 };
 
 var mapSkillsToPeople = (person, mapper) => {
@@ -62,7 +38,7 @@ var mapSkillsToPeople = (person, mapper) => {
     return mapper.filter((item) => {
       return item.id === sk;
     }).map((skll) => {
-      return [skll.name, getYoE(skll.since)];
+      return skll.key;
     });
   }).reduce((prev, curr) => {
     return prev.concat(curr);
@@ -76,7 +52,7 @@ var mapSkillsToProjects = (project, mapper) => {
     return mapper.filter((item) => {
       return item.id === sk;
     }).map((skll) => {
-      return skll.name;
+      return skll.key;
     });
   }).reduce((prev, curr) => {
     return prev.concat(curr);
@@ -106,11 +82,7 @@ var mapPeopleToProjects = (project, mapper, people = []) => {
       return item.id === id;
     }).map((item) => {
       let p = getPersonName(item.person);
-      return {
-        person: p.name,
-        image: p.image,
-        role: item.role
-      };
+      return p.id;
     });
   }).reduce((prev, curr) => {
     return [].concat(prev, curr);
@@ -164,7 +136,7 @@ var localizeProjectImage = (project) => {
 var localizeTechstackImage = (stack) => {
   if (hasTechLogo(stack)) {
     let dir = encodeURIComponent(TECHSTACK_IMAGE_FOLDER);
-    stack[1] = `/${dir}/${encodeURIComponent(stack[0])}.png`;
+    stack.logo = `/${dir}/${encodeURIComponent(stack.name)}.png`;
   }
   return stack;
 };
@@ -219,17 +191,50 @@ var generateJSON = async () => {
     });
 
     let ts = skills.map((item) => {
-      let {
-        name,
-        image
-      } = item;
-      return [name, image, counter[name] || 0];
+      let {name} = item;
+      item.count = counter[name] || 0;
+      return item;
     }).map(localizeTechstackImage);
 
     let output = {
-      people: arrPeople,
-      projects: arrProjects,
-      techstacks: ts
+      people: arrPeople.map((item) => {
+        let {
+          id,
+          name,
+          email,
+          skills: _skills
+        } = item;
+        return [
+          id,
+          name,
+          email,
+          _skills
+        ];
+      }),
+      projects: arrProjects.map((item) => {
+        let {
+          name,
+          stacks,
+          members
+        } = item;
+        return [
+          name,
+          stacks,
+          members
+        ];
+      }),
+      techstacks: ts.map((item) => {
+        let {
+          id,
+          name,
+          count
+        } = item;
+        return [
+          id,
+          name,
+          count
+        ];
+      })
     };
 
     await writeFile(file, JSON.stringify(output));

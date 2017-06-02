@@ -1,4 +1,4 @@
-/** ppsw@0.7.0 - full, no data */
+/** ppsw@0.7.1 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -992,13 +992,13 @@
 	var renderSimpleVersion = function renderSimpleVersion(container, project) {
 	  var ipath = getImgPath(container);
 	  var members = getProjectMembers(project).filter(function (mem) {
-	    return mem.image && mem.person;
+	    return mem.avatar && mem.name;
 	  });
 	  var total = members.length;
 	  if (total > 0) {
 	    var html = shuffle(members).map(function (mem) {
-	      var name = mem.person;
-	      var avatar = ipath + mem.image;
+	      var name = mem.name;
+	      var avatar = ipath + mem.avatar;
 	      return tplPersonCard.replace('{{image}}', avatar).replace('{{name}}', name);
 	    }).join('');
 	    var layout = tplSimpleLayout.replace('{{content}}', html);

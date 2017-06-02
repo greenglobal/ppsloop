@@ -558,15 +558,15 @@ var renderSimpleVersion = (container, project) => {
   let ipath = getImgPath(container);
 
   let members = getProjectMembers(project).filter((mem) => {
-    return mem.image && mem.person;
+    return mem.avatar && mem.name;
   });
 
   let total = members.length;
 
   if (total > 0) {
     let html = shuffle(members).map((mem) => {
-      let name = mem.person;
-      let avatar = ipath + mem.image;
+      let name = mem.name;
+      let avatar = ipath + mem.avatar;
       return tplPersonCard.replace('{{image}}', avatar)
                       .replace('{{name}}', name);
     }).join('');

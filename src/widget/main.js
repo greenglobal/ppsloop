@@ -3,6 +3,8 @@
  * @ndaidong
  */
 
+import './utils/polyfill.js';
+
 import {
   get as getElement,
   add as addElement,
@@ -688,7 +690,7 @@ let _init = (json) => {
     queryAll('ppswidget').map(setupLayout);
 
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
 };
 

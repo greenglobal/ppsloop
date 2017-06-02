@@ -1,9 +1,18 @@
-/** ppsw@0.7.1 - full, no data */
+/** ppsw@0.7.11 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
 	(factory((global.PPSW = global.PPSW || {})));
 }(this, (function (exports) { 'use strict';
+	if (!Array.from) {
+	  Array.from = function (c) {
+	    var a = [];
+	    for (var i = 0; i < c.length; i++) {
+	      a.push(c[i]);
+	    }
+	    return a;
+	  };
+	}
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
 	  return typeof obj;
 	} : function (obj) {
@@ -1078,7 +1087,7 @@
 	    normalizeData();
 	    queryAll('ppswidget').map(setupLayout);
 	  } catch (err) {
-	    console.error(err);
+	    console.log(err);
 	  }
 	};
 	var init = function init(data) {

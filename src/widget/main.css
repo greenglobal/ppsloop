@@ -233,7 +233,6 @@ PPSWidget {
     }
 
     &.pps-card--transition {
-      transition: all 20s ease-in-out;
       opacity: 0;
       will-change: transform;
     }

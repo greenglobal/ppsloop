@@ -237,10 +237,14 @@ var setupSlider = (container) => {
   let bprev = getElement(btns[0]);
   let bnext = getElement(btns[1]);
 
+  let enableCls = 'pps__swiper--nav--enable';
+  let disableCls = 'pps__swiper--nav--disable';
+  let bothCls = `${enableCls} ${disableCls}`;
+
   let resetState = (cslide) => {
 
-    bprev.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
-    bnext.removeClass('pps__swiper--nav--disable pps__swiper--nav--enable');
+    bprev.removeClass(bothCls);
+    bnext.removeClass(bothCls);
 
     let total = slider.queryAll('.pps__swiper-slide').length;
 
@@ -249,21 +253,21 @@ var setupSlider = (container) => {
 
     if (total > perPage) {
       if (cslide < max) {
-        bprev.addClass('pps__swiper--nav--disable');
-        bnext.addClass('pps__swiper--nav--enable');
+        bprev.addClass(disableCls);
+        bnext.addClass(enableCls);
       } else if (cslide >= min) {
-        bprev.addClass('pps__swiper--nav--enable');
-        bnext.addClass('pps__swiper--nav--disable');
+        bprev.addClass(enableCls);
+        bnext.addClass(disableCls);
       } else {
-        bprev.addClass('pps__swiper--nav--enable');
-        bnext.addClass('pps__swiper--nav--enable');
+        bprev.addClass(enableCls);
+        bnext.addClass(disableCls);
       }
 
       let els = container.queryAll('.pps__btn-link');
       els.forEach((btn) => {
         let b = getElement(btn);
         let p = getElement(b.parentNode);
-        if (p.hasClass('pps__swiper--nav--enable')) {
+        if (p.hasClass(enableCls)) {
           b.addClass('ripple');
           p.onclick = () => {
             if (b.hasClass('prev')) {
@@ -339,7 +343,7 @@ let updateLeftPanelLogo = (stack, image) => {
 
 let buildPersonCard = (entry) => {
   let card = createElement('DIV');
-  card.addClass('pps__swiper-slide pps-card');
+  card.addClass('pps__swiper-slide pps-card pps-card--transition');
 
   let {
     avatar,
@@ -468,7 +472,6 @@ let randerPeoplePanel = (ppl) => {
     }).map((item) => {
       return item.$el;
     }).map((el) => {
-      el.addClass('pps-card--transition');
       t += DELTA_PEOPLE_CONTINUOUS_LOADING;
       return setTimeout(() => {
         el.removeClass('pps-card--transition');

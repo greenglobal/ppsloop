@@ -46,6 +46,8 @@ const PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
 const TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
 const IMG_FILE_EXT = '.png';
 
+const IS_GG_DOMAIN = (/greenglobal\.vn/).test(document.URL);
+
 let imgPath = '';
 
 let people = [];
@@ -373,7 +375,9 @@ let buildProjectCard = (entry) => {
 
   let atag = addElement('A', card);
   atag.addClass('pps-inner');
-  atag.setAttribute('href', `/${alias}`);
+  if (IS_GG_DOMAIN) {
+    atag.setAttribute('href', `/${alias}`);
+  }
 
   atag.style.backgroundImage = `url(${imgPath}${logo})`;
 

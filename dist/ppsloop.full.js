@@ -1,4 +1,4 @@
-/** ppsw@0.7.2 - full, no data */
+/** ppsw@0.7.21 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -671,6 +671,7 @@
 	var PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
 	var TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
 	var IMG_FILE_EXT = '.png';
+	var IS_GG_DOMAIN = /greenglobal\.vn/.test(document.URL);
 	var imgPath = '';
 	var people = [];
 	var projects = [];
@@ -940,7 +941,9 @@
 	      alias = entry.alias;
 	  var atag = add('A', card);
 	  atag.addClass('pps-inner');
-	  atag.setAttribute('href', '/' + alias);
+	  if (IS_GG_DOMAIN) {
+	    atag.setAttribute('href', '/' + alias);
+	  }
 	  atag.style.backgroundImage = 'url(' + imgPath + logo + ')';
 	  return card;
 	};

@@ -482,6 +482,7 @@ let randerPeoplePanel = (ppl) => {
   return result;
 };
 
+
 let onStackSelect = (skill, origin) => {
   let {
     id

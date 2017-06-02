@@ -262,7 +262,7 @@ var setupSlider = (container) => {
         bnext.addClass(disableCls);
       } else {
         bprev.addClass(enableCls);
-        bnext.addClass(disableCls);
+        bnext.addClass(enableCls);
       }
 
       let els = container.queryAll('.pps__btn-link');
@@ -464,14 +464,11 @@ let randerPeoplePanel = (ppl) => {
   }
   $elTeamNum.html(txt);
 
-  let {perPage} = setupSlider($elContentBlock);
+  setupSlider($elContentBlock);
 
   if (peopleCards.length) {
     let t = DELTA_PEOPLE_START_LOADING;
-
-    let arr = peopleCards.splice(0, perPage);
-
-    arr.filter((item) => {
+    peopleCards.filter((item) => {
       return item && item.$el;
     }).map((item) => {
       return item.$el;

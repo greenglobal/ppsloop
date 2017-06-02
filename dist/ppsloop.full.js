@@ -1,4 +1,4 @@
-/** ppsw@0.7.21 - full, no data */
+/** ppsw@0.7.22 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
@@ -852,7 +852,7 @@
 	        bnext.addClass(disableCls);
 	      } else {
 	        bprev.addClass(enableCls);
-	        bnext.addClass(disableCls);
+	        bnext.addClass(enableCls);
 	      }
 	      var els = container.queryAll('.pps__btn-link');
 	      els.forEach(function (btn) {
@@ -1012,12 +1012,10 @@
 	    txt = total + ' members';
 	  }
 	  $elTeamNum.html(txt);
-	  var _setupSlider = setupSlider($elContentBlock),
-	      perPage = _setupSlider.perPage;
+	  setupSlider($elContentBlock);
 	  if (peopleCards.length) {
 	    var t = DELTA_PEOPLE_START_LOADING;
-	    var arr = peopleCards.splice(0, perPage);
-	    arr.filter(function (item) {
+	    peopleCards.filter(function (item) {
 	      return item && item.$el;
 	    }).map(function (item) {
 	      return item.$el;

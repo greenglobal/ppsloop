@@ -9,6 +9,6 @@ var files = [
 ];
 
 files.forEach((fname) => {
-  require(`../tests/specs/${fname}.js`);
+  require(`../test/specs/${fname}.js`);
 });
 

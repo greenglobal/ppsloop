@@ -1,7 +1,7 @@
-/** ppsw@0.7.23 - full, no data */
+/** ppsw@0.7.24 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define('PPSW', ['exports'], factory) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(factory((global.PPSW = global.PPSW || {})));
 }(this, (function (exports) { 'use strict';
 	if (!Array.from) {
@@ -113,34 +113,126 @@
 	var ob2Str = function ob2Str(val) {
 	  return {}.toString.call(val);
 	};
-	var isUndefined = function isUndefined(v) {
-	  return v === undefined;
+	var isUndefined = function isUndefined(val) {
+	  return ob2Str(val) === '[object Undefined]';
 	};
-	var isObject = function isObject(v) {
-	  return !isUndefined(v) && (typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object';
+	var isFunction = function isFunction(val) {
+	  return ob2Str(val) === '[object Function]';
 	};
-	var isString = function isString(v) {
-	  return typeof v === 'string';
+	var isString = function isString(val) {
+	  return ob2Str(val) === '[object String]';
 	};
-	var isNumber = function isNumber(v) {
-	  return typeof v === 'number';
+	var isNumber = function isNumber(val) {
+	  return ob2Str(val) === '[object Number]';
+	};
+	var isArray = function isArray(val) {
+	  return Array.isArray(val);
+	};
+	var isObject = function isObject(val) {
+	  return ob2Str(val) === '[object Object]' && !isArray(val);
 	};
 	var isElement = function isElement(v) {
 	  return ob2Str(v).match(/^\[object HTML\w*Element]$/);
 	};
-	var isFunction = function isFunction(v) {
-	  return v && ob2Str(v) === '[object Function]';
-	};
-	var trim = function trim(s, all) {
-	  if (!isString(s)) {
-	    return '';
+	var hasProperty = function hasProperty(ob, k) {
+	  if (!ob || !k) {
+	    return false;
 	  }
-	  var x = s ? s.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '') : s || '';
+	  return Object.prototype.hasOwnProperty.call(ob, k);
+	};
+	var toString = function toString(input) {
+	  var s = isNumber(input) ? String(input) : input;
+	  if (!isString(s)) {
+	    throw new Error('InvalidInput: String required.');
+	  }
+	  return s;
+	};
+	var trim = function trim(s) {
+	  var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	  var x = toString(s);
+	  x = x.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
 	  if (x && all) {
-	    return x.replace(/\r?\n|\r/g, ' ').replace(/\s\s+|\r/g, ' ');
+	    x = x.replace(/\r?\n|\r/g, ' ').replace(/\s\s+|\r/g, ' ');
 	  }
 	  return x;
 	};
+	var replaceAll = function replaceAll(s, a, b) {
+	  var x = toString(s);
+	  if (isNumber(a)) {
+	    a = String(a);
+	  }
+	  if (isNumber(b)) {
+	    b = String(b);
+	  }
+	  if (isString(a) && isString(b)) {
+	    var aa = x.split(a);
+	    x = aa.join(b);
+	  } else if (isArray(a) && isString(b)) {
+	    a.forEach(function (v) {
+	      x = replaceAll(x, v, b);
+	    });
+	  } else if (isArray(a) && isArray(b) && a.length === b.length) {
+	    var k = a.length;
+	    if (k > 0) {
+	      for (var i = 0; i < k; i++) {
+	        var aaa = a[i];
+	        var bb = b[i];
+	        x = replaceAll(x, aaa, bb);
+	      }
+	    }
+	  }
+	  return x;
+	};
+	var stripAccent = function stripAccent(s) {
+	  var x = toString(s);
+	  var map = {
+	    a: 'á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ|ä',
+	    A: 'Á|À|Ả|Ã|Ạ|Ă|Ắ|Ặ|Ằ|Ẳ|Ẵ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ|Ä',
+	    c: 'ç',
+	    C: 'Ç',
+	    d: 'đ',
+	    D: 'Đ',
+	    e: 'é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ|ë',
+	    E: 'É|È|Ẻ|Ẽ|Ẹ|Ê|Ế|Ề|Ể|Ễ|Ệ|Ë',
+	    i: 'í|ì|ỉ|ĩ|ị|ï|î',
+	    I: 'Í|Ì|Ỉ|Ĩ|Ị|Ï|Î',
+	    o: 'ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ|ö',
+	    O: 'Ó|Ò|Ỏ|Õ|Ọ|Ô|Ố|Ồ|Ổ|Ô|Ộ|Ơ|Ớ|Ờ|Ở|Ỡ|Ợ|Ö',
+	    u: 'ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự|û',
+	    U: 'Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự|Û',
+	    y: 'ý|ỳ|ỷ|ỹ|ỵ',
+	    Y: 'Ý|Ỳ|Ỷ|Ỹ|Ỵ'
+	  };
+	  var updateS = function updateS(ai, key) {
+	    x = replaceAll(x, ai, key);
+	  };
+	  var _loop = function _loop(key) {
+	    if (hasProperty(map, key)) {
+	      var a = map[key].split('|');
+	      a.forEach(function (item) {
+	        return updateS(item, key);
+	      });
+	    }
+	  };
+	  for (var key in map) {
+	    _loop(key);
+	  }
+	  return x;
+	};
+	var createAlias = function createAlias(s, delimiter) {
+	  var x = trim(stripAccent(s));
+	  var d = delimiter || '-';
+	  return x.toLowerCase().replace(/\W+/g, ' ').replace(/\s+/g, ' ').replace(/\s/g, d);
+	};
+	if (!Array.from) {
+	  Array.from = function (c) {
+	    var a = [];
+	    for (var i = 0; i < c.length; i++) {
+	      a.push(c[i]);
+	    }
+	    return a;
+	  };
+	}
 	var normalize = function normalize(k, v) {
 	  var reg = /^([a-z]+)([A-Z]{1})([a-z]+)$/;
 	  var mat = k.match(reg);
@@ -164,7 +256,7 @@
 	var win = window;
 	var doc = document;
 	var attachBehaviors;
-	var get$$1 = function get$$1(el) {
+	var get = function get(el) {
 	  var p = (isString(el) ? doc.getElementById(el) : el) || null;
 	  if (p && !p.___BEHAVIORS_ATTACHED) {
 	    return attachBehaviors(p);
@@ -172,20 +264,20 @@
 	  return p;
 	};
 	var add = function add(tag, parent) {
-	  var p = parent ? get$$1(parent) : doc.body;
+	  var p = parent ? get(parent) : doc.body;
 	  var d = isElement(tag) ? tag : doc.createElement(tag);
 	  p.appendChild(d);
-	  return get$$1(d);
+	  return get(d);
 	};
 	var create = function create(tag) {
-	  return get$$1(doc.createElement(tag));
+	  return get(doc.createElement(tag));
 	};
 	var query = function query(selector) {
 	  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : doc;
 	  var el = void 0;
 	  var tmp = root.querySelector(selector);
 	  if (tmp) {
-	    el = get$$1(tmp);
+	    el = get(tmp);
 	  }
 	  return el;
 	};
@@ -195,7 +287,7 @@
 	  var tmp = root.querySelectorAll(selector);
 	  if (tmp) {
 	    Array.from(tmp).forEach(function (el) {
-	      els.push(get$$1(el));
+	      els.push(get(el));
 	    });
 	  }
 	  return els;
@@ -209,14 +301,16 @@
 	      return queryAll(selector, p);
 	    };
 	    var pc = p.classList;
-	    p.hasClass = function (className) {
+	    p.hasClass = function () {
+	      var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	      var c = trim(className, true);
 	      if (!c) {
 	        return false;
 	      }
 	      return pc.contains(c);
 	    };
-	    p.addClass = function (className) {
+	    p.addClass = function () {
+	      var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	      var c = trim(className, true);
 	      if (!c) {
 	        return false;
@@ -225,7 +319,8 @@
 	      pc.add.apply(pc, toConsumableArray(a));
 	      return p;
 	    };
-	    p.removeClass = function (className) {
+	    p.removeClass = function () {
+	      var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	      var c = trim(className, true);
 	      if (!c) {
 	        return false;
@@ -234,7 +329,8 @@
 	      pc.remove.apply(pc, toConsumableArray(a));
 	      return p;
 	    };
-	    p.toggleClass = function (className) {
+	    p.toggleClass = function () {
+	      var className = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	      var c = trim(className, true);
 	      if (!c) {
 	        return false;
@@ -249,14 +345,17 @@
 	      }
 	      return p;
 	    };
-	    p.replaceClass = function (oldClass, newClass) {
+	    p.replaceClass = function () {
+	      var oldClass = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	      var newClass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
 	      var o = trim(oldClass, true);
 	      var n = trim(newClass, true);
 	      p.removeClass(o);
 	      p.addClass(n);
 	      return p;
 	    };
-	    p.setProperty = function (o) {
+	    p.setProperty = function () {
+	      var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	      for (var k in o) {
 	        if (o[k] !== '') {
 	          var v = o[k];
@@ -270,7 +369,8 @@
 	    var fixStyle = function fixStyle(s) {
 	      return s.replace(/;+/gi, ';').replace(/:/gi, ': ') + ';';
 	    };
-	    p.setStyle = function (o) {
+	    p.setStyle = function () {
+	      var o = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	      var a = [];
 	      if (isObject(o)) {
 	        for (var k in o) {
@@ -331,7 +431,7 @@
 	  return {
 	    on: function on(element, event, fn) {
 	      if (fn && isFunction(fn)) {
-	        var el = isString(element) ? get$$1(element) : element;
+	        var el = isString(element) ? get(element) : element;
 	        if (el && isElement(el)) {
 	          if (event === 'wheel') {
 	            event = isGecko ? 'DOMMouseScroll' : 'mousewheel';
@@ -346,7 +446,7 @@
 	    },
 	    off: function off(element, event, fn) {
 	      if (fn && isFunction(fn)) {
-	        var el = isString(element) ? get$$1(element) : element;
+	        var el = isString(element) ? get(element) : element;
 	        if (el && isElement(el)) {
 	          if (el.removeEventListener) {
 	            el.removeEventListener(event, fn, false);
@@ -358,7 +458,7 @@
 	    },
 	    simulate: function simulate(element, event) {
 	      var evt = void 0;
-	      var el = isString(element) ? get$$1(element) : element;
+	      var el = isString(element) ? get(element) : element;
 	      if (doc.createEventObject) {
 	        evt = doc.createEventObject();
 	        el.fireEvent('on' + event, evt);
@@ -384,112 +484,10 @@
 	      if (targ && targ.nodeType === 3) {
 	        targ = targ.parentNode;
 	      }
-	      return get$$1(targ);
+	      return get(targ);
 	    }
 	  };
 	}();
-	var ob2Str$1 = function ob2Str(val) {
-	  return {}.toString.call(val);
-	};
-	var isString$1 = function isString(val) {
-	  return ob2Str$1(val) === '[object String]';
-	};
-	var isNumber$1 = function isNumber(val) {
-	  return ob2Str$1(val) === '[object Number]';
-	};
-	var isArray = function isArray(val) {
-	  return Array.isArray(val);
-	};
-	var hasProperty = function hasProperty(ob, k) {
-	  if (!ob || !k) {
-	    return false;
-	  }
-	  return Object.prototype.hasOwnProperty.call(ob, k);
-	};
-	var toString = function toString(input) {
-	  var s = isNumber$1(input) ? String(input) : input;
-	  if (!isString$1(s)) {
-	    throw new Error('InvalidInput: String required.');
-	  }
-	  return s;
-	};
-	var trim$1 = function trim(s) {
-	  var all = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-	  var x = toString(s);
-	  x = x.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
-	  if (x && all) {
-	    x = x.replace(/\r?\n|\r/g, ' ').replace(/\s\s+|\r/g, ' ');
-	  }
-	  return x;
-	};
-	var replaceAll = function replaceAll(s, a, b) {
-	  var x = toString(s);
-	  if (isNumber$1(a)) {
-	    a = String(a);
-	  }
-	  if (isNumber$1(b)) {
-	    b = String(b);
-	  }
-	  if (isString$1(a) && isString$1(b)) {
-	    var aa = x.split(a);
-	    x = aa.join(b);
-	  } else if (isArray(a) && isString$1(b)) {
-	    a.forEach(function (v) {
-	      x = replaceAll(x, v, b);
-	    });
-	  } else if (isArray(a) && isArray(b) && a.length === b.length) {
-	    var k = a.length;
-	    if (k > 0) {
-	      for (var i = 0; i < k; i++) {
-	        var aaa = a[i];
-	        var bb = b[i];
-	        x = replaceAll(x, aaa, bb);
-	      }
-	    }
-	  }
-	  return x;
-	};
-	var stripAccent = function stripAccent(s) {
-	  var x = toString(s);
-	  var map = {
-	    a: 'á|à|ả|ã|ạ|ă|ắ|ặ|ằ|ẳ|ẵ|â|ấ|ầ|ẩ|ẫ|ậ|ä',
-	    A: 'Á|À|Ả|Ã|Ạ|Ă|Ắ|Ặ|Ằ|Ẳ|Ẵ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ|Ä',
-	    c: 'ç',
-	    C: 'Ç',
-	    d: 'đ',
-	    D: 'Đ',
-	    e: 'é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ|ë',
-	    E: 'É|È|Ẻ|Ẽ|Ẹ|Ê|Ế|Ề|Ể|Ễ|Ệ|Ë',
-	    i: 'í|ì|ỉ|ĩ|ị|ï|î',
-	    I: 'Í|Ì|Ỉ|Ĩ|Ị|Ï|Î',
-	    o: 'ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ|ö',
-	    O: 'Ó|Ò|Ỏ|Õ|Ọ|Ô|Ố|Ồ|Ổ|Ô|Ộ|Ơ|Ớ|Ờ|Ở|Ỡ|Ợ|Ö',
-	    u: 'ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự|û',
-	    U: 'Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự|Û',
-	    y: 'ý|ỳ|ỷ|ỹ|ỵ',
-	    Y: 'Ý|Ỳ|Ỷ|Ỹ|Ỵ'
-	  };
-	  var updateS = function updateS(ai, key) {
-	    x = replaceAll(x, ai, key);
-	  };
-	  var _loop = function _loop(key) {
-	    if (hasProperty(map, key)) {
-	      var a = map[key].split('|');
-	      a.forEach(function (item) {
-	        return updateS(item, key);
-	      });
-	    }
-	  };
-	  for (var key in map) {
-	    _loop(key);
-	  }
-	  return x;
-	};
-	var createAlias = function createAlias(s, delimiter) {
-	  var x = trim$1(stripAccent(s));
-	  var d = delimiter || '-';
-	  return x.toLowerCase().replace(/\W+/g, ' ').replace(/\s+/g, ' ').replace(/\s/g, d);
-	};
 	var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 	function unwrapExports (x) {
 		return x && x.__esModule ? x['default'] : x;
@@ -657,35 +655,6 @@
 	    y: yPos
 	  };
 	};
-	var tplMainLayout = "\n  <div class=\"pps__frame--left\">\n    <div class=\"pps__frame--top\">\n      <div class=\"pps__techlogo-outer\">\n        <div class=\"pps__techlogo\">\n          <label class=\"pps__label pps__label--no-padding\">{{labelTech}}</label>\n          <div class=\"pps__techlogo-image\"></div>\n          <span class=\"pps__techselect-arrow\"></span>\n        </div>\n        <div class=\"pps__select-outer\">\n          <select class=\"pps__select pps__stack-selector\">\n            {{options}}\n          </select>\n        </div>\n      </div>\n      <div class=\"pps__block--people\">\n        <label class=\"pps__label\">\n          {{labelPeople}} <span class=\"pps__teamnumber--small\"></span>\n        </label>\n        <div class=\"pps__swiper-wrapper\">\n          <div class=\"pps__swiper--nav pps__swiper--prev\">\n            <span class=\"pps__btn-link prev\"></span>\n          </div>\n          <div class=\"pps__swiper-container\"></div>\n          <div class=\"pps__swiper--nav pps__swiper--next\">\n            <span class=\"pps__btn-link next\"></span>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"pps__frame--bottom\">\n      <div class=\"pps__block--project\">\n        <label class=\"pps__label\">\n          {{labelProject}}\n        </label>\n        <div class=\"pps__list--project\"></div>\n        <div class=\"pps__view-all pps__is-disabled\"></div>\n      </div>\n    </div>\n  </div>\n  <div class=\"pps__frame--right\">\n    <div class=\"pps__block--stack\">\n      <label class=\"pps__label\">\n        {{labelTech}}\n      </label>\n      <div class=\"pps__list--stack\"></div>\n    </div>\n  </div>\n";
-	var tplBtnViewAll = "<span class=\"pps__btn-viewall\"><b>+{{count}}</b> more</span>";
-	var tplSimpleLayout = "\n  <div class=\"pps__swiper-wrapper pps__swiper-wrapper-simple\">\n    <div class=\"pps__swiper--nav pps__swiper--prev\">\n      <span class=\"pps__btn-link prev\"></span>\n    </div>\n    <div class=\"pps__swiper-container pps__swiper-container-simple\">{{content}}</div>\n    <div class=\"pps__swiper--nav pps__swiper--next\">\n      <span class=\"pps__btn-link next\"></span>\n    </div>\n  </div>\n";
-	var tplPersonCard = "\n  <div class=\"pps__swiper-slide\">\n    <div class=\"pps__person-avatar\" style=\"background-image:url({{image}})\"></div>\n    <div class=\"pps__person-name\">{{name}}</div>\n  </div>\n";
-	var DELTA_TO_START = -80;
-	var PERSON_CARD_SIZE = 200;
-	var DELTA_PEOPLE_START_LOADING = 10;
-	var DELTA_PEOPLE_CONTINUOUS_LOADING = 180;
-	var DELTA_PROJECT_START_LOADING = 20;
-	var DELTA_PROJECT_CONTINUOUS_LOADING = 120;
-	var PERSON_IMG_DIR = encodeURIComponent('People');
-	var PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
-	var TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
-	var IMG_FILE_EXT = '.png';
-	var IS_GG_DOMAIN = /greenglobal\.vn/.test(document.URL);
-	var imgPath = '';
-	var people = [];
-	var projects = [];
-	var techstacks = [];
-	var $elLogo = void 0;
-	var $elTeamNum = void 0;
-	var $elSelector = void 0;
-	var $elContentBlock = void 0;
-	var $elPeople = void 0;
-	var $elProject = void 0;
-	var $elStack = void 0;
-	var $btnViewAllProject = void 0;
-	var _isInitialized = false;
-	var _isStarted = false;
 	var shuffle = function shuffle(arr) {
 	  return arr.sort(function () {
 	    var r = Math.random();
@@ -700,43 +669,6 @@
 	    return k === v;
 	  });
 	};
-	var normalizeData = function normalizeData() {
-	  techstacks = [].concat(toConsumableArray(techstacks)).map(function (item) {
-	    return {
-	      id: item[0],
-	      name: item[1],
-	      logo: '/' + TECHSTACK_IMG_DIR + '/' + encodeURIComponent(item[1]) + IMG_FILE_EXT,
-	      count: item[2],
-	      alias: createAlias(item[1])
-	    };
-	  });
-	  people = [].concat(toConsumableArray(people)).map(function (item) {
-	    return {
-	      id: item[0],
-	      name: item[1],
-	      avatar: '/' + PERSON_IMG_DIR + '/' + encodeURIComponent(item[2]) + IMG_FILE_EXT,
-	      skills: item[3]
-	    };
-	  });
-	  projects = [].concat(toConsumableArray(projects)).map(function (item) {
-	    return {
-	      name: item[0],
-	      alias: createAlias(item[0]),
-	      logo: '/' + PROJECT_IMG_DIR + '/' + encodeURIComponent(item[0]) + IMG_FILE_EXT,
-	      stacks: item[1],
-	      members: item[2]
-	    };
-	  });
-	};
-	var getPeople = function getPeople() {
-	  return [].concat(toConsumableArray(people));
-	};
-	var getProjects = function getProjects() {
-	  return [].concat(toConsumableArray(projects));
-	};
-	var getTechstacks = function getTechstacks() {
-	  return [].concat(toConsumableArray(techstacks));
-	};
 	var getItemFrom = function getItemFrom(arr) {
 	  return {
 	    by: function by(key, value) {
@@ -747,19 +679,78 @@
 	    }
 	  };
 	};
+	var PERSON_IMG_DIR = encodeURIComponent('People');
+	var PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
+	var TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
+	var IMG_FILE_EXT = '.png';
+	var DATA = {};
+	var init$1 = function init(data) {
+	  var _data$techstacks = data.techstacks,
+	      techstacks = _data$techstacks === undefined ? [] : _data$techstacks,
+	      _data$people = data.people,
+	      people = _data$people === undefined ? [] : _data$people,
+	      _data$projects = data.projects,
+	      projects = _data$projects === undefined ? [] : _data$projects;
+	  var _techstacks = [].concat(toConsumableArray(techstacks)).map(function (item) {
+	    return {
+	      name: item[1],
+	      id: item[0],
+	      logo: '/' + TECHSTACK_IMG_DIR + '/' + encodeURIComponent(item[1]) + IMG_FILE_EXT,
+	      count: item[2],
+	      alias: createAlias(item[1])
+	    };
+	  });
+	  var _people = [].concat(toConsumableArray(people)).map(function (item) {
+	    return {
+	      id: item[0],
+	      name: item[1],
+	      avatar: '/' + PERSON_IMG_DIR + '/' + encodeURIComponent(item[2]) + IMG_FILE_EXT,
+	      skills: item[3]
+	    };
+	  });
+	  var _projects = [].concat(toConsumableArray(projects)).map(function (item) {
+	    return {
+	      name: item[0],
+	      alias: createAlias(item[0]),
+	      logo: '/' + PROJECT_IMG_DIR + '/' + encodeURIComponent(item[0]) + IMG_FILE_EXT,
+	      stacks: item[1],
+	      members: item[2]
+	    };
+	  });
+	  DATA = {
+	    techstacks: _techstacks,
+	    people: _people,
+	    projects: _projects
+	  };
+	};
+	var getPeople = function getPeople() {
+	  var _DATA = DATA,
+	      _DATA$people = _DATA.people,
+	      people = _DATA$people === undefined ? [] : _DATA$people;
+	  return [].concat(toConsumableArray(people));
+	};
+	var getProjects = function getProjects() {
+	  var _DATA2 = DATA,
+	      _DATA2$projects = _DATA2.projects,
+	      projects = _DATA2$projects === undefined ? [] : _DATA2$projects;
+	  return [].concat(toConsumableArray(projects));
+	};
+	var getTechstacks = function getTechstacks() {
+	  var _DATA3 = DATA,
+	      _DATA3$techstacks = _DATA3.techstacks,
+	      techstacks = _DATA3$techstacks === undefined ? [] : _DATA3$techstacks;
+	  return [].concat(toConsumableArray(techstacks));
+	};
 	var getTechstackById = function getTechstackById(id) {
 	  return getItemFrom(getTechstacks()).by('id', id);
 	};
 	var getPersonById = function getPersonById(id) {
 	  return getItemFrom(getPeople()).by('id', id);
 	};
-	var getProjectById = function getProjectById(id) {
-	  return getItemFrom(getProjects()).by('id', id);
-	};
 	var getPeopleBySkill = function getPeopleBySkill(skill) {
 	  var arr = [];
 	  var candidates = getPeople();
-	  if (isString$1(skill)) {
+	  if (isString(skill)) {
 	    var sk = skill.toLowerCase();
 	    var stack = getItemFrom(getTechstacks()).by('alias', sk);
 	    arr = candidates.filter(function (item) {
@@ -780,7 +771,7 @@
 	var getProjectStacks = function getProjectStacks(skill) {
 	  var arr = [];
 	  var candidates = getProjects();
-	  if (isString$1(skill)) {
+	  if (isString(skill)) {
 	    var sk = skill.toLowerCase();
 	    var stack = getItemFrom(getTechstacks()).by('alias', sk);
 	    arr = candidates.filter(function (item) {
@@ -812,6 +803,28 @@
 	  }
 	  return [];
 	};
+	var tplMainLayout = "\n  <div class=\"pps__frame--left\">\n    <div class=\"pps__frame--top\">\n      <div class=\"pps__techlogo-outer\">\n        <div class=\"pps__techlogo\">\n          <label class=\"pps__label pps__label--no-padding\">{{labelTech}}</label>\n          <div class=\"pps__techlogo-image\"></div>\n          <span class=\"pps__techselect-arrow\"></span>\n        </div>\n        <div class=\"pps__select-outer\">\n          <select class=\"pps__select pps__stack-selector\">\n            {{options}}\n          </select>\n        </div>\n      </div>\n      <div class=\"pps__block--people\">\n        <label class=\"pps__label\">\n          {{labelPeople}} <span class=\"pps__teamnumber--small\"></span>\n        </label>\n        <div class=\"pps__swiper-wrapper\">\n          <div class=\"pps__swiper--nav pps__swiper--prev\">\n            <span class=\"pps__btn-link prev\"></span>\n          </div>\n          <div class=\"pps__swiper-container\"></div>\n          <div class=\"pps__swiper--nav pps__swiper--next\">\n            <span class=\"pps__btn-link next\"></span>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"pps__frame--bottom\">\n      <div class=\"pps__block--project\">\n        <label class=\"pps__label\">\n          {{labelProject}}\n        </label>\n        <div class=\"pps__list--project\"></div>\n        <div class=\"pps__view-all pps__is-disabled\"></div>\n      </div>\n    </div>\n  </div>\n  <div class=\"pps__frame--right\">\n    <div class=\"pps__block--stack\">\n      <label class=\"pps__label\">\n        {{labelTech}}\n      </label>\n      <div class=\"pps__list--stack\"></div>\n    </div>\n  </div>\n";
+	var tplBtnViewAll = "<span class=\"pps__btn-viewall\"><b>+{{count}}</b> more</span>";
+	var tplSimpleLayout = "\n  <div class=\"pps__swiper-wrapper pps__swiper-wrapper-simple\">\n    <div class=\"pps__swiper--nav pps__swiper--prev\">\n      <span class=\"pps__btn-link prev\"></span>\n    </div>\n    <div class=\"pps__swiper-container pps__swiper-container-simple\">{{content}}</div>\n    <div class=\"pps__swiper--nav pps__swiper--next\">\n      <span class=\"pps__btn-link next\"></span>\n    </div>\n  </div>\n";
+	var tplPersonCard = "\n  <div class=\"pps__swiper-slide\">\n    <div class=\"pps__person-avatar\" style=\"background-image:url({{image}})\"></div>\n    <div class=\"pps__person-name\">{{name}}</div>\n  </div>\n";
+	var DELTA_TO_START = -80;
+	var PERSON_CARD_SIZE = 200;
+	var DELTA_PEOPLE_START_LOADING = 10;
+	var DELTA_PEOPLE_CONTINUOUS_LOADING = 180;
+	var DELTA_PROJECT_START_LOADING = 20;
+	var DELTA_PROJECT_CONTINUOUS_LOADING = 120;
+	var IS_GG_DOMAIN = /greenglobal\.vn/.test(document.URL);
+	var imgPath = '';
+	var $elLogo = void 0;
+	var $elTeamNum = void 0;
+	var $elSelector = void 0;
+	var $elContentBlock = void 0;
+	var $elPeople = void 0;
+	var $elProject = void 0;
+	var $elStack = void 0;
+	var $btnViewAllProject = void 0;
+	var _isInitialized = false;
+	var _isStarted = false;
 	var getImgPath = function getImgPath(c) {
 	  var ipath = c.getAttribute('image-path');
 	  if (ipath) {
@@ -832,8 +845,8 @@
 	  }
 	  var siema = void 0;
 	  var btns = container.queryAll('.pps__swiper--nav');
-	  var bprev = get$$1(btns[0]);
-	  var bnext = get$$1(btns[1]);
+	  var bprev = get(btns[0]);
+	  var bnext = get(btns[1]);
 	  var enableCls = 'pps__swiper--nav--enable';
 	  var disableCls = 'pps__swiper--nav--disable';
 	  var bothCls = enableCls + ' ' + disableCls;
@@ -856,8 +869,8 @@
 	      }
 	      var els = container.queryAll('.pps__btn-link');
 	      els.forEach(function (btn) {
-	        var b = get$$1(btn);
-	        var p = get$$1(b.parentNode);
+	        var b = get(btn);
+	        var p = get(b.parentNode);
 	        if (p.hasClass(enableCls)) {
 	          b.addClass('ripple');
 	          p.onclick = function () {
@@ -1111,10 +1124,10 @@
 	  }
 	  var labels = ['Team', 'Projects', 'Our expertise'];
 	  imgPath = getImgPath(container);
-	  var avatars = people.map(function (item) {
+	  var avatars = getPeople().map(function (item) {
 	    return item.avatar;
 	  });
-	  var logos = projects.map(function (item) {
+	  var logos = getProjects().map(function (item) {
 	    return item.logo;
 	  });
 	  preloadImages(avatars.concat(logos), imgPath);
@@ -1129,7 +1142,7 @@
 	  }
 	  var contentBlock = add('DIV', container);
 	  contentBlock.addClass('pps__wrapper--fluid');
-	  var sltOption = techstacks.map(function (item) {
+	  var sltOption = getTechstacks().map(function (item) {
 	    var id = item.id,
 	        name = item.name;
 	    return '<option value="' + id + '">' + name + '</option>';
@@ -1155,7 +1168,7 @@
 	    }
 	  };
 	  setupSelectorEvent();
-	  randerStackPanel(techstacks);
+	  randerStackPanel(getTechstacks());
 	  window.onscroll = onscroll;
 	  window.onload = function () {
 	    onscroll();
@@ -1165,13 +1178,7 @@
 	var _init = function _init(json) {
 	  try {
 	    var o = typeof json === 'string' ? JSON.parse(json) : json;
-	    var _people = o.people,
-	        _projects = o.projects,
-	        _techstacks = o.techstacks;
-	    people = [].concat(toConsumableArray(_people));
-	    projects = [].concat(toConsumableArray(_projects));
-	    techstacks = [].concat(toConsumableArray(_techstacks));
-	    normalizeData();
+	    init$1(o);
 	    queryAll('ppswidget').map(setupLayout);
 	  } catch (err) {
 	    console.log(err);
@@ -1186,16 +1193,14 @@
 	var isInitialized = function isInitialized() {
 	  return isInitialized;
 	};
+	exports.init = init;
+	exports.isInitialized = isInitialized;
+	exports.getTechstacks = getTechstacks;
 	exports.getPeople = getPeople;
 	exports.getProjects = getProjects;
-	exports.getTechstacks = getTechstacks;
-	exports.getTechstackById = getTechstackById;
-	exports.getPersonById = getPersonById;
-	exports.getProjectById = getProjectById;
 	exports.getPeopleBySkill = getPeopleBySkill;
 	exports.getProjectStacks = getProjectStacks;
 	exports.getProjectMembers = getProjectMembers;
-	exports.init = init;
-	exports.isInitialized = isInitialized;
+	exports.getTechstackById = getTechstackById;
 	Object.defineProperty(exports, '__esModule', { value: true });
 })));

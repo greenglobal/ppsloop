@@ -1,5 +1,5 @@
 {
-  "version": "0.7.23",
+  "version": "0.7.24",
   "name": "ppsw",
   "description": "ppsloop demo",
   "homepage": "http://beta.greenglobal.vn",
@@ -24,12 +24,12 @@
     "lint": "eslint src/widget",
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
     "nsp": "nsp check --output checkstyle",
-    "tape": "babel-node node_modules/.bin/tape tests/start.js | tap-spec",
+    "tape": "babel-node node_modules/.bin/tape test/start.js | tap-spec",
     "pretest": "npm run lint && npm run build",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
     "build": "DEBUG=pps:* NODE_ENV=production node builder/bin/build",
-    "reset": "node builder/bin/reset"
+    "reset": "node reset"
   },
   "dependencies": {
     "debug": "2.x.x",
@@ -45,7 +45,7 @@
     "copy-dir": "0.x.x",
     "css-mqpacker": "6.x.x",
     "cssnano": "3.x.x",
-    "eslint": "3.x.x",
+    "eslint": "4.x.x",
     "eslint-config-ggc": "1.x.x",
     "html-minifier": "3.x.x",
     "jsdom": "11.x.x",

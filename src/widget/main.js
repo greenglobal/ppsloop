@@ -13,17 +13,24 @@ import {
   Event
 } from 'realdom';
 
-import {
-  isString,
-  createAlias
-} from 'bellajs';
-
 import Siema from 'siema';
 
 import {
+  shuffle,
   preloadImages,
   getElementPosition
 } from './utils';
+
+import {
+  init as storeInit,
+  getTechstacks,
+  getPeople,
+  getProjects,
+  getPeopleBySkill,
+  getProjectStacks,
+  getProjectMembers,
+  getTechstackById
+} from './utils/store';
 
 import {
   tplMainLayout,
@@ -41,18 +48,9 @@ const DELTA_PEOPLE_CONTINUOUS_LOADING = 180;
 const DELTA_PROJECT_START_LOADING = 20;
 const DELTA_PROJECT_CONTINUOUS_LOADING = 120;
 
-const PERSON_IMG_DIR = encodeURIComponent('People');
-const PROJECT_IMG_DIR = encodeURIComponent('Logo Project');
-const TECHSTACK_IMG_DIR = encodeURIComponent('LogoTechStack');
-const IMG_FILE_EXT = '.png';
-
 const IS_GG_DOMAIN = (/greenglobal\.vn/).test(document.URL);
 
 let imgPath = '';
-
-let people = [];
-let projects = [];
-let techstacks = [];
 
 let $elLogo;
 let $elTeamNum;
@@ -67,147 +65,6 @@ let $btnViewAllProject;
 
 let _isInitialized = false;
 let _isStarted = false;
-
-let shuffle = (arr) => {
-  return arr.sort(() => {
-    let r = Math.random();
-    if (r === 0 || r === 0.5 || r === 1) {
-      return 0;
-    }
-    return r > 0.5;
-  });
-};
-
-let existsInArray = (v, arr) => {
-  return arr.some((k) => {
-    return k === v;
-  });
-};
-
-let normalizeData = () => {
-  techstacks = [...techstacks].map((item) => {
-    return {
-      id: item[0],
-      name: item[1],
-      logo: `/${TECHSTACK_IMG_DIR}/${encodeURIComponent(item[1])}${IMG_FILE_EXT}`,
-      count: item[2],
-      alias: createAlias(item[1])
-    };
-  });
-
-  people = [...people].map((item) => {
-    return {
-      id: item[0],
-      name: item[1],
-      avatar: `/${PERSON_IMG_DIR}/${encodeURIComponent(item[2])}${IMG_FILE_EXT}`,
-      skills: item[3]
-    };
-  });
-
-  projects = [...projects].map((item) => {
-    return {
-      name: item[0],
-      alias: createAlias(item[0]),
-      logo: `/${PROJECT_IMG_DIR}/${encodeURIComponent(item[0])}${IMG_FILE_EXT}`,
-      stacks: item[1],
-      members: item[2]
-    };
-  });
-};
-
-export let getPeople = () => {
-  return [...people];
-};
-
-export let getProjects = () => {
-  return [...projects];
-};
-
-export let getTechstacks = () => {
-  return [...techstacks];
-};
-
-let getItemFrom = (arr) => {
-  return {
-    by: (key, value) => {
-      let candidates = arr.filter((item) => {
-        return item[key] === value;
-      });
-      return candidates.length > 0 ? candidates[0] : false;
-    }
-  };
-};
-
-export let getTechstackById = (id) => {
-  return getItemFrom(getTechstacks()).by('id', id);
-};
-
-export let getPersonById = (id) => {
-  return getItemFrom(getPeople()).by('id', id);
-};
-
-export let getProjectById = (id) => {
-  return getItemFrom(getProjects()).by('id', id);
-};
-
-export let getPeopleBySkill = (skill) => {
-  let arr = [];
-  let candidates = getPeople();
-  if (isString(skill)) {
-    let sk = skill.toLowerCase();
-    let stack = getItemFrom(getTechstacks()).by('alias', sk);
-    arr = candidates.filter((item) => {
-      return existsInArray(stack.id, item.skills);
-    });
-  } else {
-    arr = candidates.filter((item) => {
-      return existsInArray(skill, item.skills);
-    });
-  }
-  return arr.map((item) => {
-    return {
-      name: item.name,
-      avatar: item.avatar
-    };
-  });
-};
-
-export let getProjectStacks = (skill) => {
-  let arr = [];
-  let candidates = getProjects();
-  if (isString(skill)) {
-    let sk = skill.toLowerCase();
-    let stack = getItemFrom(getTechstacks()).by('alias', sk);
-    arr = candidates.filter((item) => {
-      return existsInArray(stack.id, item.stacks);
-    });
-  } else {
-    arr = candidates.filter((item) => {
-      return existsInArray(skill, item.stacks);
-    });
-  }
-  return arr.map((item) => {
-    return {
-      alias: item.alias,
-      name: item.name,
-      logo: item.logo
-    };
-  });
-};
-
-export let getProjectMembers = (pname) => {
-  let name = pname.toLowerCase();
-  let p = getProjects().filter((item) => {
-    let nlower = item.name.toLowerCase();
-    return name === nlower || name === item.alias;
-  });
-  if (p.length > 0) {
-    return p[0].members.map((id) => {
-      return getPersonById(id);
-    });
-  }
-  return [];
-};
 
 let getImgPath = (c) => {
   let ipath = c.getAttribute('image-path');
@@ -575,7 +432,7 @@ var renderSimpleVersion = (container, project) => {
       let name = mem.name;
       let avatar = ipath + mem.avatar;
       return tplPersonCard.replace('{{image}}', avatar)
-                      .replace('{{name}}', name);
+        .replace('{{name}}', name);
     }).join('');
 
     let layout = tplSimpleLayout.replace('{{content}}', html);
@@ -604,11 +461,11 @@ let setupLayout = (container) => {
 
   imgPath = getImgPath(container);
 
-  let avatars = people.map((item) => {
+  let avatars = getPeople().map((item) => {
     return item.avatar;
   });
 
-  let logos = projects.map((item) => {
+  let logos = getProjects().map((item) => {
     return item.logo;
   });
 
@@ -627,7 +484,7 @@ let setupLayout = (container) => {
   let contentBlock = addElement('DIV', container);
   contentBlock.addClass('pps__wrapper--fluid');
 
-  let sltOption = techstacks.map((item) => {
+  let sltOption = getTechstacks().map((item) => {
     let {
       id,
       name
@@ -636,9 +493,9 @@ let setupLayout = (container) => {
   }).join('');
 
   let layout = tplMainLayout.replace(new RegExp('{{labelTech}}', 'gi'), labels[2])
-                          .replace('{{labelProject}}', labels[1])
-                          .replace('{{labelPeople}}', labels[0])
-                          .replace('{{options}}', sltOption);
+    .replace('{{labelProject}}', labels[1])
+    .replace('{{labelPeople}}', labels[0])
+    .replace('{{options}}', sltOption);
 
   contentBlock.html(layout);
 
@@ -666,7 +523,7 @@ let setupLayout = (container) => {
   };
 
   setupSelectorEvent();
-  randerStackPanel(techstacks);
+  randerStackPanel(getTechstacks());
 
   window.onscroll = onscroll;
 
@@ -680,25 +537,15 @@ let setupLayout = (container) => {
 let _init = (json) => {
   try {
     let o = typeof json === 'string' ? JSON.parse(json) : json;
-    let {
-      people: _people,
-      projects: _projects,
-      techstacks: _techstacks
-    } = o;
 
-    people = [..._people];
-    projects = [..._projects];
-    techstacks = [..._techstacks];
-
-    normalizeData();
+    storeInit(o);
 
     queryAll('ppswidget').map(setupLayout);
 
   } catch (err) {
-    console.log(err);
+    console.log(err); // eslint-disable-line no-console
   }
 };
-
 
 export var init = (data) => {
   if (!_isInitialized) {
@@ -710,3 +557,13 @@ export var init = (data) => {
 export var isInitialized = () => {
   return isInitialized;
 };
+
+export {
+  getTechstacks,
+  getPeople,
+  getProjects,
+  getPeopleBySkill,
+  getProjectStacks,
+  getProjectMembers,
+  getTechstackById
+} from './utils/store';

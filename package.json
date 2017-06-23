@@ -21,7 +21,7 @@
     "node": ">= 7.6"
   },
   "scripts": {
-    "lint": "eslint src/widget",
+    "lint": "eslint .",
     "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
     "nsp": "nsp check --output checkstyle",
     "tape": "babel-node node_modules/.bin/tape test/start.js | tap-spec",

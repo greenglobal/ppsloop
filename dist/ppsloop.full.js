@@ -1,8 +1,8 @@
-/** ppsw@0.7.24 - full, no data */
+/** ppsw@0.7.25 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.PPSW = global.PPSW || {})));
+	(factory((global.PPSW = {})));
 }(this, (function (exports) { 'use strict';
 	if (!Array.from) {
 	  Array.from = function (c) {

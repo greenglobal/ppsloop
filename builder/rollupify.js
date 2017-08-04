@@ -47,12 +47,11 @@ var rollupify = (entry) => {
       }),
       cleanup()
     ]
-  }).then((bundle) => {
+  }).then(async (bundle) => {
     info('Generating code with bundle...');
-    let result = bundle.generate({
+    let result = await bundle.generate({
       format: 'umd',
       indent: true,
-      moduleId: 'PPSW',
       moduleName: 'PPSW'
     });
     info('Rolling finished.');

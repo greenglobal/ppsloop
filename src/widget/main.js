@@ -303,23 +303,22 @@ let randerPeoplePanel = (ppl) => {
 
   let _ppl = shuffle(ppl);
   let top4 = [];
-  let min = Math.min(_ppl.length - 1, 4);
-  if (_ppl.length >= min && lastTop4Showed.length > 0) {
-    while (top4.length < min) {
-      for (let i = _ppl.length - 1; i >= 0; i--) {
-        let tmp = _ppl[i];
-        let isAlreadyShowed = false;
-        for (let j = 0; j < lastTop4Showed.length; j++) {
-          let m = lastTop4Showed[j];
-          if (m.avatar === tmp.avatar) { // eslint-disable-line
-            isAlreadyShowed = true;
-            break;
-          }
-        }
-        if (!isAlreadyShowed) {
-          _ppl.splice(i, 1);
-          top4.push(tmp);
-        }
+
+  let isAlreadyShowed = (p) => {
+    if (lastTop4Showed.length > 0) {
+      return lastTop4Showed.some((item) => {
+        return item.avatar === p.avatar;
+      });
+    }
+    return false;
+  };
+
+  if (_ppl.length > 4 && lastTop4Showed.length > 0) {
+    for (let i = _ppl.length - 1; i >= 0; i--) {
+      let tmp = _ppl[i];
+      if (!isAlreadyShowed(tmp)) {
+        _ppl.splice(i, 1);
+        top4.push(tmp);
       }
     }
   }

@@ -1009,23 +1009,20 @@
 	  $elPeople.empty();
 	  var _ppl = shuffle(ppl);
 	  var top4 = [];
-	  var min = Math.min(_ppl.length - 1, 4);
-	  if (_ppl.length >= min && lastTop4Showed.length > 0) {
-	    while (top4.length < min) {
-	      for (var i = _ppl.length - 1; i >= 0; i--) {
-	        var tmp = _ppl[i];
-	        var isAlreadyShowed = false;
-	        for (var j = 0; j < lastTop4Showed.length; j++) {
-	          var m = lastTop4Showed[j];
-	          if (m.avatar === tmp.avatar) {
-	            isAlreadyShowed = true;
-	            break;
-	          }
-	        }
-	        if (!isAlreadyShowed) {
-	          _ppl.splice(i, 1);
-	          top4.push(tmp);
-	        }
+	  var isAlreadyShowed = function isAlreadyShowed(p) {
+	    if (lastTop4Showed.length > 0) {
+	      return lastTop4Showed.some(function (item) {
+	        return item.avatar === p.avatar;
+	      });
+	    }
+	    return false;
+	  };
+	  if (_ppl.length > 4 && lastTop4Showed.length > 0) {
+	    for (var i = _ppl.length - 1; i >= 0; i--) {
+	      var tmp = _ppl[i];
+	      if (!isAlreadyShowed(tmp)) {
+	        _ppl.splice(i, 1);
+	        top4.push(tmp);
 	      }
 	    }
 	  }

@@ -295,11 +295,44 @@ let randerProjectPanel = (ppj, isAppend = false) => {
   return result;
 };
 
+let lastTop4Showed = [];
+
 let randerPeoplePanel = (ppl) => {
 
   $elPeople.empty();
 
-  let result = shuffle(ppl).map((entry) => {
+  let _ppl = shuffle(ppl);
+  let top4 = [];
+  let min = Math.min(_ppl.length - 1, 4);
+  if (_ppl.length >= min && lastTop4Showed.length > 0) {
+    while (top4.length < min) {
+      for (let i = _ppl.length - 1; i >= 0; i--) {
+        let tmp = _ppl[i];
+        let isAlreadyShowed = false;
+        for (let j = 0; j < lastTop4Showed.length; j++) {
+          let m = lastTop4Showed[j];
+          if (m.avatar === tmp.avatar) { // eslint-disable-line
+            isAlreadyShowed = true;
+            break;
+          }
+        }
+        if (!isAlreadyShowed) {
+          _ppl.splice(i, 1);
+          top4.push(tmp);
+        }
+      }
+    }
+  }
+
+  let sltPeople = top4.concat(_ppl);
+
+  lastTop4Showed = [];
+  let limit = Math.min(sltPeople.length, 4);
+  for (let h = 0; h < limit; h++) {
+    lastTop4Showed[h] = sltPeople[h];
+  }
+
+  let result = sltPeople.map((entry) => {
     let card = buildPersonCard(entry);
     $elPeople.appendChild(card);
     return {

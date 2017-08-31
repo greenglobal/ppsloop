@@ -1,4 +1,4 @@
-/** ppsw@0.7.25 - full, no data */
+/** ppsw@0.7.3 - full, no data */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -1004,9 +1004,38 @@
 	  }
 	  return result;
 	};
+	var lastTop4Showed = [];
 	var randerPeoplePanel = function randerPeoplePanel(ppl) {
 	  $elPeople.empty();
-	  var result = shuffle(ppl).map(function (entry) {
+	  var _ppl = shuffle(ppl);
+	  var top4 = [];
+	  var min = Math.min(_ppl.length - 1, 4);
+	  if (_ppl.length >= min && lastTop4Showed.length > 0) {
+	    while (top4.length < min) {
+	      for (var i = _ppl.length - 1; i >= 0; i--) {
+	        var tmp = _ppl[i];
+	        var isAlreadyShowed = false;
+	        for (var j = 0; j < lastTop4Showed.length; j++) {
+	          var m = lastTop4Showed[j];
+	          if (m.avatar === tmp.avatar) {
+	            isAlreadyShowed = true;
+	            break;
+	          }
+	        }
+	        if (!isAlreadyShowed) {
+	          _ppl.splice(i, 1);
+	          top4.push(tmp);
+	        }
+	      }
+	    }
+	  }
+	  var sltPeople = top4.concat(_ppl);
+	  lastTop4Showed = [];
+	  var limit = Math.min(sltPeople.length, 4);
+	  for (var h = 0; h < limit; h++) {
+	    lastTop4Showed[h] = sltPeople[h];
+	  }
+	  var result = sltPeople.map(function (entry) {
 	    var card = buildPersonCard(entry);
 	    $elPeople.appendChild(card);
 	    return {

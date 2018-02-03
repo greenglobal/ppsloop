@@ -24,7 +24,7 @@ Example:
   </head>
   <body>
   <!-- add widget here -->
-  <PPSWidget id="widgetTechTeam" section-labels="Team|Projects|Tech stacks" image-path="/img/widgetimage"></PPSWidget>
+  <PPSWidget id="widgetTechTeam" image-path="/img/widgetimage" lang="en"></PPSWidget>
 
   <!-- or display people only version -->
   <PPSWidget type="simple" project="escope" image-path="/img/widgetimage/"></PPSWidget>
@@ -118,18 +118,27 @@ Return true if init() has been called at least once early.
   - [ppsloop.json](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.json)
 
 
-## Installation
+## Usage
 
 ```
 git clone https://github.com/greenglobal/ppsloop.git
 cd ppsloop
-yarn
+npm i
 npm start
 ```
 
 If everything goes well, it would build a compiled version to "/dist", open at 8080 and start watching changes.
 
-To dev, just modify source codes from /src, then reload webpage to see updates. Then, run `npm run release` to get the last result in "/docs".
+To dev, just modify source codes from /src, then reload webpage to see updates.
+
+
+To build, run:
+
+```
+npm run build
+```
+
+The last result will be saved into "/docs".
 
 
 # License

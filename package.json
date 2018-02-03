@@ -1,8 +1,8 @@
 {
-  "version": "0.7.3",
+  "version": "0.8.0",
   "name": "ppsw",
   "description": "ppsloop demo",
-  "homepage": "http://beta.greenglobal.vn",
+  "homepage": "http://greenglobal.vn",
   "repository": {
     "type": "git",
     "url": "git@github.com:greenglobal/ppsloop.git"
@@ -22,29 +22,27 @@
   },
   "scripts": {
     "lint": "eslint src/widget",
-    "start": "DEBUG=pps:* NODE_ENV=development node server.js -p 8080",
+    "start": "DEBUG=ppsw:* NODE_ENV=development node server.js -p 8080",
     "nsp": "nsp check --output checkstyle",
     "tape": "babel-node node_modules/.bin/tape test/start.js | tap-spec",
     "pretest": "npm run lint && npm run build",
     "test": "NODE_ENV=test npm run tape",
     "posttest": "npm run nsp",
-    "build": "DEBUG=pps:* NODE_ENV=production node builder/bin/build",
+    "build": "DEBUG=ppsw:* NODE_ENV=production node builder/bin/build",
     "reset": "node reset"
   },
   "dependencies": {
-    "debug": "2.x.x",
-    "express": "4.x.x",
-    "minimist": "1.x.x"
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
+    "minimist": "^1.2.0"
   },
   "devDependencies": {
     "babel-cli": "6.x.x",
-    "babel-plugin-external-helpers": "6.x.x",
-    "babel-preset-env": "1.x.x",
-    "babel-preset-es2015-rollup": "3.x.x",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "bellajs": "7.x.x",
     "copy-dir": "0.x.x",
     "css-mqpacker": "6.x.x",
-    "cssnano": "3.x.x",
     "eslint": "4.x.x",
     "eslint-config-ggc": "1.x.x",
     "html-minifier": "3.x.x",
@@ -53,20 +51,20 @@
     "mkdirp": "0.x.x",
     "node-fetch": "1.x.x",
     "nsp": "2.x.x",
-    "postcss": "6.x.x",
-    "postcss-cssnext": "2.x.x",
-    "postcss-filter-plugins": "2.x.x",
-    "postcss-nested": "2.x.x",
-    "realdom": "3.x.x",
-    "rollup": "0.x.x",
-    "rollup-plugin-babel": "2.x.x",
-    "rollup-plugin-cleanup": "1.x.x",
-    "rollup-plugin-commonjs": "8.x.x",
-    "rollup-plugin-node-resolve": "3.x.x",
+    "postcss": "^6.0.14",
+    "postcss-clean": "^1.1.0",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-import": "^11.0.0",
+    "realdom": "^3.2.11",
+    "rollup": "^0.50.0",
+    "rollup-plugin-cleanup": "^2.0.0",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "siema": "1.x.x",
-    "tap-spec": "4.x.x",
-    "tape": "4.x.x",
-    "uglify-js": "3.x.x"
+    "strip-css-comments": "^3.0.0",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.8.0",
+    "uglify-es": "^3.1.8"
   },
   "babel": {
     "presets": [

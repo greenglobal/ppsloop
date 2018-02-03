@@ -1,81 +1,65 @@
 // rollupify
 
-var debug = require('debug');
-var info = debug('pps:info');
-var error = debug('pps:error');
+const {
+  error,
+  info,
+} = require('./logger');
 
-var rollup = require('rollup');
+const {rollup} = require('rollup');
 
-var babel = require('rollup-plugin-babel');
-var nodeResolve = require('rollup-plugin-node-resolve');
-var commonjs = require('rollup-plugin-commonjs');
-var cleanup = require('rollup-plugin-cleanup');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+const cleanup = require('rollup-plugin-cleanup');
 
-var {minify} = require('uglify-js');
+const minifyJS = require('./minifyJS');
+const transpileJS = require('./transpileJS');
 
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
-var jsminify = (source = '') => {
-  return minify(source, {sourceMap: true});
-};
-
-let removeBr = (s) => {
-  return s.replace(/(\r\n+|\n+|\r+)/gm, '\n');
-};
-
-var rollupify = (entry) => {
+var rollupify = async (input) => {
   info('Rollup start...');
-  return rollup.rollup({
-    entry,
-    plugins: [
-      nodeResolve({
-        module: true,
-        jsnext: true,
-        extensions: [
-          '.js'
-        ]
-      }),
-      commonjs(),
-      babel({
-        babelrc: false,
-        presets: [
-          'es2015-rollup'
-        ],
-        plugins: [
-          'external-helpers'
-        ]
-      }),
-      cleanup()
-    ]
-  }).then(async (bundle) => {
+  try {
     info('Generating code with bundle...');
-    let result = await bundle.generate({
+
+    let bundle = await rollup({
+      input,
+      plugins: [
+        nodeResolve({
+          jsnext: true,
+          main: true,
+          extensions: [
+            '.js',
+            '.json',
+          ],
+        }),
+        commonjs({
+          include: 'node_modules/**',
+          sourceMap: false,
+        }),
+        cleanup(),
+      ],
+    });
+
+    let {code} = await bundle.generate({
       format: 'umd',
       indent: true,
-      moduleName: 'PPSW'
+      strict: false,
+      name: 'PPSW'
     });
+
     info('Rolling finished.');
-
-    let {code} = result;
-
-    let output = {
-      code: removeBr(code)
-    };
-
-    if (ENV === 'production') {
-      let min = jsminify(code);
-      if (!min.error) {
-        output.minified = min.code;
-        output.map = min.map;
-      }
-    }
-    return output;
-  }).catch((err) => {
+    return transpileJS(code);
+  } catch (err) {
+    error('Error while rolling up...');
     error(err);
-  });
+    return err;
+  }
 };
 
 module.exports = async (entry) => {
   let output = await rollupify(entry);
+  if (ENV === 'production') {
+    return minifyJS(output);
+  }
   return output;
 };

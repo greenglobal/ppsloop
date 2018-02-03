@@ -18,7 +18,8 @@ import Siema from 'siema';
 import {
   shuffle,
   preloadImages,
-  getElementPosition
+  getElementPosition,
+  translate
 } from './utils';
 
 import {
@@ -65,6 +66,8 @@ let $btnViewAllProject;
 
 let _isInitialized = false;
 let _isStarted = false;
+
+let dict = translate('en');
 
 let getImgPath = (c) => {
   let ipath = c.getAttribute('image-path');
@@ -286,7 +289,11 @@ let randerProjectPanel = (ppj, isAppend = false) => {
   let rest = remain.length;
   if (rest > 0) {
     $btnViewAllProject.removeClass('pps__is-disabled');
-    $btnViewAllProject.html(tplBtnViewAll.replace('{{count}}', rest));
+    $btnViewAllProject.html(
+      tplBtnViewAll
+        .replace('{{count}}', rest)
+        .replace('{{more}}', dict.more)
+    );
     $btnViewAllProject.onclick = () => {
       randerProjectPanel(remain, true);
     };
@@ -345,11 +352,15 @@ let randerPeoplePanel = (ppl) => {
   }, []);
 
   let total = result.length;
-  let txt = '0 member';
+  let {
+    member,
+    members
+  } = dict;
+  let txt = `0 ${member}`;
   if (total === 1) {
-    txt = '1 member';
+    txt = `1 ${member}`;
   } else if (total > 1) {
-    txt = `${total} members`;
+    txt = `${total} ${members}`;
   }
   $elTeamNum.html(txt);
 
@@ -485,10 +496,19 @@ let setupLayout = (container) => {
     return renderSimpleVersion(container, prj);
   }
 
+  let lang = container.getAttribute('lang');
+  if (!lang) {
+    let rootTag = document.getElementsByTagName('html')[0];
+    lang = rootTag.getAttribute('lang' || rootTag.getAttribute('xml:lang'));
+  }
+  if (lang && lang !== 'en') {
+    dict = translate(lang);
+  }
+
   let labels = [
-    'Team',
-    'Projects',
-    'Our expertise'
+    dict.team,
+    dict.projects,
+    dict.expertise,
   ];
 
   imgPath = getImgPath(container);
@@ -502,16 +522,6 @@ let setupLayout = (container) => {
   });
 
   preloadImages(avatars.concat(logos), imgPath);
-
-  let attrSectionLabel = container.getAttribute('section-labels');
-  if (attrSectionLabel) {
-    let arrLabels = attrSectionLabel.split('|');
-    for (let i = 0; i < labels.length; i++) {
-      if (arrLabels[i]) {
-        labels[i] = arrLabels[i];
-      }
-    }
-  }
 
   let contentBlock = addElement('DIV', container);
   contentBlock.addClass('pps__wrapper--fluid');

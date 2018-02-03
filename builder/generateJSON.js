@@ -1,13 +1,15 @@
 // generateJSON
 
-var bella = require('bellajs');
-var debug = require('debug');
-var info = debug('pps:info');
-var error = debug('pps:error');
-
 var fs = require('fs');
+var bella = require('bellajs');
+
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
+
+const {
+  error,
+  info,
+} = require('./logger');
 
 var removeAccents = require('../builder/removeAccents');
 var normalizeData = require('../builder/normalizeData');

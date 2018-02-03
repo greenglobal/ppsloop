@@ -8,8 +8,7 @@ require('jsdom-global')();
 let data = require('../../dist/ppsloop.json');
 
 let es6PPSW = require('../../src/widget/main');
-let fullPPSW = require('../../dist/ppsloop.full');
-let minPPSW = require('../../dist/ppsloop.min');
+let compiledPPSW = require('../../dist/ppsloop');
 
 let apiCheck = (PPSW) => {
   test('Widget APIs', (assert) => {
@@ -110,4 +109,4 @@ let apiCheck = (PPSW) => {
 
 };
 
-[es6PPSW, fullPPSW, minPPSW].map(apiCheck);
+[es6PPSW, compiledPPSW].map(apiCheck);

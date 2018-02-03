@@ -3,8 +3,9 @@
 
 var path = require('path');
 
-var debug = require('debug');
-var error = debug('pps:error');
+const {
+  error,
+} = require('./logger');
 
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');

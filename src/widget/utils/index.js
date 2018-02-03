@@ -5,3 +5,4 @@ export * from './getLocatePoint';
 export * from './shuffle';
 export * from './existsInArray';
 export * from './getItemFrom';
+export * from './translate';

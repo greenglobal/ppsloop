@@ -3,9 +3,10 @@
 var fs = require('fs');
 var fetch = require('node-fetch');
 
-var debug = require('debug');
-var info = debug('pps:info');
-var error = debug('pps:error');
+const {
+  error,
+  info,
+} = require('./logger');
 
 var writeFile = require('./writeFile');
 

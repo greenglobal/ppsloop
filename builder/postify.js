@@ -9,6 +9,8 @@ const cssnext = require('postcss-cssnext');
 const mqpacker = require('css-mqpacker');
 const atImport = require('postcss-import');
 
+const minifyCSS = require('./minifyCSS');
+
 const ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 const POSTCSS_PLUGINS = [
@@ -47,7 +49,11 @@ var compileCSS = async (cssFiles, source) => {
 
   let css = await postProcess(myCSS);
 
-  return [vendorCSS, css].join(' ');
+  let output = [vendorCSS, css].join(' ');
+  if (ENV === 'production') {
+    return minifyCSS(output);
+  }
+  return output;
 };
 
 module.exports = compileCSS;

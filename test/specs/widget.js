@@ -3,8 +3,6 @@
 var bella = require('bellajs');
 var test = require('tape');
 
-require('jsdom-global')();
-
 let data = require('../../src/widget/data.json');
 
 let PPSW = require('../../src/widget/main.js');

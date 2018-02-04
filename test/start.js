@@ -5,8 +5,10 @@
 var files = [
   'overview',
   'widget',
-  'widget.apis'
+  'es6PPSW'
 ];
+
+require('browser-env')();
 
 files.forEach((fname) => {
   require(`../test/specs/${fname}.js`);

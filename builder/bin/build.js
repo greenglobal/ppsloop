@@ -26,71 +26,52 @@ var makeDirs = (dist) => {
 
 var makeWidgetData = () => {
   let json = readFile('./src/widget/data.json');
-  writeFile('./dist/ppsloop.json', json);
+  writeFile('./docs/ppsloop.json', json);
 };
 
 var makeWidgetCSS = async () => {
   let css = await compiler.css();
-  writeFile('./dist/ppsloop.css', `/** v${version} */ ${css}`);
+  writeFile('./docs/ppsloop.css', `/** v${version} */ ${css}`);
 };
 
 var makeWidgetJS = async () => {
   let js = await compiler.js();
 
-  if (js.minified) {
+  let json = readFile('./src/widget/data.json');
+  let init = json ? `if (window.PPSW) {PPSW.init(${json});};` : '';
 
-    let json = readFile('./src/widget/data.json');
-    let init = json ? `if (window.PPSW) {PPSW.init(${json});};` : '';
-
-    writeFile('./dist/ppsloop.js', [
-      `/** ${name}@${version} - minified, init data */`,
-      js.minified,
-      init
-    ].join('\n'));
-
-    writeFile('./dist/ppsloop.min.js', [
-      `/** ${name}@${version} - minified, no data */`,
-      js.minified
-    ].join('\n'));
-  }
-
-  if (js.code) {
-    writeFile('./dist/ppsloop.full.js', [
-      `/** ${name}@${version} - full, no data */`,
-      js.code
-    ].join('\n'));
-  }
-
-  if (js.map) {
-    writeFile('./dist/ppsloop.js.map', js.map);
-  }
+  writeFile('./docs/ppsloop.js', [
+    `/** ${name}@${version} - minified, init data */`,
+    js,
+    init
+  ].join('\n'));
 };
 
 var publish = () => {
   let source = './src/consumer';
-  let dist = './docs';
-  cpdir(`${source}`, `${dist}`);
+  let docs = './docs';
+  cpdir(`${source}`, `${docs}`);
+
 
   let revision = bella.createId(10);
-  let cssLink = `https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css?rev=${revision}`;
-  let jsLink = `https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js?rev=${revision}`;
-  let imagePath = '/ppsloop/img/widgetimage/';
+  let cssLink = `ppsloop.css?rev=${revision}`;
+  let jsLink = `ppsloop.js?rev=${revision}`;
+  let htmlFile = `${docs}/index.html`;
 
-  let html = readFile(`${dist}/index.html`);
-  html = html.replace(new RegExp('/img/widgetimage/', 'gi'), imagePath);
+  let html = readFile(htmlFile);
   html = html.replace('widget/ppsloop.css', cssLink);
   html = html.replace('widget/ppsloop.js', jsLink);
-  html = html.replace('<script type="text/javascript" src="widget/ppsloop.init.js"></script>', '');
+  html = html.replace('<script src="widget/ppsloop.init.js"></script>', '');
 
   let sHTML = htmlmin(html, {
-    collapseWhitespace: true,
-    preserveLineBreaks: false,
-    quoteCharacter: '"',
+    minifyCSS: true,
+    minifyJS: true,
     removeComments: true,
-    removeEmptyAttributes: true,
-    useShortDoctype: true
+    collapseWhitespace: true,
+    conservativeCollapse: true,
+    removeTagWhitespace: true,
   });
-  writeFile(`${dist}/index.html`, sHTML);
+  writeFile(htmlFile, sHTML);
 };
 
 var makeFiles = async () => {
@@ -100,5 +81,5 @@ var makeFiles = async () => {
   publish();
 };
 
-setup().then(['./dist', './docs'].map(makeDirs)).then(makeFiles);
+setup().then(['./docs'].map(makeDirs)).then(makeFiles);
 

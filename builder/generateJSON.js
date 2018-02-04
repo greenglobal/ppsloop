@@ -1,18 +1,20 @@
 // generateJSON
 
-var bella = require('bellajs');
-var debug = require('debug');
-var info = debug('pps:info');
-var error = debug('pps:error');
-
 var fs = require('fs');
+var bella = require('bellajs');
+
 var readFile = require('./readFile');
 var writeFile = require('./writeFile');
+
+const {
+  error,
+  info,
+} = require('./logger');
 
 var removeAccents = require('../builder/removeAccents');
 var normalizeData = require('../builder/normalizeData');
 
-const IMAGE_DIR = './src/consumer/img/widgetimage';
+const IMAGE_DIR = './src/consumer/images';
 
 const PERSON_IMAGE_FOLDER = 'People';
 const PROJECT_IMAGE_FOLDER = 'Logo Project';

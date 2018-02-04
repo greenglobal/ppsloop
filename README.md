@@ -20,16 +20,16 @@ Example:
 <html>
   <head>
     <title>Hello</title>
-    <link rel="stylesheet" href="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css">
+    <link rel="stylesheet" href="https://greenglobal.github.io/ppsloop/ppsloop.css">
   </head>
   <body>
   <!-- add widget here -->
-  <PPSWidget id="widgetTechTeam" image-path="/img/widgetimage" lang="en"></PPSWidget>
+  <PPSWidget id="widgetTechTeam" image-path="/path/to/images/dir/" lang="en"></PPSWidget>
 
   <!-- or display people only version -->
-  <PPSWidget type="simple" project="escope" image-path="/img/widgetimage/"></PPSWidget>
+  <PPSWidget type="simple" project="escope" image-path="/path/to/images/dir/"></PPSWidget>
 
-  <script src="https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js"></script>
+  <script src="https://greenglobal.github.io/ppsloop/ppsloop.js"></script>
   </body>
 </html>
 ```

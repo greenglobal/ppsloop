@@ -25,8 +25,6 @@ var rollupify = async (input) => {
       input,
       plugins: [
         nodeResolve({
-          jsnext: true,
-          main: true,
           extensions: [
             '.js',
             '.json',
@@ -41,7 +39,7 @@ var rollupify = async (input) => {
     });
 
     let {code} = await bundle.generate({
-      format: 'umd',
+      format: 'iife',
       indent: true,
       strict: false,
       name: 'PPSW'

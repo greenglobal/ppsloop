@@ -107,15 +107,15 @@ Return true if init() has been called at least once early.
 
 - Dev (fast update)
 
-  - [ppsloop.css](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css)
-  - [ppsloop.js](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js)
-  - [ppsloop.json](https://rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.json)
+  - [ppsloop.css](https://greenglobal.github.io/ppsloop/ppsloop.css)
+  - [ppsloop.js](https://greenglobal.github.io/ppsloop/ppsloop.js)
+  - [ppsloop.json](https://greenglobal.github.io/ppsloop/ppsloop.json)
 
 - Production (stable)
 
-  - [ppsloop.css](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.css)
-  - [ppsloop.js](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.js)
-  - [ppsloop.json](https://cdn.rawgit.com/greenglobal/ppsloop/master/dist/ppsloop.json)
+  - [ppsloop.css](https://cdn.rawgit.com/greenglobal/ppsloop/master/docs/ppsloop.css)
+  - [ppsloop.js](https://cdn.rawgit.com/greenglobal/ppsloop/master/docs/ppsloop.js)
+  - [ppsloop.json](https://cdn.rawgit.com/greenglobal/ppsloop/master/docs/ppsloop.json)
 
 
 ## Usage
